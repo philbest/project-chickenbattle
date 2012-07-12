@@ -11,8 +11,8 @@ public class Cube {
 			float[] verts = new float[288];
 			int i = 0;
 			// Front
-			verts[i++] = -1; // x1
-			verts[i++] = -1; // y1
+			verts[i++] = 0; // x1
+			verts[i++] = 0; // y1
 			verts[i++] = 1;
 			verts[i++] = 0; // Normal X
 			verts[i++] = 0; // Normal Y
@@ -21,7 +21,7 @@ public class Cube {
 			verts[i++] = 0.5f; // v1
 
 			verts[i++] = 1f; // x2
-			verts[i++] = -1; // y2
+			verts[i++] = 0; // y2
 			verts[i++] = 1;
 			verts[i++] = 0; // Normal X
 			verts[i++] = 0; // Normal Y
@@ -31,7 +31,7 @@ public class Cube {
 
 			verts[i++] = 1f; // x3
 			verts[i++] = 1f; // y2
-			verts[i++] = 1;
+			verts[i++] = 1f;
 			verts[i++] = 0; // Normal X
 			verts[i++] = 0; // Normal Y
 			verts[i++] = 1; // Normal Z
@@ -40,14 +40,14 @@ public class Cube {
 
 			verts[i++] = 1f; // x3
 			verts[i++] = 1f; // y2
-			verts[i++] = 1;
+			verts[i++] = 1f;
 			verts[i++] = 0; // Normal X
 			verts[i++] = 0; // Normal Y
 			verts[i++] = 1; // Normal Z
 			verts[i++] = 1f; // u3
 			verts[i++] = 0f; // v3
 
-			verts[i++] = -1; // x4
+			verts[i++] = 0; // x4
 			verts[i++] = 1f; // y4
 			verts[i++] = 1;
 			verts[i++] = 0; // Normal X
@@ -56,8 +56,8 @@ public class Cube {
 			verts[i++] = 0.5f; // u4
 			verts[i++] = 0f; // v4
 
-			verts[i++] = -1; // x1
-			verts[i++] = -1; // y1
+			verts[i++] = 0; // x1
+			verts[i++] = 0; // y1
 			verts[i++] = 1;
 			verts[i++] = 0; // Normal X
 			verts[i++] = 0; // Normal Y
@@ -66,7 +66,7 @@ public class Cube {
 			verts[i++] = 0.5f; // v1
 
 			// top
-			verts[i++] = -1; // x1
+			verts[i++] = 0; // x1
 			verts[i++] = 1; // y1
 			verts[i++] = 1; // z1
 			verts[i++] = 0; // Normal X
@@ -86,7 +86,7 @@ public class Cube {
 
 			verts[i++] = 1; // x1
 			verts[i++] = 1; // y1
-			verts[i++] = -1; // z1
+			verts[i++] = 0; // z1
 			verts[i++] = 0; // Normal X
 			verts[i++] = 1; // Normal Y
 			verts[i++] = 0; // Normal Z
@@ -95,23 +95,23 @@ public class Cube {
 
 			verts[i++] = 1; // x1
 			verts[i++] = 1; // y1
-			verts[i++] = -1; // z1
+			verts[i++] = 0; // z1
 			verts[i++] = 0; // Normal X
 			verts[i++] = 1; // Normal Y
 			verts[i++] = 0; // Normal Z
 			verts[i++] = 0.5f;
 			verts[i++] = 0f;
 
-			verts[i++] = -1; // x1
+			verts[i++] = 0; // x1
 			verts[i++] = 1; // y1
-			verts[i++] = -1; // z1
+			verts[i++] = 0; // z1
 			verts[i++] = 0; // Normal X
 			verts[i++] = 1; // Normal Y
 			verts[i++] = 0; // Normal Z
 			verts[i++] = 0f;
 			verts[i++] = 0f;
 
-			verts[i++] = -1; // x1
+			verts[i++] = 0; // x1
 			verts[i++] = 1; // y1
 			verts[i++] = 1; // z1
 			verts[i++] = 0; // Normal X
@@ -122,7 +122,7 @@ public class Cube {
 
 			// Right
 			verts[i++] = 1; // x1
-			verts[i++] = -1; // y1
+			verts[i++] = 0; // y1
 			verts[i++] = 1; // z1
 			verts[i++] = 1; // Normal X
 			verts[i++] = 0; // Normal Y
@@ -131,8 +131,8 @@ public class Cube {
 			verts[i++] = 0.5f;
 
 			verts[i++] = 1; // x1
-			verts[i++] = -1; // y1
-			verts[i++] = -1; // z1
+			verts[i++] = 0; // y1
+			verts[i++] = 0; // z1
 			verts[i++] = 1; // Normal X
 			verts[i++] = 0; // Normal Y
 			verts[i++] = 0; // Normal Z
@@ -141,7 +141,7 @@ public class Cube {
 
 			verts[i++] = 1; // x1
 			verts[i++] = 1; // y1
-			verts[i++] = -1; // z1
+			verts[i++] = 0; // z1
 			verts[i++] = 1; // Normal X
 			verts[i++] = 0; // Normal Y
 			verts[i++] = 0; // Normal Z
@@ -150,7 +150,7 @@ public class Cube {
 
 			verts[i++] = 1; // x1
 			verts[i++] = 1; // y1
-			verts[i++] = -1; // z1
+			verts[i++] = 0; // z1
 			verts[i++] = 1; // Normal X
 			verts[i++] = 0; // Normal Y
 			verts[i++] = 0; // Normal Z
@@ -167,7 +167,7 @@ public class Cube {
 			verts[i++] = 0f;
 
 			verts[i++] = 1; // x1
-			verts[i++] = -1; // y1
+			verts[i++] = 0; // y1
 			verts[i++] = 1; // z1
 			verts[i++] = 1; // Normal X
 			verts[i++] = 0; // Normal Y
@@ -176,9 +176,9 @@ public class Cube {
 			verts[i++] = 0.5f;
 
 			// bot
-			verts[i++] = -1;
-			verts[i++] = -1;
-			verts[i++] = -1;
+			verts[i++] = 0;
+			verts[i++] = 0;
+			verts[i++] = 0;
 			verts[i++] = 0; // Normal X
 			verts[i++] = -1; // Normal Y
 			verts[i++] = 0; // Normal Z
@@ -186,8 +186,8 @@ public class Cube {
 			verts[i++] = 1;
 
 			verts[i++] = 1;
-			verts[i++] = -1;
-			verts[i++] = -1;
+			verts[i++] = 0;
+			verts[i++] = 0;
 			verts[i++] = 0; // Normal X
 			verts[i++] = -1; // Normal Y
 			verts[i++] = 0; // Normal Z
@@ -195,7 +195,7 @@ public class Cube {
 			verts[i++] = 1;
 
 			verts[i++] = 1;
-			verts[i++] = -1;
+			verts[i++] = 0;
 			verts[i++] = 1;
 			verts[i++] = 0; // Normal X
 			verts[i++] = -1; // Normal Y
@@ -204,7 +204,7 @@ public class Cube {
 			verts[i++] = 0.5f;
 
 			verts[i++] = 1;
-			verts[i++] = -1;
+			verts[i++] = 0;
 			verts[i++] = 1;
 			verts[i++] = 0; // Normal X
 			verts[i++] = -1; // Normal Y
@@ -212,8 +212,8 @@ public class Cube {
 			verts[i++] = 0.5f;
 			verts[i++] = 0.5f;
 
-			verts[i++] = -1;
-			verts[i++] = -1;
+			verts[i++] = 0;
+			verts[i++] = 0;
 			verts[i++] = 1;
 			verts[i++] = 0; // Normal X
 			verts[i++] = -1; // Normal Y
@@ -221,9 +221,9 @@ public class Cube {
 			verts[i++] = 0f;
 			verts[i++] = 0.5f;
 
-			verts[i++] = -1;
-			verts[i++] = -1;
-			verts[i++] = -1;
+			verts[i++] = 0;
+			verts[i++] = 0;
+			verts[i++] = 0;
 			verts[i++] = 0; // Normal X
 			verts[i++] = -1; // Normal Y
 			verts[i++] = 0; // Normal Z
@@ -232,35 +232,35 @@ public class Cube {
 
 			// Back
 			verts[i++] = 1;
-			verts[i++] = -1;
-			verts[i++] = -1;
+			verts[i++] = 0;
+			verts[i++] = 0;
 			verts[i++] = 0; // Normal X
 			verts[i++] = 0; // Normal Y
 			verts[i++] = -1; // Normal Z
 			verts[i++] = 0.5f;
 			verts[i++] = 0.5f;
 
-			verts[i++] = -1;
-			verts[i++] = -1;
-			verts[i++] = -1;
+			verts[i++] = 0;
+			verts[i++] = 0;
+			verts[i++] = 0;
 			verts[i++] = 0; // Normal X
 			verts[i++] = 0; // Normal Y
 			verts[i++] = -1; // Normal Z
 			verts[i++] = 1f;
 			verts[i++] = 0.5f;
 
-			verts[i++] = -1;
+			verts[i++] = 0;
 			verts[i++] = 1;
-			verts[i++] = -1;
+			verts[i++] = 0;
 			verts[i++] = 0; // Normal X
 			verts[i++] = 0; // Normal Y
 			verts[i++] = -1; // Normal Z
 			verts[i++] = 1f;
 			verts[i++] = 0f;
 
-			verts[i++] = -1;
+			verts[i++] = 0;
 			verts[i++] = 1;
-			verts[i++] = -1;
+			verts[i++] = 0;
 			verts[i++] = 0; // Normal X
 			verts[i++] = 0; // Normal Y
 			verts[i++] = -1; // Normal Z
@@ -270,7 +270,7 @@ public class Cube {
 
 			verts[i++] = 1;
 			verts[i++] = 1;
-			verts[i++] = -1;
+			verts[i++] = 0;
 			verts[i++] = 0; // Normal X
 			verts[i++] = 0; // Normal Y
 			verts[i++] = -1; // Normal Z
@@ -278,8 +278,8 @@ public class Cube {
 			verts[i++] = 0f;
 
 			verts[i++] = 1;
-			verts[i++] = -1;
-			verts[i++] = -1;
+			verts[i++] = 0;
+			verts[i++] = 0;
 			verts[i++] = 0; // Normal X
 			verts[i++] = 0; // Normal Y
 			verts[i++] = -1; // Normal Z
@@ -287,17 +287,17 @@ public class Cube {
 			verts[i++] = 0.5f;
 
 			// Left
-			verts[i++] = -1;
-			verts[i++] = -1;
-			verts[i++] = -1;
+			verts[i++] = 0;
+			verts[i++] = 0;
+			verts[i++] = 0;
 			verts[i++] = -1; // Normal X
 			verts[i++] = 0; // Normal Y
 			verts[i++] = 0; // Normal Z
 			verts[i++] = 0.5f;
 			verts[i++] = 0.5f;
 
-			verts[i++] = -1;
-			verts[i++] = -1;
+			verts[i++] = 0;
+			verts[i++] = 0;
 			verts[i++] = 1;
 			verts[i++] = -1; // Normal X
 			verts[i++] = 0; // Normal Y
@@ -305,7 +305,7 @@ public class Cube {
 			verts[i++] = 1;
 			verts[i++] = 0.5f;
 
-			verts[i++] = -1;
+			verts[i++] = 0;
 			verts[i++] = 1;
 			verts[i++] = 1;
 			verts[i++] = -1; // Normal X
@@ -314,7 +314,7 @@ public class Cube {
 			verts[i++] = 1;
 			verts[i++] = 0;
 
-			verts[i++] = -1;
+			verts[i++] = 0;
 			verts[i++] = 1;
 			verts[i++] = 1;
 			verts[i++] = -1; // Normal X
@@ -323,18 +323,18 @@ public class Cube {
 			verts[i++] = 1;
 			verts[i++] = 0;
 
-			verts[i++] = -1;
+			verts[i++] = 0;
 			verts[i++] = 1;
-			verts[i++] = -1;
+			verts[i++] = 0;
 			verts[i++] = -1; // Normal X
 			verts[i++] = 0; // Normal Y
 			verts[i++] = 0; // Normal Z
 			verts[i++] = 0.5f;
 			verts[i++] = 0;
 
-			verts[i++] = -1;
-			verts[i++] = -1;
-			verts[i++] = -1;
+			verts[i++] = 0;
+			verts[i++] = 0;
+			verts[i++] = 0;
 			verts[i++] = -1; // Normal X
 			verts[i++] = 0; // Normal Y
 			verts[i++] = 0; // Normal Z
