@@ -88,57 +88,72 @@ public class Application implements InputProcessor{
 	}
 	@Override
 	public boolean touchDown(int arg0, int arg1, int arg2, int arg3) {
-		if (cam.position.x > 0 && cam.position.x < Map.x*2 && cam.position.y > 0 && cam.position.y < Map.y*2 && cam.position.z > 0 && cam.position.z < Map.z*2) {
-			
-			
-			Vector3 dirVec = cam.getPickRay(arg0, arg1).direction;
-			//tile = 2x2x2
-			Vector3 iterationPoint = new Vector3(cam.getPickRay(arg0,arg1).origin);
-			int MAX_RANGE = 100;
-
-			float range=0;
-			boolean hit = false;
-
-			do {
-				int blockX = ((int) iterationPoint.x)/2;
-				int blockY = ((int) iterationPoint.y)/2;
-				int blockZ = ((int) iterationPoint.z)/2;
-				if (map.map[blockX][blockY][blockZ] != null) {
-					hit = true;
-				}
-
-				if(!hit)
-				{
-					float distX = dirVec.x==0?Float.MAX_VALUE:dirVec.x<0?(iterationPoint.x%2.0f)/-dirVec.y:(2.0f-iterationPoint.x%2.0f)/dirVec.x;
-					float distY = dirVec.y==0?Float.MAX_VALUE:dirVec.y<0?(iterationPoint.y%2.0f)/-dirVec.y:(2.0f-iterationPoint.y%2.0f)/dirVec.y;
-					float distZ = dirVec.z==0?Float.MAX_VALUE:dirVec.z<0?(iterationPoint.z%2.0f)/-dirVec.z:(2.0f-iterationPoint.z%2.0f)/dirVec.z;
-					if (distX == 0)
-						distX = Math.abs(2f/dirVec.x);
-					if (distY == 0)
-						distY = Math.abs(2f/dirVec.y);
-					if (distZ == 0)
-						distZ = Math.abs(2f/dirVec.z);
-					float minDistance = Math.min(distX,Math.min(distY,distZ));
-					System.out.println(minDistance + "MIN");
-					iterationPoint.set(iterationPoint.x+dirVec.x*minDistance, 
-							iterationPoint.y+dirVec.y*minDistance, 
-							iterationPoint.z+dirVec.z*minDistance);
-					Vector3 temp = new Vector3(iterationPoint);
-					temp.sub(cam.getPickRay(arg0, arg1).origin );
-					range= temp.len();
-					System.out.println("RANGE " + range);
-				}
-
-
+		float range = 0;
+		Vector3 point = new Vector3(cam.getPickRay(arg0, arg1).origin);
+		Vector3 direction = new Vector3(cam.getPickRay(arg0,arg1).direction);
+		direction.nor();
+		boolean hit = false;
+		int pointX = (int) point.x;
+		int pointY = (int) point.y;
+		int pointZ = (int) point.z;
+		if (pointX >= 0 && pointX < map.x && pointY >= 0 && pointY < map.y && pointZ >= 0 && pointZ < map.z) {
+			if (map.map[pointX][pointY][pointZ] != null) {
+				hit = true;
+				System.out.println("inside" + pointX + " " + pointY + " " + pointZ);
 			}
-			while(!hit && range < MAX_RANGE);
-
-			if(!hit)
-				System.out.println("No blocks were hit by the ray.");
-			else
-				System.out.println("Hit a block at "+"("+iterationPoint.x+"),("+iterationPoint.y+"),("+iterationPoint.z+").");
-
-
+		}
+		int dx=0;
+		int dy=0;
+		int dz=0;
+		while (!hit && range <200) {
+			range+=1;
+			float distX, distY, distZ;
+			if (direction.x == 0) {
+				distX = Float.MAX_VALUE;
+			} else if (direction.x > 0) {
+				distX = (pointX+dx)+1-point.x;
+			} else {
+				distX = point.x-(pointX+dx);
+			}
+			if (direction.y == 0) {
+				distY = Float.MAX_VALUE;
+			} else if (direction.y > 0) {
+				distY = (pointY+dy)+1-point.y;
+			} else {
+				distY = point.y-(pointY+dy);
+			}
+			if (direction.z == 0) {
+				distZ = Float.MAX_VALUE;
+			} else if (direction.z > 0) {
+				distZ = (pointZ+dz)+1-point.z;
+			} else {
+				distZ = point.z-(pointZ+dz);				
+			}
+			if (distX <= distY && distX <= distZ) {
+				if (direction.x > 0) {
+					dx++;
+				} else {
+					dx--;
+				}
+			} else if (distY <= distX && distY <= distZ) {
+				if (direction.y > 0) {
+					dy++;
+				} else {
+					dy--;
+				}
+			} else if (distZ <= distX && distZ <= distY) {
+				if (direction.z > 0) {
+					dz++;
+				} else {
+					dz--;
+				}
+			}
+			if ((pointX+dx) >= 0 && (pointX+dx) < map.x && (pointY+dy) >= 0 && (pointY+dy) < map.y && (pointZ+dz) >= 0 && (pointZ+dz) < map.z) {
+				if (map.map[pointX+dx][pointY+dy][pointZ+dz] != null) {
+					hit = true;
+					System.out.println("HIT" + (pointX+dx) + " " + (pointY+dy) + " " + (pointZ+dz));
+				}
+			}
 		}
 		draggedX = arg0;
 		draggedY = arg1;

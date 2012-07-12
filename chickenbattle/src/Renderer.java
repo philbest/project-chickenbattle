@@ -1,11 +1,9 @@
-import java.io.IOException;
-import java.io.InputStream;
+
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g3d.loaders.obj.ObjLoader;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
@@ -30,15 +28,6 @@ public class Renderer {
 		if (!simpleShader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile simple shader: "
 					+ simpleShader.getLog());
-
-		try {
-			InputStream in = Gdx.files.internal("data/SkySphere2.obj").read();
-			cube = ObjLoader.loadObj(in);
-			in.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		cubeTexture = new Texture(Gdx.files.internal("data/grassmap.png"));
 		lightTexture = new Texture(Gdx.files.internal("data/light.png"));
 	}
@@ -63,7 +52,7 @@ public class Renderer {
 				for (int z = 0; z < Map.z; z++) {
 					if (app.map.map[x][y][z] != null) {
 						simpleShader.setUniformi("s_texture", 1);
-						cubeModel.setToTranslation(x*2,y*2,z*2);
+						cubeModel.setToTranslation(x,y,z);
 						modelViewProjectionMatrix.set(app.cam.combined);
 						modelViewProjectionMatrix.mul(cubeModel);
 						modelViewMatrix.set(app.cam.view);
