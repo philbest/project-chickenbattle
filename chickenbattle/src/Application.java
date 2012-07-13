@@ -14,7 +14,12 @@ public class Application implements InputProcessor{
 	float angleUP, angleLeft;
 	public Map map;
 	public LightSource light;
+	public Vector3 from;
+	public Vector3 to;
+	public boolean adding;
 	public Application() {
+		from = new Vector3(0,0,0);
+		to = new Vector3(0,0,0);
 		light = new LightSource(5,6,5);
 		map = new Map();
 		cube = new Cube();
@@ -68,7 +73,11 @@ public class Application implements InputProcessor{
 	}
 	@Override
 	public boolean keyDown(int arg0) {
-		// TODO Auto-generated method stub
+		if (Input.Keys.NUM_1 == arg0) {
+			adding = true;
+		} else if (Input.Keys.NUM_2 == arg0) {
+			adding = false;
+		}
 		return false;
 	}
 	@Override
@@ -92,6 +101,9 @@ public class Application implements InputProcessor{
 		Vector3 point = new Vector3(cam.getPickRay(arg0, arg1).origin);
 		Vector3 direction = new Vector3(cam.getPickRay(arg0,arg1).direction);
 		direction.nor();
+		direction.mul(0.5f);
+		from.set(point);
+		to.set(direction).mul(100);
 		boolean hit = false;
 		int pointX = (int) point.x;
 		int pointY = (int) point.y;
@@ -102,59 +114,100 @@ public class Application implements InputProcessor{
 				System.out.println("inside" + pointX + " " + pointY + " " + pointZ);
 			}
 		}
-		int dx=0;
-		int dy=0;
-		int dz=0;
-		while (!hit && range <200) {
-			range+=1;
-			float distX, distY, distZ;
-			if (direction.x == 0) {
-				distX = Float.MAX_VALUE;
-			} else if (direction.x > 0) {
-				distX = (pointX+dx)+1-point.x;
-			} else {
-				distX = point.x-(pointX+dx);
-			}
-			if (direction.y == 0) {
-				distY = Float.MAX_VALUE;
-			} else if (direction.y > 0) {
-				distY = (pointY+dy)+1-point.y;
-			} else {
-				distY = point.y-(pointY+dy);
-			}
-			if (direction.z == 0) {
-				distZ = Float.MAX_VALUE;
-			} else if (direction.z > 0) {
-				distZ = (pointZ+dz)+1-point.z;
-			} else {
-				distZ = point.z-(pointZ+dz);				
-			}
-			if (distX <= distY && distX <= distZ) {
-				if (direction.x > 0) {
-					dx++;
-				} else {
-					dx--;
-				}
-			} else if (distY <= distX && distY <= distZ) {
-				if (direction.y > 0) {
-					dy++;
-				} else {
-					dy--;
-				}
-			} else if (distZ <= distX && distZ <= distY) {
-				if (direction.z > 0) {
-					dz++;
-				} else {
-					dz--;
-				}
-			}
-			if ((pointX+dx) >= 0 && (pointX+dx) < map.x && (pointY+dy) >= 0 && (pointY+dy) < map.y && (pointZ+dz) >= 0 && (pointZ+dz) < map.z) {
-				if (map.map[pointX+dx][pointY+dy][pointZ+dz] != null) {
+		while (!hit && range < 200) {
+			range += direction.len();
+			point.add(direction);
+			pointX = (int) point.x;
+			pointY = (int) point.y;
+			pointZ = (int) point.z;
+			if (pointX >= 0 && pointX < map.x && pointY >= 0 && pointY < map.y && pointZ >= 0 && pointZ < map.z) {
+				if (map.map[pointX][pointY][pointZ] != null) {
 					hit = true;
-					System.out.println("HIT" + (pointX+dx) + " " + (pointY+dy) + " " + (pointZ+dz));
+					System.out.println("hit" + pointX + " " + pointY + " " + pointZ);
+				}
+			}
+			if (hit) {
+				if (adding) {
+					point.sub(direction);
+					pointX = (int) point.x;
+					pointY = (int) point.y;
+					pointZ = (int) point.z;
+					if (pointX >= 0 && pointX < map.x && pointY >= 0 && pointY < map.y && pointZ >= 0 && pointZ < map.z) {
+						map.map[pointX][pointY][pointZ] = new Cube();
+					}
+				} else {
+					if (pointX >= 0 && pointX < map.x && pointY >= 0 && pointY < map.y && pointZ >= 0 && pointZ < map.z) {
+						map.map[pointX][pointY][pointZ] = null;
+					}
 				}
 			}
 		}
+		//		int pointX = (int) point.x;
+		//		int pointY = (int) point.y;
+		//		System.out.println(point.y);
+		//		int pointZ = (int) point.z;
+		//		if (pointX >= 0 && pointX < map.x && pointY >= 0 && pointY < map.y && pointZ >= 0 && pointZ < map.z) {
+		//			if (map.map[pointX][pointY][pointZ] != null) {
+		//				hit = true;
+		//				System.out.println("inside" + pointX + " " + pointY + " " + pointZ);
+		//			}
+		//		}
+		//		int dx=0;
+		//		int dy=0;
+		//		int dz=0;
+		//		while (!hit && range <200) {
+		//			range+=1;
+		//			float distX, distY, distZ;
+		//			if (direction.x == 0) {
+		//				distX = Float.MAX_VALUE;
+		//			} else if (direction.x > 0) {
+		//				distX = (pointX+dx)+1-point.x;
+		//			} else {
+		//				distX = point.x-(pointX+dx);
+		//			}
+		//			if (direction.y == 0) {
+		//				distY = Float.MAX_VALUE;
+		//			} else if (direction.y > 0) {
+		//				distY = (pointY+dy)+1-point.y;
+		//			} else {
+		//				distY = point.y-(pointY+dy);
+		//			}
+		//			if (direction.z == 0) {
+		//				distZ = Float.MAX_VALUE;
+		//			} else if (direction.z > 0) {
+		//				distZ = (pointZ+dz)+1-point.z;
+		//			} else {
+		//				distZ = point.z-(pointZ+dz);				
+		//			}
+		//			if (Math.min(distX, Math.min(distY,distZ)) < 0) {
+		//				System.out.println(distX + " " + distY + " "+ distZ);	
+		//			}
+		//			if (distX <= distY && distX <= distZ) {
+		//				if (direction.x > 0) {
+		//					dx++;
+		//				} else {
+		//					dx--;
+		//				}
+		//			} else if (distY <= distX && distY <= distZ) {
+		//				if (direction.y > 0) {
+		//					dy++;
+		//				} else {
+		//					dy--;
+		//				}
+		//			} else if (distZ <= distX && distZ <= distY) {
+		//				if (direction.z > 0) {
+		//					dz++;
+		//				} else {
+		//					dz--;
+		//				}
+		//			}
+		//			if ((pointX+dx) >= 0 && (pointX+dx) < map.x && (pointY+dy) >= 0 && (pointY+dy) < map.y && (pointZ+dz) >= 0 && (pointZ+dz) < map.z) {
+		//				if (map.map[pointX+dx][pointY+dy][pointZ+dz] != null) {
+		//					hit = true;
+		//					System.out.println("HIT" + (pointX+dx) + " " + (pointY+dy) + " " + (pointZ+dz));
+		//				}
+		//			}
+		//		}
 		draggedX = arg0;
 		draggedY = arg1;
 		return false;
