@@ -10,11 +10,17 @@ import com.badlogic.gdx.utils.TimeUtils;
 public class Map {
 	int[][][] map;
 	public static final int chunkSize = 32;
-	public static final int x = chunkSize*20; // Must be multiple of chunkSize;
-	public static final int y = chunkSize; // Must be multiple of chunkSize;
-	public static final int z = chunkSize*20; // Must be multiple of chunkSize;
+	public static final int x = chunkSize*10; // Must be multiple of chunkSize;
+	public static final int y = chunkSize*2; // Must be multiple of chunkSize;
+	public static final int z = chunkSize*10; // Must be multiple of chunkSize;
 	Mesh[][][] chunks;
-	long maxTime = 0;
+	public long maxTime = 0;
+	Vector3 above = new Vector3();
+	Vector3 below = new Vector3();
+	Vector3 behind = new Vector3();
+	Vector3 front = new Vector3();
+	Vector3 right = new Vector3();
+	Vector3 left = new Vector3();
 	public Map() {
 		map = new int[x][y][z];
 		chunks = new Mesh[x/16][y/16][z/16];
@@ -23,7 +29,7 @@ public class Map {
 				map[x2][0][z2] = 1;
 			}
 		}
-		map[0][1][0] = 1;
+		map[0][1][0] = 1;     
 		map[0][1][1] = 1;
 		map[0][1][2] = 1;
 
@@ -58,14 +64,14 @@ public class Map {
 		FloatArray fa = new FloatArray();
 		for (int x = 0; x < chunkSize; x++) {
 			for (int y = 0; y < chunkSize; y++) {
-				for (int z = 0; z < chunkSize; z++) {
+				for (int z = 0; z < chunkSize; z++) { 
 					if (map[x+chunkX*chunkSize][y+chunkY*chunkSize][z+chunkZ*chunkSize] == 1) {
-						Vector3 above = new Vector3(x+chunkX*chunkSize,y+chunkY*chunkSize+1,z+chunkZ*chunkSize);
-						Vector3 below = new Vector3(x+chunkX*chunkSize,y+chunkY*chunkSize-1,z+chunkZ*chunkSize);
-						Vector3 behind = new Vector3(x+chunkX*chunkSize,y+chunkY*chunkSize,z+chunkZ*chunkSize-1);
-						Vector3 front = new Vector3(x+chunkX*chunkSize,y+chunkY*chunkSize,z+chunkZ*chunkSize+1);
-						Vector3 right = new Vector3(x+chunkX*chunkSize+1,y+chunkY*chunkSize,z+chunkZ*chunkSize);
-						Vector3 left = new Vector3(x+chunkX*chunkSize-1,y+chunkY*chunkSize,z+chunkZ*chunkSize);
+						above.set(x+chunkX*chunkSize,y+chunkY*chunkSize+1,z+chunkZ*chunkSize);
+						below.set(x+chunkX*chunkSize,y+chunkY*chunkSize-1,z+chunkZ*chunkSize);
+						behind.set(x+chunkX*chunkSize,y+chunkY*chunkSize,z+chunkZ*chunkSize-1);
+						front.set(x+chunkX*chunkSize,y+chunkY*chunkSize,z+chunkZ*chunkSize+1);
+						right.set(x+chunkX*chunkSize+1,y+chunkY*chunkSize,z+chunkZ*chunkSize);
+						left.set(x+chunkX*chunkSize-1,y+chunkY*chunkSize,z+chunkZ*chunkSize);
 						if (above.y >= y) {
 							addTopFace(fa, x+chunkX*chunkSize, y+chunkY*chunkSize, z+chunkZ*chunkSize);
 						} else if (map[(int) above.x][(int) above.y][(int) above.z] == 0) {
@@ -100,15 +106,17 @@ public class Map {
 				}
 			}
 		}
-		
-		
+
+
 		chunks[chunkX][chunkY][chunkZ] = new Mesh(true, fa.size, 0,
 				new VertexAttribute(Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE ), 
 				new VertexAttribute(Usage.Normal,3,ShaderProgram.NORMAL_ATTRIBUTE),
 				new VertexAttribute(Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE+"0" ));
-		chunks[chunkX][chunkY][chunkZ].setVertices(fa.items);
+		if (fa.size > 0)
+			chunks[chunkX][chunkY][chunkZ].setVertices(fa.items);
 		time = TimeUtils.millis()-time;
 		maxTime = Math.max(time, maxTime);
+		System.out.println("Time was: " + time + " and maxtime is " + maxTime);
 	}
 	public void addTopFace(FloatArray fa, int x, int y, int z) {
 		fa.add(0+x); // x1
@@ -220,7 +228,7 @@ public class Map {
 		fa.add(0);
 		fa.add(1);
 	}
-	
+
 	public void addLeftFace(FloatArray fa, int x, int y, int z) {
 		fa.add(0+x);
 		fa.add(0+y);
@@ -276,7 +284,7 @@ public class Map {
 		fa.add(0.5f);
 		fa.add(0.5f);
 	}
-	
+
 	public void addRightFace(FloatArray fa, int x, int y, int z) {
 		fa.add(1+x); // x1
 		fa.add(0+y); // y1

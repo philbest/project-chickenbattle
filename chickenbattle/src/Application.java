@@ -23,7 +23,7 @@ public class Application implements InputProcessor{
 		to = new Vector3(0,0,0);
 		light = new LightSource(5,6,5);
 		map = new Map();
-		cube = new Cube();
+		map.maxTime = 0;
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		cam.position.set(0,0,40);
 		cam.update();
@@ -110,7 +110,7 @@ public class Application implements InputProcessor{
 		int pointX = (int) point.x;
 		int pointY = (int) point.y;
 		int pointZ = (int) point.z;
-		if (pointX >= 0 && pointX < map.x && pointY >= 0 && pointY < map.y && pointZ >= 0 && pointZ < map.z) {
+		if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
 			if (map.map[pointX][pointY][pointZ] == 1) {
 				hit = true;
 				System.out.println("inside" + pointX + " " + pointY + " " + pointZ);
@@ -122,7 +122,7 @@ public class Application implements InputProcessor{
 			pointX = (int) point.x;
 			pointY = (int) point.y;
 			pointZ = (int) point.z;
-			if (pointX >= 0 && pointX < map.x && pointY >= 0 && pointY < map.y && pointZ >= 0 && pointZ < map.z) {
+			if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
 				if (map.map[pointX][pointY][pointZ] == 1) {
 					hit = true;
 					System.out.println("hit" + pointX + " " + pointY + " " + pointZ);
@@ -134,13 +134,14 @@ public class Application implements InputProcessor{
 					pointX = (int) point.x;
 					pointY = (int) point.y;
 					pointZ = (int) point.z;
-					if (pointX >= 0 && pointX < map.x && pointY >= 0 && pointY < map.y && pointZ >= 0 && pointZ < map.z) {
+					if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
 						map.map[pointX][pointY][pointZ] = 1;
+						map.rebuildChunk((int)(pointX/Map.chunkSize),(int)(pointY/Map.chunkSize),(int)(pointZ/Map.chunkSize));
 					}
-					System.out.println("added to chunk:" + (int)(pointX/map.chunkSize) + " " + (int)(pointY/map.chunkSize) + " " +(int)(pointZ/map.chunkSize));
 				} else {
-					if (pointX >= 0 && pointX < map.x && pointY >= 0 && pointY < map.y && pointZ >= 0 && pointZ < map.z) {
+					if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
 						map.map[pointX][pointY][pointZ] = 0;
+						map.rebuildChunk((int)(pointX/Map.chunkSize),(int)(pointY/Map.chunkSize),(int)(pointZ/Map.chunkSize));
 					}
 				}
 			}
