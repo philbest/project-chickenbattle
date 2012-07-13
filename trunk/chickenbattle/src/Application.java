@@ -33,6 +33,7 @@ public class Application implements InputProcessor{
 		renderer.render(this);
 	}
 	public void update() {
+//		Gdx.input.setCursorCatched(true);
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			Vector3 movement = new Vector3();
 			movement.set(cam.direction);
@@ -142,80 +143,22 @@ public class Application implements InputProcessor{
 				}
 			}
 		}
-		//		int pointX = (int) point.x;
-		//		int pointY = (int) point.y;
-		//		System.out.println(point.y);
-		//		int pointZ = (int) point.z;
-		//		if (pointX >= 0 && pointX < map.x && pointY >= 0 && pointY < map.y && pointZ >= 0 && pointZ < map.z) {
-		//			if (map.map[pointX][pointY][pointZ] != null) {
-		//				hit = true;
-		//				System.out.println("inside" + pointX + " " + pointY + " " + pointZ);
-		//			}
-		//		}
-		//		int dx=0;
-		//		int dy=0;
-		//		int dz=0;
-		//		while (!hit && range <200) {
-		//			range+=1;
-		//			float distX, distY, distZ;
-		//			if (direction.x == 0) {
-		//				distX = Float.MAX_VALUE;
-		//			} else if (direction.x > 0) {
-		//				distX = (pointX+dx)+1-point.x;
-		//			} else {
-		//				distX = point.x-(pointX+dx);
-		//			}
-		//			if (direction.y == 0) {
-		//				distY = Float.MAX_VALUE;
-		//			} else if (direction.y > 0) {
-		//				distY = (pointY+dy)+1-point.y;
-		//			} else {
-		//				distY = point.y-(pointY+dy);
-		//			}
-		//			if (direction.z == 0) {
-		//				distZ = Float.MAX_VALUE;
-		//			} else if (direction.z > 0) {
-		//				distZ = (pointZ+dz)+1-point.z;
-		//			} else {
-		//				distZ = point.z-(pointZ+dz);				
-		//			}
-		//			if (Math.min(distX, Math.min(distY,distZ)) < 0) {
-		//				System.out.println(distX + " " + distY + " "+ distZ);	
-		//			}
-		//			if (distX <= distY && distX <= distZ) {
-		//				if (direction.x > 0) {
-		//					dx++;
-		//				} else {
-		//					dx--;
-		//				}
-		//			} else if (distY <= distX && distY <= distZ) {
-		//				if (direction.y > 0) {
-		//					dy++;
-		//				} else {
-		//					dy--;
-		//				}
-		//			} else if (distZ <= distX && distZ <= distY) {
-		//				if (direction.z > 0) {
-		//					dz++;
-		//				} else {
-		//					dz--;
-		//				}
-		//			}
-		//			if ((pointX+dx) >= 0 && (pointX+dx) < map.x && (pointY+dy) >= 0 && (pointY+dy) < map.y && (pointZ+dz) >= 0 && (pointZ+dz) < map.z) {
-		//				if (map.map[pointX+dx][pointY+dy][pointZ+dz] != null) {
-		//					hit = true;
-		//					System.out.println("HIT" + (pointX+dx) + " " + (pointY+dy) + " " + (pointZ+dz));
-		//				}
-		//			}
-		//		}
-		draggedX = arg0;
-		draggedY = arg1;
+
 		return false;
 	}
 	@Override
 	public boolean touchDragged(int arg0, int arg1, int arg2) {
-		float deltaX = arg0-draggedX;
-		float deltaY = arg1-draggedY;
+
+		return false;
+	}
+	@Override
+	public boolean touchMoved(int arg0, int arg1) {
+		if (draggedX == 0)
+			draggedX = arg0;
+		if (draggedY == 0)
+			draggedY = arg1;
+		float deltaX = (arg0-draggedX)*2;
+		float deltaY = (arg1-draggedY)*2;
 		deltaY = deltaY*-1;
 		draggedX = arg0;
 		draggedY = arg1;
@@ -226,11 +169,6 @@ public class Application implements InputProcessor{
 		cam.rotate(angleUP, 1, 0, 0);
 		cam.rotate(angleLeft, 0, 1, 0);
 		cam.update();
-		return false;
-	}
-	@Override
-	public boolean touchMoved(int arg0, int arg1) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	@Override
