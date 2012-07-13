@@ -32,7 +32,9 @@ public class Renderer {
 	Sprite gun;
 	Sprite block;
 	SpriteBatch sb;
+	//Vector3 frustumVec;
 	public Renderer() {
+		//frustumVec = new Vector3();
 		sb = new SpriteBatch();
 		crosshair = new Sprite(new Texture(Gdx.files.internal("data/crosshairsmaller.png")));
 		gun = new Sprite(new Texture(Gdx.files.internal("data/gun.png")));
@@ -86,10 +88,22 @@ public class Renderer {
 		simpleShader.begin();
 		simpleShader.setUniform4fv("scene_light", app.light.color, 0,4);
 		simpleShader.setUniformf("scene_ambient_light", 0.2f,0.2f,0.2f, 1.0f);
-		for (int x = 0; x < Map.x/Map.chunkSize; x++) {
-			for (int y = 0; y < Map.y/Map.chunkSize; y++) {
-				for (int z = 0; z < Map.z/Map.chunkSize; z++) {
-					if (app.map.chunks[x][y][z] != null) {
+		int camInChunkX = (((int)app.cam.position.x)/Map.chunkSize);
+		int camInChunkY = (((int)app.cam.position.y)/Map.chunkSize);
+		int camInChunkZ = (((int)app.cam.position.z)/Map.chunkSize);
+		
+		int lowerBoundX = Math.max(0, camInChunkX-3);
+		int lowerBoundY = Math.max(0, camInChunkY-3);
+		int lowerBoundZ = Math.max(0, camInChunkZ-3);
+		
+		int upperBoundX = Math.min(Map.x/Map.chunkSize, camInChunkX+3);
+		int upperBoundY = Math.min(Map.y/Map.chunkSize, camInChunkY+3);
+		int upperBoundZ = Math.min(Map.z/Map.chunkSize, camInChunkZ+3);
+		for (int x = lowerBoundX; x < upperBoundX; x++) {
+			for (int y = lowerBoundY; y < upperBoundY; y++) {
+				for (int z = lowerBoundZ; z < upperBoundZ; z++) {
+					//frustumVec.set(x*Map.chunkSize+Map.chunkSize/2,y*Map.chunkSize+Map.chunkSize/2,z*Map.chunkSize+Map.chunkSize/2);
+					if (app.map.chunks[x][y][z] != null) {// && app.cam.frustum.sphereInFrustum(frustumVec, Map.chunkSize/2)) {
 						simpleShader.setUniformi("s_texture", 0);
 						cubeModel.setToTranslation(0,0,0);
 						modelViewProjectionMatrix.set(app.cam.combined);
