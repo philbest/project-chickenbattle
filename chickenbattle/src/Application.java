@@ -1,6 +1,7 @@
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.Vector3;
 
@@ -33,7 +34,7 @@ public class Application implements InputProcessor{
 		renderer.render(this);
 	}
 	public void update() {
-//		Gdx.input.setCursorCatched(true);
+		Gdx.input.setCursorCatched(true);
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			Vector3 movement = new Vector3();
 			movement.set(cam.direction);
@@ -99,8 +100,8 @@ public class Application implements InputProcessor{
 	@Override
 	public boolean touchDown(int arg0, int arg1, int arg2, int arg3) {
 		float range = 0;
-		Vector3 point = new Vector3(cam.getPickRay(arg0, arg1).origin);
-		Vector3 direction = new Vector3(cam.getPickRay(arg0,arg1).direction);
+		Vector3 point = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).origin);
+		Vector3 direction = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).direction);
 		direction.nor();
 		direction.mul(0.5f);
 		from.set(point);
@@ -110,7 +111,7 @@ public class Application implements InputProcessor{
 		int pointY = (int) point.y;
 		int pointZ = (int) point.z;
 		if (pointX >= 0 && pointX < map.x && pointY >= 0 && pointY < map.y && pointZ >= 0 && pointZ < map.z) {
-			if (map.map[pointX][pointY][pointZ] != null) {
+			if (map.map[pointX][pointY][pointZ] == 1) {
 				hit = true;
 				System.out.println("inside" + pointX + " " + pointY + " " + pointZ);
 			}
@@ -122,7 +123,7 @@ public class Application implements InputProcessor{
 			pointY = (int) point.y;
 			pointZ = (int) point.z;
 			if (pointX >= 0 && pointX < map.x && pointY >= 0 && pointY < map.y && pointZ >= 0 && pointZ < map.z) {
-				if (map.map[pointX][pointY][pointZ] != null) {
+				if (map.map[pointX][pointY][pointZ] == 1) {
 					hit = true;
 					System.out.println("hit" + pointX + " " + pointY + " " + pointZ);
 				}
@@ -134,16 +135,16 @@ public class Application implements InputProcessor{
 					pointY = (int) point.y;
 					pointZ = (int) point.z;
 					if (pointX >= 0 && pointX < map.x && pointY >= 0 && pointY < map.y && pointZ >= 0 && pointZ < map.z) {
-						map.map[pointX][pointY][pointZ] = new Cube();
+						map.map[pointX][pointY][pointZ] = 1;
 					}
+					System.out.println("added to chunk:" + (int)(pointX/map.chunkSize) + " " + (int)(pointY/map.chunkSize) + " " +(int)(pointZ/map.chunkSize));
 				} else {
 					if (pointX >= 0 && pointX < map.x && pointY >= 0 && pointY < map.y && pointZ >= 0 && pointZ < map.z) {
-						map.map[pointX][pointY][pointZ] = null;
+						map.map[pointX][pointY][pointZ] = 0;
 					}
 				}
 			}
 		}
-
 		return false;
 	}
 	@Override
@@ -164,6 +165,10 @@ public class Application implements InputProcessor{
 		draggedY = arg1;
 		angleLeft -= deltaX/5;
 		angleUP += deltaY/5;
+		if (angleUP < -90)
+			angleUP = -90;
+		if (angleUP > 90)
+			angleUP = 90;
 		cam.direction.set(0,0,-1);
 		cam.up.set(0,1,0);
 		cam.rotate(angleUP, 1, 0, 0);
