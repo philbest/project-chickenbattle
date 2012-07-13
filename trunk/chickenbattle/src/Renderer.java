@@ -4,9 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
 
@@ -21,6 +24,7 @@ public class Renderer {
 	Texture cubeTexture;
 	Texture lightTexture;
 	ShaderProgram simpleShader;
+	ShaderProgram particleShader;
 	public Renderer() {
 		simpleShader = new ShaderProgram(Gdx.files.internal(
 		"data/shaders/simple.vert").readString(), Gdx.files.internal(
@@ -28,6 +32,14 @@ public class Renderer {
 		if (!simpleShader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile simple shader: "
 					+ simpleShader.getLog());
+		
+		particleShader = new ShaderProgram(Gdx.files.internal(
+		"data/shaders/particleShader.vert").readString(), Gdx.files.internal(
+		"data/shaders/particleShader.frag").readString());
+		if (!particleShader.isCompiled())
+			throw new GdxRuntimeException("Couldn't compile shader: "
+					+ particleShader.getLog());
+		
 		cubeTexture = new Texture(Gdx.files.internal("data/grassmap.png"));
 		lightTexture = new Texture(Gdx.files.internal("data/light.png"));
 	}
@@ -40,6 +52,7 @@ public class Renderer {
 		Gdx.gl20.glCullFace(GL20.GL_BACK);
 		renderMap(app);
 		renderLights(app);
+		renderVector(app.from,app.to,app);
 	}
 	public void renderMap(Application app) {
 		app.cam.update();
@@ -82,5 +95,22 @@ public class Renderer {
 		simpleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
 		app.cube.cubeMesh.render(simpleShader, GL20.GL_TRIANGLES);
 		simpleShader.end();
+	}
+
+	public void renderVector(Vector3 from,Vector3 to, Application app) {
+		Mesh vectorTest = new Mesh(true,2,0,new VertexAttribute(Usage.Position, 3,"a_position"));
+		particleShader.begin();
+		float[] vertices = new float[]{ from.x,from.y,from.z,to.x,to.y,to.z}; 
+		vectorTest.setVertices(vertices);
+
+
+		Matrix4 modelViewProjectionMatrix = new Matrix4();
+		modelViewProjectionMatrix.set(app.cam.combined);
+
+		particleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
+
+		vectorTest.render(particleShader, GL20.GL_LINES);
+		particleShader.end();
+		vectorTest.dispose();
 	}
 }
