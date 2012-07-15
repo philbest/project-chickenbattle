@@ -136,12 +136,22 @@ public class Application implements InputProcessor{
 					pointZ = (int) point.z;
 					if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
 						map.map[pointX][pointY][pointZ] = 1;
-						map.rebuildChunk((int)(pointX/Map.chunkSize),(int)(pointY/Map.chunkSize),(int)(pointZ/Map.chunkSize));
+						for (Chunk c : map.chunks) {
+							if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
+								map.rebuildChunk(c,(int)(pointX/Map.chunkSize),(int)(pointY/Map.chunkSize),(int)(pointZ/Map.chunkSize));
+								break;
+							}
+						}
 					}
 				} else {
 					if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
 						map.map[pointX][pointY][pointZ] = 0;
-						map.rebuildChunk((int)(pointX/Map.chunkSize),(int)(pointY/Map.chunkSize),(int)(pointZ/Map.chunkSize));
+						for (Chunk c : map.chunks) {
+							if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
+								map.rebuildChunk(c,(int)(pointX/Map.chunkSize),(int)(pointY/Map.chunkSize),(int)(pointZ/Map.chunkSize));
+								break;
+							}
+						}
 					}
 				}
 			}

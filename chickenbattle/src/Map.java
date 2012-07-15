@@ -1,8 +1,11 @@
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.TimeUtils;
 
@@ -10,10 +13,11 @@ import com.badlogic.gdx.utils.TimeUtils;
 public class Map {
 	int[][][] map;
 	public static final int chunkSize = 32;
-	public static final int x = chunkSize*10; // Must be multiple of chunkSize;
-	public static final int y = chunkSize*2; // Must be multiple of chunkSize;
-	public static final int z = chunkSize*10; // Must be multiple of chunkSize;
-	Mesh[][][] chunks;
+	public static final int x = chunkSize*2; // Must be multiple of chunkSize;
+	public static final int y = chunkSize; // Must be multiple of chunkSize;
+	public static final int z = chunkSize*2; // Must be multiple of chunkSize;
+	//Chunk[][][] chunks;
+	Array<Chunk> chunks;
 	public long maxTime = 0;
 	Vector3 above = new Vector3();
 	Vector3 below = new Vector3();
@@ -21,27 +25,21 @@ public class Map {
 	Vector3 front = new Vector3();
 	Vector3 right = new Vector3();
 	Vector3 left = new Vector3();
+	Matrix4 calcMat;
 	public Map() {
+		calcMat = new Matrix4();
+		Heightmap h = HeightmapUtils.load(Gdx.files.internal("data/noise2.png"));
 		map = new int[x][y][z];
-		chunks = new Mesh[x/16][y/16][z/16];
+		//chunks = new Chunk[x/chunkSize][y/chunkSize][z/chunkSize];
+		chunks = new Array<Chunk>();
 		for (int x2 = 0; x2 < x; x2++) {
 			for (int z2 = 0; z2 < z; z2++) {
-				map[x2][0][z2] = 1;
+//				for (int y2 = 0; y2 < 2; y2++) {
+				for (int y2 = 0; y2 < h.elevation(x2, z2)*y; y2++) {
+					map[x2][y2][z2] = 1;
+				}
 			}
 		}
-		map[0][1][0] = 1;     
-		map[0][1][1] = 1;
-		map[0][1][2] = 1;
-
-		map[1][1][1] = 1;
-
-		map[2][1][0] = 1;
-		map[2][1][1] = 1;
-		map[2][1][2] = 1;
-
-		map[4][1][0] = 1;
-		map[4][1][1] = 1;
-		map[4][1][2] = 1;
 		buildChunks();
 		System.out.println("max time = " + maxTime);
 	}
@@ -50,16 +48,16 @@ public class Map {
 			for (int chunkY = 0; chunkY < y/chunkSize; chunkY++) {
 				for (int chunkZ = 0; chunkZ < z/chunkSize; chunkZ++) {
 					System.out.println("Building chunk: " + chunkX + " " + chunkY + " " + chunkZ);
-					rebuildChunk(chunkX, chunkY, chunkZ);
+					chunks.add(new Chunk(chunkX,chunkY,chunkZ));
+					rebuildChunk(chunks.get(chunks.size-1),chunkX, chunkY, chunkZ);
 				}	
 			}
 		}
 	}
-	public void rebuildChunk(int chunkX, int chunkY, int chunkZ) {
+	public void rebuildChunk(Chunk c, int chunkX, int chunkY, int chunkZ) {
 		long time = TimeUtils.millis();
-		if (chunks[chunkX][chunkY][chunkZ] != null) {
-			chunks[chunkX][chunkY][chunkZ].dispose();
-			System.out.println("Disposed");
+		if (c.chunkMesh != null) {
+			c.chunkMesh.dispose();
 		}
 		FloatArray fa = new FloatArray();
 		for (int x = 0; x < chunkSize; x++) {
@@ -72,35 +70,36 @@ public class Map {
 						front.set(x+chunkX*chunkSize,y+chunkY*chunkSize,z+chunkZ*chunkSize+1);
 						right.set(x+chunkX*chunkSize+1,y+chunkY*chunkSize,z+chunkZ*chunkSize);
 						left.set(x+chunkX*chunkSize-1,y+chunkY*chunkSize,z+chunkZ*chunkSize);
-						if (above.y >= y) {
-							addTopFace(fa, x+chunkX*chunkSize, y+chunkY*chunkSize, z+chunkZ*chunkSize);
+						if (above.y >= Map.y) {
+							addTopFace(fa, x, y, z);
 						} else if (map[(int) above.x][(int) above.y][(int) above.z] == 0) {
-							addTopFace(fa, x+chunkX*chunkSize, y+chunkY*chunkSize, z+chunkZ*chunkSize);
+							addTopFace(fa, x, y, z);
 						}
 						if (below.y < 0) {
-							addBotFace(fa, x+chunkX*chunkSize, y+chunkY*chunkSize, z+chunkZ*chunkSize);
+							addBotFace(fa, x, y, z);
 						} else if (map[(int) below.x][(int) below.y][(int) below.z] == 0) {
-							addBotFace(fa, x+chunkX*chunkSize, y+chunkY*chunkSize, z+chunkZ*chunkSize);
+							addBotFace(fa, x, y, z);
 						}
 						if (behind.z < 0) {
-							addBackFace(fa, x+chunkX*chunkSize, y+chunkY*chunkSize, z+chunkZ*chunkSize);
+							addBackFace(fa, x, y, z);
 						} else if (map[(int) behind.x][(int) behind.y][(int) behind.z] == 0) {
-							addBackFace(fa, x+chunkX*chunkSize, y+chunkY*chunkSize, z+chunkZ*chunkSize);
+							addBackFace(fa, x, y, z);
 						}
-						if (front.z >= z) {
-							addFrontFace(fa, x+chunkX*chunkSize, y+chunkY*chunkSize, z+chunkZ*chunkSize);
+						if (front.z >= Map.z) {
+							addFrontFace(fa, x, y, z);
 						} else if (map[(int) front.x][(int) front.y][(int) front.z] == 0) {
-							addFrontFace(fa, x+chunkX*chunkSize, y+chunkY*chunkSize, z+chunkZ*chunkSize);
+							addFrontFace(fa, x, y, z);
 						}
-						if (right.x >= x) {
-							addRightFace(fa, x+chunkX*chunkSize, y+chunkY*chunkSize, z+chunkZ*chunkSize);
+						if (right.x >= Map.x) {
+							addRightFace(fa, x, y, z);
 						} else if (map[(int) right.x][(int) right.y][(int) right.z] == 0) {
-							addRightFace(fa, x+chunkX*chunkSize, y+chunkY*chunkSize, z+chunkZ*chunkSize);
+							addRightFace(fa, x, y, z);
 						}
 						if (left.x < 0) {
-							addLeftFace(fa, x+chunkX*chunkSize, y+chunkY*chunkSize, z+chunkZ*chunkSize);
+							addLeftFace(fa, x, y, z);
 						} else if (map[(int) left.x][(int) left.y][(int) left.z] == 0) {
-							addLeftFace(fa, x+chunkX*chunkSize, y+chunkY*chunkSize, z+chunkZ*chunkSize);
+							System.out.println("ADDED");
+							addLeftFace(fa, x, y, z);
 						}
 					}
 				}
@@ -108,12 +107,16 @@ public class Map {
 		}
 
 
-		chunks[chunkX][chunkY][chunkZ] = new Mesh(true, fa.size, 0,
-				new VertexAttribute(Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE ), 
-				new VertexAttribute(Usage.Normal,3,ShaderProgram.NORMAL_ATTRIBUTE),
-				new VertexAttribute(Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE+"0" ));
-		if (fa.size > 0)
-			chunks[chunkX][chunkY][chunkZ].setVertices(fa.items);
+		if (fa.size > 0) {
+			c.chunkMesh = new Mesh(true, fa.size, 0,
+					new VertexAttribute(Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE ), 
+					new VertexAttribute(Usage.Normal,3,ShaderProgram.NORMAL_ATTRIBUTE),
+					new VertexAttribute(Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE+"0" ));
+			c.chunkMesh.setVertices(fa.items);
+			c.chunkMesh.calculateBoundingBox(c.bounds);
+			calcMat.setToTranslation(chunkX*chunkSize, chunkY*chunkSize, chunkZ*chunkSize);
+			c.bounds.mul(calcMat);
+		}
 		time = TimeUtils.millis()-time;
 		maxTime = Math.max(time, maxTime);
 		System.out.println("Time was: " + time + " and maxtime is " + maxTime);
