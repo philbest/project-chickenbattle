@@ -12,10 +12,10 @@ import com.badlogic.gdx.utils.TimeUtils;
 
 public class Map {
 	int[][][] map;
-	public static final int chunkSize = 32;
-	public static final int x = chunkSize*2; // Must be multiple of chunkSize;
+	public static final int chunkSize = 64;
+	public static final int x = chunkSize*10; // Must be multiple of chunkSize;
 	public static final int y = chunkSize; // Must be multiple of chunkSize;
-	public static final int z = chunkSize*2; // Must be multiple of chunkSize;
+	public static final int z = chunkSize*10; // Must be multiple of chunkSize;
 	//Chunk[][][] chunks;
 	Array<Chunk> chunks;
 	public long maxTime = 0;
@@ -34,8 +34,8 @@ public class Map {
 		chunks = new Array<Chunk>();
 		for (int x2 = 0; x2 < x; x2++) {
 			for (int z2 = 0; z2 < z; z2++) {
-//				for (int y2 = 0; y2 < 2; y2++) {
-				for (int y2 = 0; y2 < h.elevation(x2, z2)*y; y2++) {
+				//				for (int y2 = 0; y2 < 2; y2++) {
+				for (int y2 = 0; y2 < h.elevation(x2%128, z2%128)*y; y2++) {
 					map[x2][y2][z2] = 1;
 				}
 			}
@@ -76,10 +76,11 @@ public class Map {
 							addTopFace(fa, x, y, z);
 						}
 						if (below.y < 0) {
-							addBotFace(fa, x, y, z);
-						} else if (map[(int) below.x][(int) below.y][(int) below.z] == 0) {
-							addBotFace(fa, x, y, z);
-						}
+							//	addBotFace(fa, x, y, z);
+						} else 
+							if (map[(int) below.x][(int) below.y][(int) below.z] == 0) {
+								addBotFace(fa, x, y, z);
+							}
 						if (behind.z < 0) {
 							addBackFace(fa, x, y, z);
 						} else if (map[(int) behind.x][(int) behind.y][(int) behind.z] == 0) {

@@ -93,14 +93,14 @@ public class Renderer {
 		simpleShader.begin();
 		simpleShader.setUniform4fv("scene_light", app.light.color, 0,4);
 		simpleShader.setUniformf("scene_ambient_light", 0.2f,0.2f,0.2f, 1.0f);
-		Vector3 temp = new Vector3();
-		for (int i = 0; i < app.map.chunks.size; i++) {
-			Chunk c = app.map.chunks.get(i);
-			temp.set(c.x,c.y,c.z);
-			temp.sub(app.cam.position);
-			c.distance = temp.len();
-		}
-		app.map.chunks.sort();
+//		Vector3 temp = new Vector3();
+//		for (int i = 0; i < app.map.chunks.size; i++) {
+//			Chunk c = app.map.chunks.get(i);
+//			temp.set(c.x,c.y,c.z);
+//			temp.sub(app.cam.position);
+//			c.distance = temp.len();
+//		}
+		//app.map.chunks.sort();
 		int vertices = 0;
 		for (int i = 0; i < app.map.chunks.size;i++) {
 			if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0 && app.cam.frustum.boundsInFrustum(app.map.chunks.get(i).bounds)) {
