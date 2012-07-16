@@ -103,6 +103,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(0+x); // x1
 		fa.add(1+y); // y1
 		fa.add(1+z); // z1
@@ -121,6 +123,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(1+x); // x1
 		fa.add(1+y); // y1
 		fa.add(1+z); // z1
@@ -139,6 +143,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(1+x); // x1
 		fa.add(1+y); // y1
 		fa.add(0+z); // z1
@@ -168,6 +174,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(0+x); // x1
 		fa.add(1+y); // y1
 		fa.add(0+z); // z1
@@ -186,6 +194,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(0+x); // x1
 		fa.add(1+y); // y1
 		fa.add(1+z); // z1
@@ -205,6 +215,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(0+x);
 		fa.add(0+y);
 		fa.add(0+z);
@@ -223,6 +235,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(1+x);
 		fa.add(0+y);
 		fa.add(0+z);
@@ -241,6 +255,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(1+x);
 		fa.add(0+y);
 		fa.add(1+z);
@@ -269,6 +285,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(0+x);
 		fa.add(0+y);
 		fa.add(1+z);
@@ -287,6 +305,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(0+x);
 		fa.add(0+y);
 		fa.add(0+z);
@@ -308,6 +328,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(0+x);
 		fa.add(0+y);
 		fa.add(0+z);
@@ -326,6 +348,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(0+x);
 		fa.add(0+y);
 		fa.add(1+z);
@@ -344,6 +368,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(0+x);
 		fa.add(1+y);
 		fa.add(1+z);
@@ -372,6 +398,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(0+x);
 		fa.add(1+y);
 		fa.add(0+z);
@@ -390,6 +418,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(0+x);
 		fa.add(0+y);
 		fa.add(0+z);
@@ -411,6 +441,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(1+x); // x1
 		fa.add(0+y); // y1
 		fa.add(1+z); // z1
@@ -429,6 +461,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(1+x); // x1
 		fa.add(0+y); // y1
 		fa.add(0+z); // z1
@@ -447,6 +481,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(1+x); // x1
 		fa.add(1+y); // y1
 		fa.add(0+z); // z1
@@ -475,6 +511,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(1+x); // x1
 		fa.add(1+y); // y1
 		fa.add(1+z); // z1
@@ -493,6 +531,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(1+x); // x1
 		fa.add(0+y); // y1
 		fa.add(1+z); // z1
@@ -513,6 +553,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(0+x); // x1
 		fa.add(0+y); // y1
 		fa.add(1+z);
@@ -531,6 +573,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(1+x); // x2
 		fa.add(0+y); // y2
 		fa.add(1+z);
@@ -549,6 +593,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(1f+x); // x3
 		fa.add(1f+y); // y2
 		fa.add(1f+z);
@@ -577,6 +623,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(0+x); // x4
 		fa.add(1+y); // y4
 		fa.add(1+z);
@@ -595,6 +643,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(0+x); // x1
 		fa.add(0+y); // y1
 		fa.add(1+z);
@@ -615,6 +665,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(1+x);
 		fa.add(0+y);
 		fa.add(0+z);
@@ -633,6 +685,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(0+x);
 		fa.add(0+y);
 		fa.add(0+z);
@@ -651,6 +705,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(0+x);
 		fa.add(1+y);
 		fa.add(0+z);
@@ -680,6 +736,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(1+x);
 		fa.add(1+y);
 		fa.add(0+z);
@@ -698,6 +756,8 @@ public class Chunk implements Comparable, Runnable{
 			occlusion++;
 		}
 		occlusion/=2;
+		//if (occlusion != 0)
+			//if (occlusion != 0)
 		fa.add(1+x);
 		fa.add(0+y);
 		fa.add(0+z);
