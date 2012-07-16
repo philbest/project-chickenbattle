@@ -29,7 +29,7 @@ public class Application implements InputProcessor{
 		oldPos = new Vector3();
 		from = new Vector3(0,0,0);
 		to = new Vector3(0,0,0);
-		light = new LightSource(5,6,5);
+		light = new LightSource(-100,200,0);
 		map = new Map();
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		cam.position.set(0,50,40);
@@ -93,6 +93,7 @@ public class Application implements InputProcessor{
 			oldPos.set(ch.position);
 			movement.set(cam.direction.x,0,cam.direction.z);
 			movement.crs(cam.up);
+			movement.nor();
 			movement.mul(Gdx.graphics.getDeltaTime()*10);
 			ch.addMovement(movement);
 			for (Vector3 vec : ch.box.getCorners()) {
@@ -116,6 +117,7 @@ public class Application implements InputProcessor{
 			oldPos.set(ch.position);
 			movement.set(cam.direction.x,0,cam.direction.z);
 			movement.crs(cam.up);
+			movement.nor();
 			movement.mul(Gdx.graphics.getDeltaTime()*-10);
 			ch.addMovement(movement);
 			for (Vector3 vec : ch.box.getCorners()) {

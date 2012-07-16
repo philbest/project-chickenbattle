@@ -11,11 +11,10 @@ uniform vec4 material_diffuse;
 uniform vec4 material_specular; 
 uniform vec4 scene_ambient_light;
 uniform vec4 scene_light;
-uniform vec3 dir_light;
 
 varying vec3 N;
 varying vec3 v;
-
+varying float v_occlusion;
 void main()
 {
 	vec4 color;
@@ -29,20 +28,15 @@ void main()
 	vec3 E = normalize(-v); 
 	vec3 Ll = u_lightPos.xyz - v;  
 	vec3 L = normalize(Ll);
-	//vec3 R = normalize(-reflect(L,N));
-	// float distance = length(Ll)*0.2;
-	float distance = 0.0;
-	vec3 R = normalize(dir_light);
-	
+	vec3 R = normalize(-reflect(L,N));
+	float distance = length(Ll)*0.2;
+	distance = 0.0;
 	float diffuseTerm = clamp(dot(N, L), 0.0,1.0);
 	float specularTerm = pow(max(dot(R, E), 0.0), material_shininess);
 	specularTerm = diffuseTerm >= 0.0 ? specularTerm : 0.0;
-	
-	//finalDiffuse += scene_light *diffuseTerm / (1.0+distance);
-	//finalSpecular += scene_light *specularTerm / (1.0+distance);
-	finalDiffuse += scene_light *diffuseTerm;
-	finalSpecular += scene_light *specularTerm;
+	finalDiffuse += scene_light *diffuseTerm / (1.0+distance);
+	finalSpecular += scene_light *specularTerm / (1.0+distance);
 	
 	vec4 ambientTerm = ambient * scene_ambient_light;
-	gl_FragColor =  ambientTerm  + finalDiffuse * diffuse + finalSpecular * material_specular;
+	gl_FragColor =  ambientTerm*v_occlusion  + finalDiffuse * diffuse + finalSpecular * material_specular;
 }
