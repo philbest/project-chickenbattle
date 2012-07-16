@@ -39,5 +39,8 @@ void main()
 	
 	vec4 ambientTerm = ambient * scene_ambient_light;
 	float occ = min(1,v_occlusion+0.3);
+	if (occ < 0.5)
+	gl_FragColor =  (ambientTerm  + finalDiffuse * diffuse + finalSpecular * material_specular)*0.5;
+	else
 	gl_FragColor =  (ambientTerm  + finalDiffuse * diffuse + finalSpecular * material_specular)*occ;
 }
