@@ -15,6 +15,7 @@ public class Main implements ApplicationListener{
 	}
 	public void create() {
 		Cube.initiate();
+		StaticVariables.initiate();
 		app = new Application();
 		Gdx.graphics.setVSync(true);
 	}
@@ -30,7 +31,7 @@ public class Main implements ApplicationListener{
 	}
 
 	public void render() {
-		System.out.println(Gdx.graphics.getFramesPerSecond());
+//		System.out.println(Gdx.graphics.getFramesPerSecond());
 		GL20 gl = Gdx.graphics.getGL20();
 		gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		app.update();
