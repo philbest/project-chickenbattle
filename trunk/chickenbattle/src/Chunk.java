@@ -7,25 +7,35 @@ import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.FloatArray;
 
 
-public class Chunk implements Comparable{
+public class Chunk implements Comparable, Runnable{
 	int[][][] map;
 	Mesh chunkMesh;
 	BoundingBox bounds;
 	int x, y, z;
 	float distance;
+	boolean running;
 	public Chunk(int x, int y, int z) {
-		map = new int[Map.chunkSize][Map.chunkSize][Map.chunkSize];
-		distance = 0;
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		map = new int[Map.chunkSize][Map.chunkSize][Map.chunkSize];
+		distance = 0;
 		bounds = new BoundingBox();
 		map = new int[Map.chunkSize][Map.chunkSize][Map.chunkSize];
+		for (int x2 = 0; x2 < Map.chunkSize; x2++) {
+			for (int z2 = 0; z2 < Map.chunkSize; z2++) {
+				for (int y2 = 0; y2 < Map.heightmap.elevation(x2%128, z2%128)*Map.y; y2++) {
+					map[x2][y2][z2] = 1;
+				}
+			}
+		}
 	}
+
 	public int compareTo(Object arg0) {
 		return (int) (distance-((Chunk) arg0).distance);
 	}
 	public void rebuildChunk(int chunkX, int chunkY, int chunkZ) {
+		running = true;
 		if (chunkMesh != null) {
 			chunkMesh.dispose();
 		}
@@ -81,6 +91,7 @@ public class Chunk implements Comparable{
 			bounds.mul(calcMat);
 			StaticVariables.releaseSema();
 		}
+		running = false;
 	}
 	public void addTopFace(FloatArray fa, int x, int y, int z) {
 		fa.add(0+x); // x1
@@ -414,5 +425,9 @@ public class Chunk implements Comparable{
 		fa.add(-1); // Normal Z
 		fa.add(0.5f);
 		fa.add(0.5f);
+	}
+
+	public void run() {
+		rebuildChunk(x, y, z);
 	}
 }
