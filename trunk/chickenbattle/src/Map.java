@@ -8,7 +8,6 @@ public class Map {
 	public static final int y = chunkSize; // Must be multiple of chunkSize;
 	public static final int z = chunkSize*6; // Must be multiple of chunkSize;
 	public static Heightmap heightmap;
-	public static int loadingMaps = 0;
 	Array<Chunk> chunks;
 	public Map() {
 		heightmap = HeightmapUtils.load(Gdx.files.internal("data/noise2.png"));
