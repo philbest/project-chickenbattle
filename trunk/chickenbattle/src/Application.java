@@ -157,6 +157,7 @@ public class Application implements InputProcessor{
 					}
 				}
 			}
+			ch.position.set(oldPos);
 		}
 		if (jumping) {
 			oldPos.set(ch.position);
@@ -171,6 +172,7 @@ public class Application implements InputProcessor{
 						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
 							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] == 1) {
 								ch.setPos(oldPos);
+								jumping = false;
 							}		
 							break;
 						}
