@@ -65,7 +65,7 @@ public class Renderer {
 		renderMapChunks(app);
 		renderLights(app);
 		renderVector(app.from,app.to,app);
-
+		renderCharacter(app);
 		crosshair.setPosition(Gdx.graphics.getWidth()/2-crosshair.getWidth()/2,Gdx.graphics.getHeight()/2-crosshair.getHeight()/2);
 		gun.setPosition(Gdx.graphics.getWidth()-gun.getWidth(), 0);
 		block.setPosition(Gdx.graphics.getWidth()-block.getWidth(), 0);
@@ -87,6 +87,16 @@ public class Renderer {
 		else
 			block.draw(sb);
 		sb.end();
+	}
+	public void renderCharacter(Application app) {
+		lightTexture.bind(0);
+		simpleShader.begin();
+		simpleShader.setUniformi("s_texture", 0);
+		modelViewProjectionMatrix.set(app.cam.combined);
+		modelViewProjectionMatrix.mul(app.ch.modelMatrix);
+		simpleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
+		app.cube.cubeMesh.render(simpleShader, GL20.GL_TRIANGLES);
+		simpleShader.end();
 	}
 	public void renderMapChunks(Application app) {
 		cubeTexture.bind(0);
