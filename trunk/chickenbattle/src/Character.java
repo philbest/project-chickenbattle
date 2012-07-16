@@ -10,13 +10,15 @@ public class Character {
 	public BoundingBox box;
 	public Mesh model;
 	public Matrix4 modelMatrix;
+	public int weapon;
 	public void setPos(float x, float y, float z) {
+		weapon = 1;
 		position = new Vector3(x,y,z);
 		model = Cube.cubeMesh;
 		box = new BoundingBox();
 		meshbox = new BoundingBox();
 		modelMatrix = new Matrix4();
-		modelMatrix.setToTranslation(x,y,z); 
+		modelMatrix.setToTranslation(position);
 		model.calculateBoundingBox(meshbox);
 		box.set(meshbox);
 		box.mul(modelMatrix);
@@ -33,4 +35,5 @@ public class Character {
 		box.set(meshbox);
 		box.mul(modelMatrix);
 	}
+
 }

@@ -16,12 +16,12 @@ public class Application implements InputProcessor{
 	public LightSource light;
 	public Vector3 from;
 	public Vector3 to;
-	public boolean adding;
 	public Vector3 oldPos;
 	public Character ch;
 	Vector3 movement;
 	float forceUp;
 	boolean jumping;
+	int timer;
 	public Application() {
 		movement = new Vector3();
 		ch = new Character();
@@ -205,20 +205,30 @@ public class Application implements InputProcessor{
 		}
 
 
-		oldPos.set(cam.direction);
-		oldPos.nor();
-		oldPos.mul(5);
+		//oldPos.set(cam.direction);
+		//oldPos.nor();
+		//oldPos.mul(5);
 		movement.set(ch.position);
-		movement.sub(oldPos);
+		//movement.sub(oldPos);
+		movement.add(0,2,0);
 		cam.position.set(movement);
 		cam.update();
+		if (ch.weapon == 2 && Gdx.input.isTouched()) {
+			timer+= Gdx.graphics.getDeltaTime()*1000;
+			if (timer > 50) {
+				timer = 0;
+				touchDown(draggedX,draggedY,0,0);
+			}
+		}
 	}
 	@Override
 	public boolean keyDown(int arg0) {
 		if (Input.Keys.NUM_1 == arg0) {
-			adding = true;
+			ch.weapon = 1;
 		} else if (Input.Keys.NUM_2 == arg0) {
-			adding = false;
+			ch.weapon = 2;
+		} else if (Input.Keys.NUM_3 == arg0) {
+			ch.weapon = 3;
 		}
 		return false;
 	}
@@ -270,7 +280,7 @@ public class Application implements InputProcessor{
 				}
 			}
 			if (hit) {
-				if (adding) {
+				if (ch.weapon == 3) {
 					point.sub(direction);
 					pointX = (int) point.x;
 					pointY = (int) point.y;
@@ -303,7 +313,7 @@ public class Application implements InputProcessor{
 	}
 	@Override
 	public boolean touchDragged(int arg0, int arg1, int arg2) {
-
+		touchMoved(arg0,arg1);
 		return false;
 	}
 	@Override
