@@ -49,7 +49,7 @@ public class Renderer {
 	public Renderer() {
 		sb = new SpriteBatch();
 
-		InputStream in = Gdx.files.internal("data/Skysphere2.obj").read();
+		InputStream in = Gdx.files.internal("data/SkySphere2.obj").read();
 		skysphere = ObjLoader.loadObj(in);
 		try {
 			in.close();
@@ -85,7 +85,7 @@ public class Renderer {
 
 		cubeTexture = new Texture(Gdx.files.internal("data/grassmap.png"));
 		lightTexture = new Texture(Gdx.files.internal("data/light.png"));
-		//texture av Remus tagen 2012-07-16 måste ge credit om ska användas
+		//texture av Remus tagen 2012-07-16 mï¿½ste ge credit om ska anvï¿½ndas
 		//http://forums.epicgames.com/threads/603122-Remus-high-resolution-skydome-texture-pack
 		skysphereTexture = new Texture(Gdx.files.internal("data/skydome.bmp"));
 	}
@@ -162,7 +162,7 @@ public class Renderer {
 	public void renderMapChunks(Application app) {
 		cubeTexture.bind(0);
 		simpleShader.begin();
-		simpleShader.setUniform4fv("scene_light", app.light.color, 0,4);
+		simpleShader.setUniform4fv("scene_light", app.light.color, 0, 4);
 		simpleShader.setUniformf("scene_ambient_light", 0.2f,0.2f,0.2f, 1.0f);
 		//		Vector3 temp = new Vector3();
 		//		for (int i = 0; i < app.map.chunks.size; i++) {
@@ -190,7 +190,10 @@ public class Renderer {
 				simpleShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
 				simpleShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
 				simpleShader.setUniformf("material_shininess", 0.5f);
-				simpleShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
+				// simpleShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
+				
+				simpleShader.setUniformf("dir_light",0f,1f,0f);
+				
 				app.map.chunks.get(i).chunkMesh.render(simpleShader, GL20.GL_TRIANGLES);
 				vertices+=app.map.chunks.get(i).chunkMesh.getNumVertices();
 			}
