@@ -124,7 +124,7 @@ public class Renderer {
 				vertices+=app.map.chunks.get(i).chunkMesh.getNumVertices();
 			}
 		}
-		System.out.println("Vertices: " + vertices);
+		//System.out.println("Vertices: " + vertices);
 		simpleShader.end();
 	}
 	public void renderBoundingBox(Application app, BoundingBox b) {
@@ -158,36 +158,7 @@ public class Renderer {
 		particleShader.end();
 		vectorTest.dispose();
 	}
-	public void renderMap(Application app) {
-		cubeTexture.bind(0);
-		simpleShader.begin();
-		simpleShader.setUniform4fv("scene_light", app.light.color, 0,4);
-		simpleShader.setUniformf("scene_ambient_light", 0.2f,0.2f,0.2f, 1.0f);
-		for (int x = 0; x < Map.x; x++) {
-			for (int y = 0; y < Map.y; y++) {
-				for (int z = 0; z < Map.z; z++) {
-					if (app.map.map[x][y][z] == 1) {
-						simpleShader.setUniformi("s_texture", 0);
-						cubeModel.setToTranslation(x,y,z);
-						modelViewProjectionMatrix.set(app.cam.combined);
-						modelViewProjectionMatrix.mul(cubeModel);
-						modelViewMatrix.set(app.cam.view);
-						modelViewMatrix.mul(cubeModel);
-						normalMatrix.set(modelViewMatrix);
-						simpleShader.setUniformMatrix("normalMatrix", normalMatrix);
-						simpleShader.setUniformMatrix("u_modelViewMatrix", modelViewMatrix);
-						simpleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
-						simpleShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
-						simpleShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
-						simpleShader.setUniformf("material_shininess", 0.5f);
-						simpleShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
-						Cube.cubeMesh.render(simpleShader, GL20.GL_TRIANGLES);
-					}
-				}
-			}
-		}
-		simpleShader.end();
-	}
+
 	public void renderLights(Application app) {
 		lightTexture.bind(0);
 		simpleShader.begin();

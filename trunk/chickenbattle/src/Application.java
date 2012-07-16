@@ -23,7 +23,6 @@ public class Application implements InputProcessor{
 		to = new Vector3(0,0,0);
 		light = new LightSource(5,6,5);
 		map = new Map();
-		map.maxTime = 0;
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		cam.position.set(0,0,40);
 		cam.update();
@@ -110,22 +109,23 @@ public class Application implements InputProcessor{
 		int pointX = (int) point.x;
 		int pointY = (int) point.y;
 		int pointZ = (int) point.z;
-		if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-			if (map.map[pointX][pointY][pointZ] == 1) {
-				hit = true;
-				System.out.println("inside" + pointX + " " + pointY + " " + pointZ);
-			}
-		}
 		while (!hit && range < 200) {
 			range += direction.len();
 			point.add(direction);
 			pointX = (int) point.x;
 			pointY = (int) point.y;
 			pointZ = (int) point.z;
+
+
 			if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-				if (map.map[pointX][pointY][pointZ] == 1) {
-					hit = true;
-					System.out.println("hit" + pointX + " " + pointY + " " + pointZ);
+				for (Chunk c : map.chunks) {
+					if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
+						if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] == 1) {
+							hit = true;
+							System.out.println("hit" + pointX + " " + pointY + " " + pointZ);
+						}		
+						break;
+					}
 				}
 			}
 			if (hit) {
@@ -135,22 +135,24 @@ public class Application implements InputProcessor{
 					pointY = (int) point.y;
 					pointZ = (int) point.z;
 					if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-						map.map[pointX][pointY][pointZ] = 1;
 						for (Chunk c : map.chunks) {
 							if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-								map.rebuildChunk(c,(int)(pointX/Map.chunkSize),(int)(pointY/Map.chunkSize),(int)(pointZ/Map.chunkSize));
+								c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] = 1;
+								c.rebuildChunk((int)(pointX/Map.chunkSize),(int)(pointY/Map.chunkSize),(int)(pointZ/Map.chunkSize));
 								break;
-							}
+							}		
 						}
 					}
 				} else {
 					if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-						map.map[pointX][pointY][pointZ] = 0;
+						System.out.println("in map");
 						for (Chunk c : map.chunks) {
 							if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-								map.rebuildChunk(c,(int)(pointX/Map.chunkSize),(int)(pointY/Map.chunkSize),(int)(pointZ/Map.chunkSize));
+								System.out.println("HIT");
+								c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] = 0;
+								c.rebuildChunk((int)(pointX/Map.chunkSize),(int)(pointY/Map.chunkSize),(int)(pointZ/Map.chunkSize));
 								break;
-							}
+							}		
 						}
 					}
 				}
