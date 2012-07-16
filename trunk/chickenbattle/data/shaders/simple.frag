@@ -38,5 +38,5 @@ void main()
 	finalSpecular += scene_light *specularTerm / (1.0+distance);
 	
 	vec4 ambientTerm = ambient * scene_ambient_light;
-	gl_FragColor =  ambientTerm*v_occlusion  + finalDiffuse * diffuse + finalSpecular * material_specular;
+	gl_FragColor =  (ambientTerm  + finalDiffuse * diffuse + finalSpecular * material_specular)*v_occlusion;
 }
