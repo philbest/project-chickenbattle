@@ -1,5 +1,8 @@
 
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
@@ -9,6 +12,7 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.loaders.obj.ObjLoader;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
@@ -20,21 +24,41 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 
 public class Renderer {
 	public Mesh cube;
+	Mesh skysphere;
 	Matrix4 cubeModel = new Matrix4();
 	Matrix4 cubeModel2 = new Matrix4();
+	Matrix4 skysphereModel = new Matrix4();
+
 	Matrix4 modelViewProjectionMatrix = new Matrix4();
 	Matrix4 modelViewMatrix = new Matrix4();
 	Matrix3 normalMatrix = new Matrix3();
+
 	Texture cubeTexture;
 	Texture lightTexture;
+	Texture skysphereTexture;
+
 	ShaderProgram simpleShader;
 	ShaderProgram particleShader;
+	ShaderProgram skysphereShader;
+
 	Sprite crosshair;
 	Sprite gun;
 	Sprite block;
 	SpriteBatch sb;
+
+
 	public Renderer() {
 		sb = new SpriteBatch();
+
+		InputStream in = Gdx.files.internal("data/Skysphere2.obj").read();
+		skysphere = ObjLoader.loadObj(in);
+		try {
+			in.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		crosshair = new Sprite(new Texture(Gdx.files.internal("data/crosshairsmaller.png")));
 		gun = new Sprite(new Texture(Gdx.files.internal("data/gun.png")));
 		block = new Sprite(new Texture(Gdx.files.internal("data/block.png")));
@@ -52,8 +76,18 @@ public class Renderer {
 			throw new GdxRuntimeException("Couldn't compile shader: "
 					+ particleShader.getLog());
 
+		skysphereShader = new ShaderProgram(Gdx.files.internal(
+		"data/shaders/skysphereShader.vert").readString(), Gdx.files.internal(
+		"data/shaders/skysphereShader.frag").readString());
+		if (!skysphereShader.isCompiled())
+			throw new GdxRuntimeException("Couldn't compile shader: "
+					+ skysphereShader.getLog());
+
 		cubeTexture = new Texture(Gdx.files.internal("data/grassmap.png"));
 		lightTexture = new Texture(Gdx.files.internal("data/light.png"));
+		//texture av Remus tagen 2012-07-16 måste ge credit om ska användas
+		//http://forums.epicgames.com/threads/603122-Remus-high-resolution-skydome-texture-pack
+		skysphereTexture = new Texture(Gdx.files.internal("data/skydome.bmp"));
 	}
 	public void render(Application app) {
 		Gdx.gl20.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -62,6 +96,8 @@ public class Renderer {
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		Gdx.gl20.glEnable(GL20.GL_CULL_FACE);
 		Gdx.gl20.glCullFace(GL20.GL_BACK);
+
+		renderSkySphere(app);
 		renderMapChunks(app);
 		renderLights(app);
 		renderVector(app.from,app.to,app);
@@ -88,6 +124,26 @@ public class Renderer {
 			block.draw(sb);
 		sb.end();
 	}
+
+	public void renderSkySphere(Application app){
+		skysphereTexture.bind(0);
+		skysphereShader.begin();
+
+		skysphereShader.setUniformi("s_texture", 0);
+
+		skysphereModel.setToTranslation(app.cam.position.x,app.cam.position.y+20,app.cam.position.z);
+
+		skysphereModel.scl(1.5f);
+		skysphereModel.rotate(0, 0,1 , 180);
+		modelViewProjectionMatrix.set(app.cam.combined);
+		modelViewProjectionMatrix.mul(skysphereModel);	
+
+		skysphereShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
+
+		skysphere.render(skysphereShader, GL20.GL_TRIANGLES);
+		skysphereShader.end();
+	}
+
 	public void renderCharacter(Application app) {
 		lightTexture.bind(0);
 		simpleShader.begin();
@@ -103,13 +159,13 @@ public class Renderer {
 		simpleShader.begin();
 		simpleShader.setUniform4fv("scene_light", app.light.color, 0,4);
 		simpleShader.setUniformf("scene_ambient_light", 0.2f,0.2f,0.2f, 1.0f);
-//		Vector3 temp = new Vector3();
-//		for (int i = 0; i < app.map.chunks.size; i++) {
-//			Chunk c = app.map.chunks.get(i);
-//			temp.set(c.x,c.y,c.z);
-//			temp.sub(app.cam.position);
-//			c.distance = temp.len();
-//		}
+		//		Vector3 temp = new Vector3();
+		//		for (int i = 0; i < app.map.chunks.size; i++) {
+		//			Chunk c = app.map.chunks.get(i);
+		//			temp.set(c.x,c.y,c.z);
+		//			temp.sub(app.cam.position);
+		//			c.distance = temp.len();
+		//		}
 		//app.map.chunks.sort();
 		int vertices = 0;
 		for (int i = 0; i < app.map.chunks.size;i++) {
@@ -117,7 +173,7 @@ public class Renderer {
 				//if (app.map.chunks[x][y][z].chunkMesh != null && app.map.chunks[x][y][z].chunkMesh.getNumVertices() > 0) {
 				simpleShader.setUniformi("s_texture", 0);
 				cubeModel.setToTranslation(app.map.chunks.get(i).x*Map.chunkSize,app.map.chunks.get(i).y*Map.chunkSize,app.map.chunks.get(i).z*Map.chunkSize);
-				
+
 				modelViewProjectionMatrix.set(app.cam.combined);
 				modelViewProjectionMatrix.mul(cubeModel);
 				modelViewMatrix.set(app.cam.view);
