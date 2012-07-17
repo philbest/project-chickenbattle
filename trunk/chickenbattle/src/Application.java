@@ -242,7 +242,7 @@ public class Application implements InputProcessor{
 		cam.position.set(movement);
 		cam.update();
 		mptimer+= Gdx.graphics.getDeltaTime()*1000;
-		if(mptimer > 50){
+		if(mptimer > 10){
 			mptimer = 0;
 			send = true;
 		}
