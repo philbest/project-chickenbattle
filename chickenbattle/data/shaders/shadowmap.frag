@@ -26,5 +26,5 @@ void main(void)
 	vec4 lightZ = v_lightSpacePosition / v_lightSpacePosition.w;
 	lightZ = (lightZ + 1.0) / 2.0;
 	shadowFactor = getShadowFactor(lightZ);	
-	gl_FragColor = v_color * shadowFactor;
+	gl_FragColor = v_color*0.5 + v_color*0.5* shadowFactor;
 }

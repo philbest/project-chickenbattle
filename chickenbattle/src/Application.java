@@ -1,6 +1,3 @@
-
-import java.io.IOException;
-
 import network.GameClient;
 import network.Packet.BlockUpdate;
 import network.Player;
@@ -392,11 +389,16 @@ public class Application implements InputProcessor{
 	}
 	@Override
 	public boolean touchDragged(int arg0, int arg1, int arg2) {
-		touchMoved(arg0,arg1);
+		mouseMoved(arg0,arg1);
 		return false;
 	}
 	@Override
-	public boolean touchMoved(int arg0, int arg1) {
+	public boolean touchUp(int arg0, int arg1, int arg2, int arg3) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public boolean mouseMoved(int arg0, int arg1) {
 		if (draggedX == 0)
 			draggedX = arg0;
 		if (draggedY == 0)
@@ -417,11 +419,6 @@ public class Application implements InputProcessor{
 		cam.rotate(angleUP, 1, 0, 0);
 		cam.rotate(angleLeft, 0, 1, 0);
 		cam.update();
-		return false;
-	}
-	@Override
-	public boolean touchUp(int arg0, int arg1, int arg2, int arg3) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }
