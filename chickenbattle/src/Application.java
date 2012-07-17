@@ -54,7 +54,7 @@ public class Application implements InputProcessor{
 		cam.update();
 		renderer = new Renderer();
 
-		multiplayer = true;
+		multiplayer = false;
 		if(multiplayer){
 			players = new Player[10];
 			client = new GameClient();
@@ -247,7 +247,7 @@ public class Application implements InputProcessor{
 			send = true;
 		}
 
-		if (ch.weapon == 2 && Gdx.input.isTouched()) {
+		if (ch.weapon == Weapon.ak && Gdx.input.isTouched()) {
 			timer+= Gdx.graphics.getDeltaTime()*1000;
 			if (timer > 50) {
 				timer = 0;
@@ -286,11 +286,11 @@ public class Application implements InputProcessor{
 	@Override
 	public boolean keyDown(int arg0) {
 		if (Input.Keys.NUM_1 == arg0) {
-			ch.weapon = 1;
+			ch.weapon = ch.inventory.get(0).weaponID;
 		} else if (Input.Keys.NUM_2 == arg0) {
-			ch.weapon = 2;
+			ch.weapon = ch.inventory.get(1).weaponID;
 		} else if (Input.Keys.NUM_3 == arg0) {
-			ch.weapon = 3;
+			ch.weapon = ch.inventory.get(2).weaponID;
 		}
 		return false;
 	}
@@ -342,7 +342,7 @@ public class Application implements InputProcessor{
 				}
 			}
 			if (hit) {
-				if (ch.weapon == 3) {
+				if (ch.weapon == Weapon.block) {
 					point.sub(direction);
 					pointX = (int) point.x;
 					pointY = (int) point.y;
