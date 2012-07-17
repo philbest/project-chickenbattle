@@ -24,11 +24,14 @@ public class Application implements InputProcessor{
 	public Map map;
 	public LightSource light;
 	public Vector3 from;
+	public Vector3 comparevec;
+	public Vector3 startpos;
 	public Vector3 to;
 	public Vector3 oldPos;
 	public Character ch;
 	public Array<BlockUpdate> chunkstoupdate;
 	public Array<Chunk> chunkstorebuild;
+
 	Vector3 movement;
 	GameClient client;
 	public Player[] players;
@@ -40,8 +43,10 @@ public class Application implements InputProcessor{
 	public Application(){
 		movement = new Vector3();
 		ch = new Character();
-		ch.setPos(0,50,40);
+		startpos = new Vector3(10,50,10);
+		ch.setPos(startpos.x,startpos.y,startpos.z);
 		oldPos = new Vector3();
+		comparevec = new Vector3();
 		from = new Vector3(0,0,0);
 		to = new Vector3(0,0,0);
 		light = new LightSource(-100,200,0);
@@ -54,7 +59,7 @@ public class Application implements InputProcessor{
 		cam.update();
 		renderer = new Renderer();
 
-		multiplayer = false;
+		multiplayer = true;
 		if(multiplayer){
 			players = new Player[10];
 			client = new GameClient();
@@ -67,6 +72,9 @@ public class Application implements InputProcessor{
 	}
 	public void update() {
 		Gdx.input.setCursorCatched(true);
+		if(client.dead){
+			ch.setPos(startpos.x,startpos.y,startpos.z);
+		}
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			oldPos.set(ch.position);
 			movement.set(cam.direction.x,0,cam.direction.z);
@@ -242,7 +250,7 @@ public class Application implements InputProcessor{
 		cam.position.set(movement);
 		cam.update();
 		mptimer+= Gdx.graphics.getDeltaTime()*1000;
-		if(mptimer > 35){
+		if(mptimer > 60){
 			mptimer = 0;
 			send = true;
 		}
@@ -258,14 +266,12 @@ public class Application implements InputProcessor{
 		if(multiplayer){
 			players = client.getPlayers();
 			if(players[client.id] != null){	
-
 				players[client.id].posX = ch.position.x; 
 				players[client.id].posY = ch.position.y; 
 				players[client.id].posZ = ch.position.z; 
-
-				//			System.out.println(players[client.id].posX);
+				players[client.id].box = ch.box;
 				if(send){
-					client.sendMessage(players[client.id]);
+					client.sendMessage(players[client.id],ch.box.getCorners());
 					send = false;
 				}
 			}
@@ -322,63 +328,65 @@ public class Application implements InputProcessor{
 		int pointX = (int) point.x;
 		int pointY = (int) point.y;
 		int pointZ = (int) point.z;
+		if(multiplayer){		
+			client.sendBullet(point,direction);
+		}
 		while (!hit && range < 200) {
 			range += direction.len();
 			point.add(direction);
 			pointX = (int) point.x;
 			pointY = (int) point.y;
 			pointZ = (int) point.z;
-
-
-			if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
+			if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {		
 				for (Chunk c : map.chunks) {
 					if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
 						if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] == 1) {
 							hit = true;
-							System.out.println("hit" + pointX + " " + pointY + " " + pointZ);
-						}		
+							//							System.out.println("hit" + pointX + " " + pointY + " " + pointZ);
+						}
 						break;
 					}
 				}
 			}
-			if (hit) {
-				if (ch.weapon == Weapon.block) {
-					point.sub(direction);
-					pointX = (int) point.x;
-					pointY = (int) point.y;
-					pointZ = (int) point.z;
-					if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-						for (Chunk c : map.chunks) {
-							if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-								c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] = 1;
+		}
+		if (hit) {
+			if (ch.weapon == Weapon.block) {
+				point.sub(direction);
+				pointX = (int) point.x;
+				pointY = (int) point.y;
+				pointZ = (int) point.z;
+				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
+					for (Chunk c : map.chunks) {
+						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
+							c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] = 1;
+							c.rebuildChunk();
+							break;
+						}		
+					}
+				}
+			} else {
+				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
+					//					System.out.println("in map");
+
+					for (int i = 0; i < map.chunks.size; i++){
+						Chunk c = map.chunks.get(i);
+						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
+							//							System.out.println("HIT");
+							if(multiplayer){
+								client.sendChunkUpdate(i, pointX, pointY, pointZ, Map.chunkSize, 0);
+								//								System.out.println("mprevmoce");
+							}
+							else{
+								c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] = 0;
 								c.rebuildChunk();
 								break;
-							}		
-						}
-					}
-				} else {
-					if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-						System.out.println("in map");
-
-						for (int i = 0; i < map.chunks.size; i++){
-							Chunk c = map.chunks.get(i);
-							if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-								System.out.println("HIT");
-								if(multiplayer){
-									client.sendChunkUpdate(i, pointX, pointY, pointZ, Map.chunkSize, 0);
-									System.out.println("mprevmoce");
-								}
-								else{
-									c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] = 0;
-									c.rebuildChunk();
-									break;
-								}
 							}
-
 						}
+
 					}
 				}
 			}
+
 		}
 		return false;
 	}

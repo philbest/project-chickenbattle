@@ -6,10 +6,13 @@ import java.util.HashMap;
 import network.Packet.AddPlayer;
 import network.Packet.Added;
 import network.Packet.BlockUpdate;
+import network.Packet.Bullet;
 import network.Packet.Disconnected;
+import network.Packet.Hit;
 import network.Packet.Reject;
 import network.Packet.Update;
 
+import com.badlogic.gdx.math.Vector3;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
@@ -17,18 +20,29 @@ import com.esotericsoftware.kryonet.Server;
 public class GameServer {
 	Server server;
 	Player[] gameState;
+	Vector3[] bbCorners;
 	HashMap<Connection,Integer> connectionIDs;
 	Connection[] connections;
 	Update toSend;
 	BlockUpdate btoSend;
+	Hit hittoSend;
+	Vector3 point;
+	Vector3 direction;
 	int startx,starty,startz;
-	public int ids;
+	int ids;
+	boolean hit;
 
 	public GameServer () throws IOException {
 		server = new Server();
 		gameState = new Player[10];
 		connections = new Connection[10];
+		bbCorners = new Vector3[8];
+		for(int i=0; i < 8; i++)
+			bbCorners[i] = new Vector3(0,0,0);
+		point = new Vector3(0,0,0);
+		direction = new Vector3(0,0,0);
 		toSend = new Update();
+		hittoSend = new Hit();
 		connectionIDs = new HashMap<Connection,Integer>();
 		server.start();
 		Packet.register(server);
@@ -42,16 +56,15 @@ public class GameServer {
 			public void received (Connection connection, Object object) {
 				if (object instanceof AddPlayer){
 					AddPlayer received = (AddPlayer)object;
-					System.out.println("AddPlayer From : " + received.name);
+					System.out.println("Adding player: " + received.name);
 					if(fixId()){
 						Added reply = new Added();					
 						reply.id = ids;
-						System.out.println("giving" + received.name + "id: " + ids);
+						System.out.println(received.name + "gets id: " + ids);
 						connection.sendTCP(reply);
 						AddPlayer oldPlayers = new AddPlayer();
 						for(int i=0; i <gameState.length; i++){
 							if(gameState[i] != null){
-								System.out.println("mywife");
 								oldPlayers.id = i;
 								oldPlayers.startx = gameState[i].posX;
 								oldPlayers.starty = gameState[i].posY;
@@ -81,15 +94,53 @@ public class GameServer {
 					toSend.x = received.x;
 					toSend.y = received.y;	
 					toSend.z = received.z;	
+					toSend.hp = gameState[received.id].hp;
+
 					gameState[received.id].posX = received.x;
 					gameState[received.id].posY = received.y;
 					gameState[received.id].posZ = received.z;
+
+					bbCorners[0].set(received.x1, received.y1, received.z1);
+					bbCorners[1].set(received.x2, received.y2, received.z2);
+					bbCorners[2].set(received.x3, received.y3, received.z3);
+					bbCorners[3].set(received.x4, received.y4, received.z4);
+					bbCorners[4].set(received.x5, received.y5, received.z5);
+					bbCorners[5].set(received.x6, received.y6, received.z6);
+					bbCorners[6].set(received.x7, received.y7, received.z7);
+					bbCorners[7].set(received.x8, received.y8, received.z8);
+
+					gameState[received.id].setBox(bbCorners);
 					server.sendToAllTCP(toSend);
 				}
 				else if (object instanceof BlockUpdate){
 					BlockUpdate received = (BlockUpdate)object;
 					btoSend = received;
 					server.sendToAllTCP(btoSend);		
+				}
+				else if(object instanceof Bullet){
+					hit = false;
+					float range = 0;
+					Bullet b = (Bullet)object;
+					direction.set(b.dx, b.dy, b.dz);
+					point.set(b.ox,b.oy,b.oz);
+					while (!hit && range < 200) {
+						range += direction.len();
+						point.add(direction);
+						for(int i=0; i < gameState.length; i++){				
+							if(gameState[i] != null){
+								if(gameState[i].box.contains(point)){
+									hittoSend.id = i;
+									gameState[i].hp =gameState[i].hp-1;
+									if(gameState[i].hp < 0){
+										System.out.println(gameState[i].name + "IS DEAD");
+										gameState[i].hp = 10;
+									}
+									hit = true;
+									server.sendToAllTCP(hittoSend);
+								}
+							}
+						}
+					}
 				}
 			}
 
