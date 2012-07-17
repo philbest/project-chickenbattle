@@ -25,11 +25,14 @@ public class Chunk implements Comparable{
 		map = new int[Map.chunkSize][Map.chunkSize][Map.chunkSize];
 		for (int x2 = 0; x2 < Map.chunkSize; x2++) {
 			for (int z2 = 0; z2 < Map.chunkSize; z2++) {
-				for (int y2 = 0; y2 < Map.heightmap.elevation(x2%128, z2%128)*Map.y; y2++) {
-					map[x2][y2][z2] = 1;
-				}
+				//for (int y2 = 0; y2 < Map.heightmap.elevation(x2%128, z2%128)*Map.y; y2++) {
+					map[x2][0][z2] = 1;		
+				//}
 			}
 		}
+		
+		map[5][1][5] = 1;
+		map[5][2][5] = 1;
 	}
 
 	public int compareTo(Object arg0) {

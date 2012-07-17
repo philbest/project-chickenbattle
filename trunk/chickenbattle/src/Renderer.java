@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.loaders.obj.ObjLoader;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -52,8 +54,8 @@ public class Renderer {
 	public void initiateShadows() {
 		shadowMap = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 		lightCam = new PerspectiveCamera(67, shadowMap.getWidth(), shadowMap.getHeight());
-		lightCam.position.set(-10, 10, 5);
-		lightCam.lookAt(0, 0, 0);
+		lightCam.position.set(-20, 10, 16);
+		lightCam.lookAt(16, 0, 16);
 		lightCam.update();
 
 		shadowGenShader = new ShaderProgram(Gdx.files.internal("data/shaders/shadowgen.vert").readString(), Gdx.files
@@ -108,7 +110,7 @@ public class Renderer {
 		skysphereTexture = new Texture(Gdx.files.internal("data/skydome.bmp"));
 	}
 	public void render(Application app) {
-		this.hasShadows = false;
+		app.cam.update();
 		Gdx.gl20.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
@@ -193,7 +195,15 @@ public class Renderer {
 		}
 	}
 	public void renderMapChunks(Application app) {
+		if (Gdx.input.isKeyPressed(Input.Keys.M)) {
+			hasShadows = false;
+		} else if (Gdx.input.isKeyPressed(Input.Keys.N)) {
+			hasShadows = true;
+		}
 		if (this.hasShadows) {
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);                    
+			Gdx.gl.glEnable(GL20.GL_CULL_FACE);
+			Gdx.gl.glCullFace(GL20.GL_FRONT);
 			shadowMap.begin();
 			shadowGenShader.begin();
 			for (int i = 0; i < app.map.chunks.size;i++) {
@@ -208,27 +218,27 @@ public class Renderer {
 			shadowGenShader.end();
 			shadowMap.end();
 
+			Gdx.gl.glDisable(GL20.GL_CULL_FACE);
+
 			shadowMapShader.begin();
 			for (int i = 0; i < app.map.chunks.size;i++) {
 				if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0 && app.cam.frustum.boundsInFrustum(app.map.chunks.get(i).bounds)) {
-					shadowMap.getColorBufferTexture().bind();
+					shadowMap.getColorBufferTexture().bind(0);
 					shadowMapShader.setUniformi("s_shadowMap", 0);
 					cubeModel.setToTranslation(app.map.chunks.get(i).x*Map.chunkSize,app.map.chunks.get(i).y*Map.chunkSize,app.map.chunks.get(i).z*Map.chunkSize);
 					modelViewProjectionMatrix.set(app.cam.combined);
 					modelViewProjectionMatrix.mul(cubeModel);
-					shadowMapShader.setUniformMatrix("u_projTrans", app.cam.combined);
-					
+					shadowMapShader.setUniformMatrix("u_projTrans", modelViewProjectionMatrix);
+
 					modelViewProjectionMatrix.set(lightCam.combined);
 					modelViewProjectionMatrix.mul(cubeModel);
-					shadowMapShader.setUniformMatrix("u_lightProjTrans",lightCam.combined);
+					shadowMapShader.setUniformMatrix("u_lightProjTrans",modelViewProjectionMatrix);
 					shadowMapShader.setUniformf("u_color", 1, 0, 0, 1);
-					
+
 					app.map.chunks.get(i).chunkMesh.render(shadowMapShader, GL20.GL_TRIANGLES);
 				}
 			}
 			shadowMapShader.end();
-
-
 		} else {
 			cubeTexture.bind(0);
 			simpleShader.begin();
