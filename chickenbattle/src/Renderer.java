@@ -7,19 +7,20 @@ import java.io.InputStream;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.loaders.obj.ObjLoader;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-
 
 
 public class Renderer {
@@ -42,9 +43,32 @@ public class Renderer {
 	ShaderProgram skysphereShader;
 
 	SpriteBatch sb;
+	boolean hasShadows;
+	FrameBuffer shadowMap;
+	ShaderProgram shadowGenShader;
+	ShaderProgram shadowMapShader;
 
+	PerspectiveCamera lightCam;
+	public void initiateShadows() {
+		shadowMap = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+		lightCam = new PerspectiveCamera(67, shadowMap.getWidth(), shadowMap.getHeight());
+		lightCam.position.set(-10, 10, 5);
+		lightCam.lookAt(0, 0, 0);
+		lightCam.update();
 
+		shadowGenShader = new ShaderProgram(Gdx.files.internal("data/shaders/shadowgen.vert").readString(), Gdx.files
+				.internal("data/shaders/shadowgen.frag").readString());
+		if (!shadowGenShader.isCompiled())
+			throw new GdxRuntimeException("Couldn't compile shadow gen shader: " + shadowGenShader.getLog());
+
+		shadowMapShader = new ShaderProgram(Gdx.files.internal("data/shaders/shadowmap.vert").readString(), Gdx.files
+				.internal("data/shaders/shadowmap.frag").readString());
+		if (!shadowMapShader.isCompiled())
+			throw new GdxRuntimeException("Couldn't compile shadow map shader: " + shadowMapShader.getLog());
+
+	}
 	public Renderer() {
+		initiateShadows();
 		sb = new SpriteBatch();
 
 		InputStream in = Gdx.files.internal("data/SkySphere2.obj").read();
@@ -84,6 +108,7 @@ public class Renderer {
 		skysphereTexture = new Texture(Gdx.files.internal("data/skydome.bmp"));
 	}
 	public void render(Application app) {
+		this.hasShadows = false;
 		Gdx.gl20.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
@@ -161,54 +186,92 @@ public class Renderer {
 				simpleShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
 				simpleShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
 				simpleShader.setUniformf("material_shininess", 0.5f);
-//				simpleShader.setUniformf("dir_light",0f,1f,0f);
+				//				simpleShader.setUniformf("dir_light",0f,1f,0f);
 
 				app.cube.cubeMesh.render(simpleShader, GL20.GL_TRIANGLES);
 			}
 		}
 	}
 	public void renderMapChunks(Application app) {
-		cubeTexture.bind(0);
-		simpleShader.begin();
-		simpleShader.setUniform4fv("scene_light", app.light.color, 0, 4);
-		simpleShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
-		//		Vector3 temp = new Vector3();
-		//		for (int i = 0; i < app.map.chunks.size; i++) {
-		//			Chunk c = app.map.chunks.get(i);
-		//			temp.set(c.x,c.y,c.z);
-		//			temp.sub(app.cam.position);
-		//			c.distance = temp.len();
-		//		}
-		//app.map.chunks.sort();
-		int vertices = 0;
-		for (int i = 0; i < app.map.chunks.size;i++) {
-			if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0 && app.cam.frustum.boundsInFrustum(app.map.chunks.get(i).bounds)) {
-				//if (app.map.chunks[x][y][z].chunkMesh != null && app.map.chunks[x][y][z].chunkMesh.getNumVertices() > 0) {
-				simpleShader.setUniformi("s_texture", 0);
-				cubeModel.setToTranslation(app.map.chunks.get(i).x*Map.chunkSize,app.map.chunks.get(i).y*Map.chunkSize,app.map.chunks.get(i).z*Map.chunkSize);
+		if (this.hasShadows) {
+			shadowMap.begin();
+			shadowGenShader.begin();
+			for (int i = 0; i < app.map.chunks.size;i++) {
+				if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0 && app.cam.frustum.boundsInFrustum(app.map.chunks.get(i).bounds)) {
+					cubeModel.setToTranslation(app.map.chunks.get(i).x*Map.chunkSize,app.map.chunks.get(i).y*Map.chunkSize,app.map.chunks.get(i).z*Map.chunkSize);
+					modelViewProjectionMatrix.set(lightCam.combined);
+					modelViewProjectionMatrix.mul(cubeModel);
+					shadowGenShader.setUniformMatrix("u_projTrans", modelViewProjectionMatrix);
+					app.map.chunks.get(i).chunkMesh.render(shadowGenShader, GL20.GL_TRIANGLES);
+				}
+			}			
+			shadowGenShader.end();
+			shadowMap.end();
 
-				modelViewProjectionMatrix.set(app.cam.combined);
-				modelViewProjectionMatrix.mul(cubeModel);
-				modelViewMatrix.set(app.cam.view);
-				modelViewMatrix.mul(cubeModel);
-				normalMatrix.set(modelViewMatrix);
-				simpleShader.setUniformMatrix("normalMatrix", normalMatrix);
-				simpleShader.setUniformMatrix("u_modelViewMatrix", modelViewMatrix);
-				simpleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
-				simpleShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
-				simpleShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
-				simpleShader.setUniformf("material_shininess", 0.5f);
-				simpleShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
-
-
-				//simpleShader.setUniformf("dir_light",0,0,0);
-				
-				app.map.chunks.get(i).chunkMesh.render(simpleShader, GL20.GL_TRIANGLES);
-				vertices+=app.map.chunks.get(i).chunkMesh.getNumVertices();
+			shadowMapShader.begin();
+			for (int i = 0; i < app.map.chunks.size;i++) {
+				if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0 && app.cam.frustum.boundsInFrustum(app.map.chunks.get(i).bounds)) {
+					shadowMap.getColorBufferTexture().bind();
+					shadowMapShader.setUniformi("s_shadowMap", 0);
+					cubeModel.setToTranslation(app.map.chunks.get(i).x*Map.chunkSize,app.map.chunks.get(i).y*Map.chunkSize,app.map.chunks.get(i).z*Map.chunkSize);
+					modelViewProjectionMatrix.set(app.cam.combined);
+					modelViewProjectionMatrix.mul(cubeModel);
+					shadowMapShader.setUniformMatrix("u_projTrans", app.cam.combined);
+					
+					modelViewProjectionMatrix.set(lightCam.combined);
+					modelViewProjectionMatrix.mul(cubeModel);
+					shadowMapShader.setUniformMatrix("u_lightProjTrans",lightCam.combined);
+					shadowMapShader.setUniformf("u_color", 1, 0, 0, 1);
+					
+					app.map.chunks.get(i).chunkMesh.render(shadowMapShader, GL20.GL_TRIANGLES);
+				}
 			}
+			shadowMapShader.end();
+
+
+		} else {
+			cubeTexture.bind(0);
+			simpleShader.begin();
+			simpleShader.setUniform4fv("scene_light", app.light.color, 0, 4);
+			simpleShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
+			//		Vector3 temp = new Vector3();
+			//		for (int i = 0; i < app.map.chunks.size; i++) {
+			//			Chunk c = app.map.chunks.get(i);
+			//			temp.set(c.x,c.y,c.z);
+			//			temp.sub(app.cam.position);
+			//			c.distance = temp.len();
+			//		}
+			//app.map.chunks.sort();
+			int vertices = 0;
+			for (int i = 0; i < app.map.chunks.size;i++) {
+				if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0 && app.cam.frustum.boundsInFrustum(app.map.chunks.get(i).bounds)) {
+					//if (app.map.chunks[x][y][z].chunkMesh != null && app.map.chunks[x][y][z].chunkMesh.getNumVertices() > 0) {
+					simpleShader.setUniformi("s_texture", 0);
+					cubeModel.setToTranslation(app.map.chunks.get(i).x*Map.chunkSize,app.map.chunks.get(i).y*Map.chunkSize,app.map.chunks.get(i).z*Map.chunkSize);
+
+					modelViewProjectionMatrix.set(app.cam.combined);
+					modelViewProjectionMatrix.mul(cubeModel);
+					modelViewMatrix.set(app.cam.view);
+					modelViewMatrix.mul(cubeModel);
+					normalMatrix.set(modelViewMatrix);
+					simpleShader.setUniformMatrix("normalMatrix", normalMatrix);
+					simpleShader.setUniformMatrix("u_modelViewMatrix", modelViewMatrix);
+					simpleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
+					simpleShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
+					simpleShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
+					simpleShader.setUniformf("material_shininess", 0.5f);
+					simpleShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
+
+
+					//simpleShader.setUniformf("dir_light",0,0,0);
+
+					app.map.chunks.get(i).chunkMesh.render(simpleShader, GL20.GL_TRIANGLES);
+					vertices+=app.map.chunks.get(i).chunkMesh.getNumVertices();
+				}
+			}
+			//System.out.println("Vertices: " + vertices);
+			simpleShader.end();
 		}
-		//System.out.println("Vertices: " + vertices);
-		simpleShader.end();
 	}
 	public void renderBoundingBox(Application app, BoundingBox b) {
 		Vector3[] c = b.getCorners();

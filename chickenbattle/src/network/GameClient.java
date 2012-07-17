@@ -48,7 +48,7 @@ public class GameClient{
 		Packet.register(client);
 		name = "anon";
 		try {
-			client.connect(5000, "127.0.0.1", 54555, 54778);
+			client.connect(5000, "129.16.21.56", 54555, 54778);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
