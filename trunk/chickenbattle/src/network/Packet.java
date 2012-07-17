@@ -18,16 +18,19 @@ public class Packet {
 	}
 
 	static public class Update {
-		public int id,x,y,z;
+		public int id;
+		public float x,y,z;
 	}
 
 	static public class AddPlayer {
 		public String name;
-		public int id,startx,starty,startz;
+		public int id;
+		public float startx,starty,startz;
 	}
 
 	static public class Added {
-		public int id,x,y,z;
+		public int id;
+		public float x,y,z;
 	}
 	
 	static public class Disconnected{
