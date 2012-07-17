@@ -59,7 +59,7 @@ public class Application implements InputProcessor{
 		cam.update();
 		renderer = new Renderer();
 
-		multiplayer = true;
+		multiplayer = false;
 		if(multiplayer){
 			players = new Player[10];
 			client = new GameClient();
@@ -72,9 +72,9 @@ public class Application implements InputProcessor{
 	}
 	public void update() {
 		Gdx.input.setCursorCatched(true);
-		if(client.dead){
-			ch.setPos(startpos.x,startpos.y,startpos.z);
-		}
+//		if(client.dead){
+//			ch.setPos(startpos.x,startpos.y,startpos.z);
+//		}
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			oldPos.set(ch.position);
 			movement.set(cam.direction.x,0,cam.direction.z);
