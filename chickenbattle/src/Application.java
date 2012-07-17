@@ -259,9 +259,9 @@ public class Application implements InputProcessor{
 			players = client.getPlayers();
 			if(players[client.id] != null){	
 
-				players[client.id].posX = (int) cam.position.x; 
-				players[client.id].posY = (int) cam.position.y; 
-				players[client.id].posZ = (int) cam.position.z; 
+				players[client.id].posX = ch.position.x; 
+				players[client.id].posY = ch.position.y; 
+				players[client.id].posZ = ch.position.z; 
 
 				//			System.out.println(players[client.id].posX);
 				if(send){

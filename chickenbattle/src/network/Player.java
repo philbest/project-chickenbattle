@@ -4,7 +4,8 @@ import com.badlogic.gdx.graphics.Mesh;
 
 public class Player {
 	public String name;
-	public int id, posX, posY,posZ;  
+	public int id;
+	public float posX, posY,posZ;  
 	public Mesh cubeMesh;
 	
 	public Player(String xs){
