@@ -1,8 +1,21 @@
 
+import java.io.DataInputStream;
+import java.io.IOException;
+
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.g3d.keyframed.KeyframedModel;
+import com.badlogic.gdx.graphics.g3d.loaders.md5.MD5Animation;
+import com.badlogic.gdx.graphics.g3d.loaders.md5.MD5AnimationInfo;
+import com.badlogic.gdx.graphics.g3d.loaders.md5.MD5Animator;
+import com.badlogic.gdx.graphics.g3d.loaders.md5.MD5Joints;
+import com.badlogic.gdx.graphics.g3d.loaders.md5.MD5Loader;
+import com.badlogic.gdx.graphics.g3d.loaders.md5.MD5Model;
+import com.badlogic.gdx.graphics.g3d.loaders.md5.MD5Renderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
+import com.badlogic.gdx.utils.Array;
 
 
 public class Character {
@@ -12,8 +25,16 @@ public class Character {
 	public Mesh model;
 	public Matrix4 modelMatrix;
 	public int weapon;
+	public Array<Weapon> inventory;
+	public Character() {
+		inventory = new Array<Weapon>();
+		inventory.add(new Weapon(Weapon.gun));
+		inventory.add(new Weapon(Weapon.ak));
+		inventory.add(new Weapon(Weapon.block));
+		weapon = inventory.get(0).weaponID;
+	}
 	public void setPos(float x, float y, float z) {
-		weapon = 1;
+
 		position = new Vector3(x,y,z);
 		model = Cube.cubeMesh;
 		box = new BoundingBox();

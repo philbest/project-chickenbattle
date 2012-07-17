@@ -41,9 +41,6 @@ public class Renderer {
 	ShaderProgram particleShader;
 	ShaderProgram skysphereShader;
 
-	Sprite crosshair;
-	Sprite gun,ak;
-	Sprite block;
 	SpriteBatch sb;
 
 
@@ -59,10 +56,6 @@ public class Renderer {
 			e.printStackTrace();
 		}
 
-		crosshair = new Sprite(new Texture(Gdx.files.internal("data/crosshairsmaller.png")));
-		gun = new Sprite(new Texture(Gdx.files.internal("data/gun.png")));
-		ak = new Sprite(new Texture(Gdx.files.internal("data/ak.png")));
-		block = new Sprite(new Texture(Gdx.files.internal("data/block.png")));
 		simpleShader = new ShaderProgram(Gdx.files.internal(
 		"data/shaders/simple.vert").readString(), Gdx.files.internal(
 		"data/shaders/simple.frag").readString());
@@ -106,31 +99,14 @@ public class Renderer {
 		}
 		renderVector(app.from,app.to,app);
 		//renderCharacter(app);
-		crosshair.setPosition(Gdx.graphics.getWidth()/2-crosshair.getWidth()/2,Gdx.graphics.getHeight()/2-crosshair.getHeight()/2);
-		gun.setPosition(Gdx.graphics.getWidth()-gun.getWidth(), 0);
-		block.setPosition(Gdx.graphics.getWidth()-block.getWidth(), 0);
-
-		ak.setPosition(Gdx.graphics.getWidth()-ak.getWidth(), -120);
-		ak.setSize(256,256);
 		for (int i = 0; i < app.map.chunks.size;i++) {
 			if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0) {
 				this.renderBoundingBox(app,app.map.chunks.get(i).bounds);
 			}
 		}
 		Gdx.gl20.glDisable(GL20.GL_CULL_FACE);
-		if (app.ch.weapon == 1 || app.ch.weapon == 2)
-			crosshair.setColor(1,0,0,1);
-		else
-			crosshair.setColor(1,1,1,1);
 		sb.begin();
-		crosshair.draw(sb);
-		if (app.ch.weapon == 1) {
-			gun.draw(sb);	
-		} else if (app.ch.weapon == 2) {
-			ak.draw(sb);
-		} else if (app.ch.weapon == 3) {
-			block.draw(sb);	
-		}
+		app.ch.inventory.get(app.ch.weapon).render(sb);
 		sb.end();
 	}
 
