@@ -1,7 +1,6 @@
 package Spelet;
-
 import com.badlogic.gdx.graphics.Mesh;
-import com.badlogic.gdx.graphics.g3d.loaders.md5.MD5Model;
+import com.badlogic.gdx.graphics.g3d.model.keyframe.KeyframedModel;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
@@ -16,9 +15,13 @@ public class Character {
 	public Matrix4 modelMatrix;
 	public int weapon;
 	public Array<Weapon> inventory;
-	MD5Model md5model;
+	int scale = 50;
+	KeyframedModel charModel;
 	public Character() {
-		
+		//charModel = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/TankTracks.md5anim"));
+//		MD5Model charModel = MD5Loader.loadModel(Gdx.files.internal("data/md5/cg_mesh.md5mesh").read(),false);
+//		this.charModel.
+		//texture = new Texture(Gdx.files.internal("data/Test.png"), Format.RGB565, true);
 		inventory = new Array<Weapon>();
 		inventory.add(new Weapon(Weapon.gun));
 		inventory.add(new Weapon(Weapon.ak));
@@ -33,6 +36,7 @@ public class Character {
 		meshbox = new BoundingBox();
 		modelMatrix = new Matrix4();
 		modelMatrix.setToTranslation(position);
+		modelMatrix.scale(scale,scale,scale);
 		model.calculateBoundingBox(meshbox);
 		box.set(meshbox);
 		box.mul(modelMatrix);
@@ -40,12 +44,14 @@ public class Character {
 	public void setPos(Vector3 pos) {
 		position.set(pos);
 		modelMatrix.setToTranslation(position);
+		modelMatrix.scale(scale,scale,scale);
 		box.set(meshbox);
 		box.mul(modelMatrix);
 	}
 	public void addMovement(Vector3 movement) {
 		position.add(movement);
 		modelMatrix.setToTranslation(position);
+		modelMatrix.scale(scale,scale,scale);
 		box.set(meshbox);
 		box.mul(modelMatrix);
 	}
