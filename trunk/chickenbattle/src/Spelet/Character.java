@@ -15,7 +15,6 @@ public class Character {
 	public Matrix4 modelMatrix;
 	public int weapon;
 	public Array<Weapon> inventory;
-	int scale = 50;
 	KeyframedModel charModel;
 	public Character() {
 		//charModel = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/TankTracks.md5anim"));
@@ -36,7 +35,6 @@ public class Character {
 		meshbox = new BoundingBox();
 		modelMatrix = new Matrix4();
 		modelMatrix.setToTranslation(position);
-		modelMatrix.scale(scale,scale,scale);
 		model.calculateBoundingBox(meshbox);
 		box.set(meshbox);
 		box.mul(modelMatrix);
@@ -44,14 +42,12 @@ public class Character {
 	public void setPos(Vector3 pos) {
 		position.set(pos);
 		modelMatrix.setToTranslation(position);
-		modelMatrix.scale(scale,scale,scale);
 		box.set(meshbox);
 		box.mul(modelMatrix);
 	}
 	public void addMovement(Vector3 movement) {
 		position.add(movement);
 		modelMatrix.setToTranslation(position);
-		modelMatrix.scale(scale,scale,scale);
 		box.set(meshbox);
 		box.mul(modelMatrix);
 	}
