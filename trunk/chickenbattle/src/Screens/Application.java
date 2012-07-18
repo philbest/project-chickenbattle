@@ -16,6 +16,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
@@ -41,6 +42,7 @@ public class Application extends Screen implements InputProcessor{
 
 	Vector3 movement;
 	GameClient client;
+	public int clientid;
 	public Player[] players;
 	float forceUp;
 	boolean jumping;
@@ -71,6 +73,7 @@ public class Application extends Screen implements InputProcessor{
 			players = new Player[10];
 			client = new GameClient();
 			System.out.println("Client created");
+			clientid = client.id;
 		}
 		Gdx.input.setInputProcessor(this);
 	}
@@ -303,6 +306,8 @@ public class Application extends Screen implements InputProcessor{
 			ch.weapon = ch.inventory.get(1).weaponID;
 		} else if (Input.Keys.NUM_3 == arg0) {
 			ch.weapon = ch.inventory.get(2).weaponID;
+		}else if (Input.Keys.NUM_9 == arg0){
+			ch.setPos(startpos.x,startpos.y,startpos.z);
 		}
 		return false;
 	}
@@ -337,6 +342,10 @@ public class Application extends Screen implements InputProcessor{
 			int pointX = (int) point.x;
 			int pointY = (int) point.y;
 			int pointZ = (int) point.z;
+			
+			
+			recoil();
+			
 			if(multiplayer){		
 				client.sendBullet(point,direction);
 			}
@@ -364,11 +373,18 @@ public class Application extends Screen implements InputProcessor{
 					pointY = (int) point.y;
 					pointZ = (int) point.z;
 					if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-						for (Chunk c : map.chunks) {
+						for (int i = 0; i < map.chunks.size; i++){
+							Chunk c = map.chunks.get(i);
 							if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-								c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.grass;
-								c.rebuildChunk();
-								break;
+								if(multiplayer){
+									client.sendChunkUpdate(i, pointX, pointY, pointZ, Map.chunkSize, 1);
+									//								System.out.println("mprevmoce");
+								}
+								else{
+									c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.grass;
+									c.rebuildChunk();
+									break;
+								}
 							}		
 						}
 					}
@@ -427,6 +443,26 @@ public class Application extends Screen implements InputProcessor{
 		cam.rotate(angleLeft, 0, 1, 0);
 		cam.update();
 		return false;
+	}
+	
+	private void recoil(){
+		if(ch.weapon == Weapon.ak){
+			cam.direction.set(0,0,-1);
+			cam.up.set(0,1,0);
+			angleUP += MathUtils.random(0, 2);;
+			angleLeft += MathUtils.random(-1, 1);
+			cam.rotate(angleUP, 1, 0, 0);
+			cam.rotate(angleLeft, 0, 1, 0);
+			cam.update();
+		}
+		else if(ch.weapon == Weapon.gun ){
+			cam.direction.set(0,0,-1);
+			cam.up.set(0,1,0);
+			angleUP += 2;
+			cam.rotate(angleUP, 1, 0, 0);
+			cam.rotate(angleLeft, 0, 1, 0);
+			cam.update();
+		}
 	}
 	@Override
 	public void enter() {
