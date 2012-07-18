@@ -27,17 +27,13 @@ public class Chunk {
 		for (int x2 = 0; x2 < Map.chunkSize; x2++) {
 			for (int z2 = 0; z2 < Map.chunkSize; z2++) {
 				for (int y2 = 0; y2 < Map.chunkSize; y2++) {
-					//for (int y2 = 0; y2 < Map.heightmap.elevation(x2%128, z2%128)*Map.y; y2++) {
-					if (y2 == 0)
+					if (x2 == 0 || y2 == 0)
 						map[x2][y2][z2] = new Voxel(Voxel.grass);
 					else
 						map[x2][y2][z2] = new Voxel(Voxel.nothing);	
 				}
 			}
 		}
-
-		map[5][1][5].id = Voxel.grass;
-		map[5][2][5].id = Voxel.grass;
 	}
 
 	public int compareTo(Object arg0) {
