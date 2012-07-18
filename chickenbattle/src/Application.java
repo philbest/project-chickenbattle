@@ -70,9 +70,12 @@ public class Application implements InputProcessor{
 	public void update() {
 		Gdx.input.setCursorCatched(true);
 		map.update();
-//		if(client.dead){
-//			ch.setPos(startpos.x,startpos.y,startpos.z);
-//		}
+		ch.inventory.get(ch.weapon).update();
+		//		if(client.dead){
+		//			ch.setPos(startpos.x,startpos.y,startpos.z);
+		//		}
+		if (Gdx.input.isTouched())
+			touchDown(draggedX, draggedY, 0, 0);
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			oldPos.set(ch.position);
 			movement.set(cam.direction.x,0,cam.direction.z);
@@ -190,6 +193,9 @@ public class Application implements InputProcessor{
 			}
 			ch.position.set(oldPos);
 		}
+		if (Gdx.input.isKeyPressed(Input.Keys.R)) {
+			ch.inventory.get(ch.weapon).reload();
+		}
 		if (jumping) {
 			oldPos.set(ch.position);
 			movement.set(0,Gdx.graphics.getDeltaTime()*10*forceUp,0);
@@ -253,14 +259,6 @@ public class Application implements InputProcessor{
 			send = true;
 		}
 
-		if (ch.weapon == Weapon.ak && Gdx.input.isTouched()) {
-			timer+= Gdx.graphics.getDeltaTime()*1000;
-			if (timer > 50) {
-				timer = 0;
-				touchDown(draggedX,draggedY,0,0);
-			}
-		}
-
 		if(multiplayer){
 			players = client.getPlayers();
 			if(players[client.id] != null){	
@@ -315,76 +313,74 @@ public class Application implements InputProcessor{
 	}
 	@Override
 	public boolean touchDown(int arg0, int arg1, int arg2, int arg3) {
-		float range = 0;
-		Vector3 point = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).origin);
-		Vector3 direction = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).direction);
-		direction.nor();
-		direction.mul(0.5f);
-		from.set(point);
-		to.set(direction).mul(100);
-		boolean hit = false;
-		int pointX = (int) point.x;
-		int pointY = (int) point.y;
-		int pointZ = (int) point.z;
-		if(multiplayer){		
-			client.sendBullet(point,direction);
-		}
-		while (!hit && range < 200) {
-			range += direction.len();
-			point.add(direction);
-			pointX = (int) point.x;
-			pointY = (int) point.y;
-			pointZ = (int) point.z;
-			if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {		
-				for (Chunk c : map.chunks) {
-					if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-						if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
-							hit = true;
-							//							System.out.println("hit" + pointX + " " + pointY + " " + pointZ);
-						}
-						break;
-					}
-				}
+		if (ch.inventory.get(ch.weapon).shoot()) {
+			float range = 0;
+			Vector3 point = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).origin);
+			Vector3 direction = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).direction);
+			from.set(point);
+			to.set(from);
+			direction.mul(100);
+			to.add(direction);
+			direction.nor();
+			direction.mul(0.5f);
+			boolean hit = false;
+			int pointX = (int) point.x;
+			int pointY = (int) point.y;
+			int pointZ = (int) point.z;
+			if(multiplayer){		
+				client.sendBullet(point,direction);
 			}
-		}
-		if (hit) {
-			if (ch.weapon == Weapon.block) {
-				point.sub(direction);
+			while (!hit && range < 200) {
+				range += direction.len();
+				point.add(direction);
 				pointX = (int) point.x;
 				pointY = (int) point.y;
 				pointZ = (int) point.z;
-				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
+				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {		
 					for (Chunk c : map.chunks) {
 						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.grass;
-							c.rebuildChunk();
+							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
+								hit = true;
+							}
 							break;
-						}		
-					}
-				}
-			} else {
-				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-					//					System.out.println("in map");
-
-					for (int i = 0; i < map.chunks.size; i++){
-						Chunk c = map.chunks.get(i);
-						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							//							System.out.println("HIT");
-							if(multiplayer){
-								client.sendChunkUpdate(i, pointX, pointY, pointZ, Map.chunkSize, 0);
-								//								System.out.println("mprevmoce");
-							}
-							else{
-								c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.nothing;
-								c.rebuildChunk();
-								break;
-							}
 						}
-
 					}
 				}
 			}
+			if (hit) {
+				if (ch.weapon == Weapon.block) {
+					point.sub(direction);
+					pointX = (int) point.x;
+					pointY = (int) point.y;
+					pointZ = (int) point.z;
+					if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
+						for (Chunk c : map.chunks) {
+							if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
+								c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.grass;
+								c.rebuildChunk();
+								break;
+							}		
+						}
+					}
+				} else {
+					if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
+						for (int i = 0; i < map.chunks.size; i++){
+							Chunk c = map.chunks.get(i);
+							if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
+								if(multiplayer){
+									client.sendChunkUpdate(i, pointX, pointY, pointZ, Map.chunkSize, 0);
+								} else {
+									c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.nothing;
+									c.rebuildChunk();
+									break;
+								}
+							}
 
+						}
+					}
+				}
+
+			}
 		}
 		return false;
 	}

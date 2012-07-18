@@ -1,8 +1,5 @@
 
 import com.badlogic.gdx.graphics.Mesh;
-import com.badlogic.gdx.graphics.VertexAttribute;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.FloatArray;
@@ -14,7 +11,7 @@ public class Chunk {
 	BoundingBox bounds;
 	public int x, y, z;
 	float distance;
-	boolean running;
+
 	public Chunk(int x, int y, int z) {
 		this.x = x;
 		this.y = y;
@@ -45,7 +42,6 @@ public class Chunk {
 		int chunkX = x;
 		int chunkY = y;
 		int chunkZ = z;
-		running = true;
 		if (chunkMesh != null) {
 			chunkMesh.dispose();
 		}
@@ -92,10 +88,10 @@ public class Chunk {
 
 		if (fa.size > 0) {
 			chunkMesh = new Mesh(true, fa.size, 0,
-					new VertexAttribute(Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE ), 
-					new VertexAttribute(Usage.Normal,3,ShaderProgram.NORMAL_ATTRIBUTE),
-					new VertexAttribute(Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE+"0"),
-					new VertexAttribute(Usage.Generic,1,"a_occlusion"));
+					VertexAttributes.position, 
+					VertexAttributes.normal,
+					VertexAttributes.textureCoords,
+					VertexAttributes.occlusion);
 			chunkMesh.setVertices(fa.items);
 			chunkMesh.calculateBoundingBox(bounds);
 			Matrix4 calcMat = StaticVariables.acquireCalcMat();
@@ -103,7 +99,6 @@ public class Chunk {
 			bounds.mul(calcMat);
 			StaticVariables.releaseSema();
 		}
-		running = false;
 	}
 	public void addTopFace(FloatArray fa, int x, int y, int z) {
 		float occlusion = 0;
