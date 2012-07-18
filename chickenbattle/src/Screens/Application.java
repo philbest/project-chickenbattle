@@ -56,7 +56,7 @@ public class Application extends Screen implements InputProcessor{
 		main = m;
 		movement = new Vector3();
 		ch = new Spelet.Character();
-		startpos = new Vector3(30,50,10);
+		startpos = new Vector3(30,60,10);
 		ch.setPos(startpos.x,startpos.y,startpos.z);
 		oldPos = new Vector3();
 		comparevec = new Vector3();
@@ -74,7 +74,7 @@ public class Application extends Screen implements InputProcessor{
 		cam.update();
 		renderer = new Renderer();
 
-		multiplayer = true;
+		multiplayer = false;
 	}
 	public void render() {
 		renderer.render(this);
@@ -93,7 +93,7 @@ public class Application extends Screen implements InputProcessor{
 			touchDown(draggedX, draggedY, 0, 0);
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			oldPos.set(ch.position);
-			movement.set(cam.direction.x,0,cam.direction.z);
+			movement.set(cam.direction.x,cam.direction.y,cam.direction.z);
 			movement.nor();
 			movement.mul(Gdx.graphics.getDeltaTime()*10);
 			ch.addMovement(movement);
@@ -209,57 +209,56 @@ public class Application extends Screen implements InputProcessor{
 			ch.position.set(oldPos);
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.R)) {
-			ch.inventory.get(ch.weapon).reload();
+			ch.inventory.get(ch.weapon).reload();		
 		}
-		if (jumping) {
-			oldPos.set(ch.position);
-			movement.set(0,Gdx.graphics.getDeltaTime()*10*forceUp,0);
-			ch.addMovement(movement);
-			for (Vector3 vec : ch.box.getCorners()) {
-				int pointX = (int) vec.x;
-				int pointY = (int) vec.y;
-				int pointZ = (int) vec.z;
-				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-					for (Chunk c : map.chunks) {
-						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
-								ch.setPos(oldPos);
-								jumping = false;
-							}		
-							break;
-						}
-					}
-				}
-				forceUp -= 2.5f*Gdx.graphics.getDeltaTime();
-				if (forceUp < 0) {
-					jumping = false;
-					forceUp = 0;
-				}
-			}
-			cam.update();
-		} else {
-			oldPos.set(ch.position);
-			movement.set(0,Gdx.graphics.getDeltaTime()*10*forceUp,0);
-			forceUp -= 2.5f*Gdx.graphics.getDeltaTime();
-			ch.addMovement(movement);
-			for (Vector3 vec : ch.box.getCorners()) {
-				int pointX = (int) vec.x;
-				int pointY = (int) vec.y;
-				int pointZ = (int) vec.z;
-				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-					for (Chunk c : map.chunks) {
-						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
-								ch.setPos(oldPos);
-								forceUp = 0;
-							}		
-							break;
-						}
-					}
-				}
-			}
-		}
-
+//		if (jumping) {
+//			oldPos.set(ch.position);
+//			movement.set(0,Gdx.graphics.getDeltaTime()*10*forceUp,0);
+//			ch.addMovement(movement);
+//			for (Vector3 vec : ch.box.getCorners()) {
+//				int pointX = (int) vec.x;
+//				int pointY = (int) vec.y;
+//				int pointZ = (int) vec.z;
+//				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
+//					for (Chunk c : map.chunks) {
+//						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
+//							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
+//								ch.setPos(oldPos);
+//								jumping = false;
+//							}		
+//							break;
+//						}
+//					}
+//				}
+//				forceUp -= 2.5f*Gdx.graphics.getDeltaTime();
+//				if (forceUp < 0) {
+//					jumping = false;
+//					forceUp = 0;
+//				}
+//			}
+//			cam.update();
+//		} else {
+//			oldPos.set(ch.position);
+//			movement.set(0,Gdx.graphics.getDeltaTime()*10*forceUp,0);
+//			forceUp -= 2.5f*Gdx.graphics.getDeltaTime();
+//			ch.addMovement(movement);
+//			for (Vector3 vec : ch.box.getCorners()) {
+//				int pointX = (int) vec.x;
+//				int pointY = (int) vec.y;
+//				int pointZ = (int) vec.z;
+//				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
+//					for (Chunk c : map.chunks) {
+//						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
+//							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
+//								ch.setPos(oldPos);
+//								forceUp = 0;
+//							}		
+//							break;
+//						}
+//					}
+//				}
+//			}
+//		}
 		//oldPos.set(cam.direction);
 		//oldPos.nor();
 		//oldPos.mul(5);
@@ -332,7 +331,20 @@ public class Application extends Screen implements InputProcessor{
 	}
 	@Override
 	public boolean scrolled(int arg0) {
-
+		int currentweapon = ch.weapon;
+		if(arg0 == -1){
+			currentweapon+=1;
+			if(currentweapon == ch.inventory.size)
+				currentweapon=0;
+			ch.weapon = ch.inventory.get(currentweapon).weaponID;
+		}
+		else if(arg0 == 1){
+			currentweapon-=1;
+			if(currentweapon == -1)
+				currentweapon=ch.inventory.size-1;
+			ch.weapon = ch.inventory.get(currentweapon).weaponID;
+		}
+		
 		return false;
 	}
 	@Override
@@ -355,7 +367,6 @@ public class Application extends Screen implements InputProcessor{
 				int pointX = (int) point.x;
 				int pointY = (int) point.y;
 				int pointZ = (int) point.z;
-
 
 				recoil();
 
@@ -418,7 +429,6 @@ public class Application extends Screen implements InputProcessor{
 							}
 						}
 					}
-
 				}
 			}
 		}
@@ -470,14 +480,14 @@ public class Application extends Screen implements InputProcessor{
 			cam.rotate(angleLeft, 0, 1, 0);
 			cam.update();
 		}
-		/*else if(ch.weapon == Weapon.gun ){
+		else if(ch.weapon == Weapon.gun ){
 			cam.direction.set(0,0,-1);
 			cam.up.set(0,1,0);
 			angleUP += 2;
 			cam.rotate(angleUP, 1, 0, 0);
 			cam.rotate(angleLeft, 0, 1, 0);
 			cam.update();
-		}*/
+		}
 	}
 	@Override
 	public void enter() {
