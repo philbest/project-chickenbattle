@@ -1,6 +1,16 @@
+package Screens;
 import network.GameClient;
 import network.Packet.BlockUpdate;
 import network.Player;
+
+
+import Map.Chunk;
+import Map.Map;
+import Map.Voxel;
+import Spelet.Cube;
+import Spelet.LightSource;
+import Spelet.Renderer;
+import Spelet.Weapon;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -10,11 +20,11 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 
-public class Application implements InputProcessor{
+public class Application extends Screen implements InputProcessor{
 	public Renderer renderer;
 	public Cube cube;
 	public Boolean send;
-	PerspectiveCamera cam;
+	public PerspectiveCamera cam;
 	int draggedX;
 	int draggedY;
 	float angleUP, angleLeft;
@@ -25,7 +35,7 @@ public class Application implements InputProcessor{
 	public Vector3 startpos;
 	public Vector3 to;
 	public Vector3 oldPos;
-	public Character ch;
+	public Spelet.Character ch;
 	public Array<BlockUpdate> chunkstoupdate;
 	public Array<Chunk> chunkstorebuild;
 
@@ -35,11 +45,11 @@ public class Application implements InputProcessor{
 	float forceUp;
 	boolean jumping;
 	int timer;
-	boolean multiplayer;
+	public boolean multiplayer;
 	int mptimer;
 	public Application(){
 		movement = new Vector3();
-		ch = new Character();
+		ch = new Spelet.Character();
 		startpos = new Vector3(10,50,10);
 		ch.setPos(startpos.x,startpos.y,startpos.z);
 		oldPos = new Vector3();
@@ -417,5 +427,10 @@ public class Application implements InputProcessor{
 		cam.rotate(angleLeft, 0, 1, 0);
 		cam.update();
 		return false;
+	}
+	@Override
+	public void enter() {
+		// TODO Auto-generated method stub
+		
 	}
 }

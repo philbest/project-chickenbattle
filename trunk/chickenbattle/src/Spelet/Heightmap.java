@@ -1,3 +1,4 @@
+package Spelet;
 
 public class Heightmap {
 

@@ -1,3 +1,4 @@
+package Spelet;
 
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;

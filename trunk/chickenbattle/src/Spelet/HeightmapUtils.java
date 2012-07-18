@@ -1,3 +1,4 @@
+package Spelet;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;

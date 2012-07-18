@@ -1,3 +1,4 @@
+package Spelet;
 
 import java.util.concurrent.Semaphore;
 

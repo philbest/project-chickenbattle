@@ -1,17 +1,6 @@
+package Spelet;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Mesh;
-import com.badlogic.gdx.graphics.g3d.keyframed.KeyframedModel;
-import com.badlogic.gdx.graphics.g3d.loaders.md5.MD5Animation;
-import com.badlogic.gdx.graphics.g3d.loaders.md5.MD5AnimationInfo;
-import com.badlogic.gdx.graphics.g3d.loaders.md5.MD5Animator;
-import com.badlogic.gdx.graphics.g3d.loaders.md5.MD5Joints;
-import com.badlogic.gdx.graphics.g3d.loaders.md5.MD5Loader;
-import com.badlogic.gdx.graphics.g3d.loaders.md5.MD5Model;
-import com.badlogic.gdx.graphics.g3d.loaders.md5.MD5Renderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
