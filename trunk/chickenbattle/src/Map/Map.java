@@ -9,8 +9,8 @@ import com.badlogic.gdx.utils.Array;
 
 
 public class Map {
-	public static final int chunkSize = 32;
-	public static final int x = chunkSize*2; // Must be multiple of chunkSize;
+	public static final int chunkSize = 64;
+	public static final int x = chunkSize*1; // Must be multiple of chunkSize;
 	public static final int y = chunkSize*1; // Must be multiple of chunkSize;
 	public static final int z = chunkSize*1; // Must be multiple of chunkSize;
 	public static Heightmap heightmap;

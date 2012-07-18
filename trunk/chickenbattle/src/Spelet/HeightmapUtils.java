@@ -31,5 +31,4 @@ public class HeightmapUtils {
 		boolean flipY = true;
 		return new Heightmap(width, height, data, flipY);
 	}
-
 }

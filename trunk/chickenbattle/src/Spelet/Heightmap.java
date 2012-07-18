@@ -6,6 +6,7 @@ public class Heightmap {
 	public final int height;
 
 	public final float[] elevations;
+	public float[] gelevations;
 
 	public final boolean flipY;
 
@@ -14,6 +15,7 @@ public class Heightmap {
 		this.height = height;
 		this.elevations = elevations;
 		this.flipY = flipY;
+		gelevations = new float[32];
 
 		if (width * height != elevations.length) {
 			throw new IllegalArgumentException("Height map dimension mismatch, width * height (" + (width * height) + ") != data.length (" + elevations.length + ")");
@@ -29,6 +31,11 @@ public class Heightmap {
 
 	// [0f, 1f]
 	public float elevation(int x, int y) {
+		return elevations[index(x, y)];
+	}
+	
+	
+	public float invertelevation(int x, int y) {
 		return elevations[index(x, y)];
 	}
 
