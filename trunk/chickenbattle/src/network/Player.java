@@ -7,6 +7,7 @@ public class Player {
 	public String name;
 	public int id;
 	public int hp;
+	public long lasthit;
 	public float posX, posY,posZ;  
 	public BoundingBox box;
 
