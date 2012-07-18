@@ -9,6 +9,7 @@ import Map.Map;
 import Map.Voxel;
 import Spelet.Cube;
 import Spelet.LightSource;
+import Spelet.Main;
 import Spelet.Renderer;
 import Spelet.Weapon;
 
@@ -49,7 +50,9 @@ public class Application extends Screen implements InputProcessor{
 	int timer;
 	public boolean multiplayer;
 	int mptimer;
-	public Application(){
+	Main main;
+	public Application(Main m){
+		main = m;
 		movement = new Vector3();
 		ch = new Spelet.Character();
 		startpos = new Vector3(10,50,10);
@@ -58,7 +61,7 @@ public class Application extends Screen implements InputProcessor{
 		comparevec = new Vector3();
 		from = new Vector3(0,0,0);
 		to = new Vector3(0,0,0);
-		light = new LightSource(-10,50,16);
+		light = new LightSource(200,500,16);
 		chunkstoupdate = new Array<BlockUpdate>();
 		chunkstorebuild = new Array<Chunk>();
 		map = new Map();
@@ -75,7 +78,6 @@ public class Application extends Screen implements InputProcessor{
 			System.out.println("Client created");
 			clientid = client.id;
 		}
-		Gdx.input.setInputProcessor(this);
 	}
 	public void render() {
 		renderer.render(this);
@@ -444,7 +446,6 @@ public class Application extends Screen implements InputProcessor{
 		cam.update();
 		return false;
 	}
-	
 	private void recoil(){
 		if(ch.weapon == Weapon.ak){
 			cam.direction.set(0,0,-1);
@@ -466,7 +467,7 @@ public class Application extends Screen implements InputProcessor{
 	}
 	@Override
 	public void enter() {
-		// TODO Auto-generated method stub
+		Gdx.input.setInputProcessor(this);
 		
 	}
 }

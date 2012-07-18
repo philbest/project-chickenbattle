@@ -1,6 +1,7 @@
 package Spelet;
 
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.g3d.loaders.md5.MD5Model;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
@@ -15,7 +16,9 @@ public class Character {
 	public Matrix4 modelMatrix;
 	public int weapon;
 	public Array<Weapon> inventory;
+	MD5Model md5model;
 	public Character() {
+		
 		inventory = new Array<Weapon>();
 		inventory.add(new Weapon(Weapon.gun));
 		inventory.add(new Weapon(Weapon.ak));

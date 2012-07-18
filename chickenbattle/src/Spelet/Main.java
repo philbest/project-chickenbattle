@@ -26,9 +26,9 @@ public class Main implements ApplicationListener{
 		Cube.initiate();
 		StaticVariables.initiate();
 		screens = new HashMap<Integer, Screen>();
-		screens.put(MAINMENU, new MainMenu());
-		screens.put(GAME, new Application());
-		activeScreen = screens.get(GAME);
+		screens.put(MAINMENU, new MainMenu(this));
+		screens.put(GAME, new Application(this));
+		activeScreen = screens.get(MAINMENU);
 		activeScreen.enter();
 		Gdx.graphics.setVSync(true);
 	}
