@@ -15,6 +15,7 @@ public class Main implements ApplicationListener{
 	
 	}
 	public void create() {
+		VertexAttributes.initiate();
 		Cube.initiate();
 		StaticVariables.initiate();
 		app = new Application();
