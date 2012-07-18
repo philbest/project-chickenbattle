@@ -14,6 +14,7 @@ import network.Packet.Update;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -110,6 +111,7 @@ public class GameClient{
 				}
 				else if(object instanceof Hit){
 					Hit response = (Hit)object;
+					players[response.id].lasthit = TimeUtils.millis();
 				}
 			}
 		});		

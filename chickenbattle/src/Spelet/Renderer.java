@@ -26,6 +26,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.TimeUtils;
 
 
 public class Renderer {
@@ -42,6 +43,7 @@ public class Renderer {
 	Texture cubeTexture;
 	Texture lightTexture;
 	Texture skysphereTexture;
+	Texture blood;
 
 	ShaderProgram simpleShader;
 	ShaderProgram particleShader;
@@ -59,6 +61,7 @@ public class Renderer {
 		lightCam.position.set(-10, 5, 16);
 		lightCam.lookAt(16, 0, 16);
 		lightCam.update();
+
 
 		shadowGenShader = new ShaderProgram(Gdx.files.internal("data/shaders/shadowgen.vert").readString(), Gdx.files
 				.internal("data/shaders/shadowgen.frag").readString());
@@ -107,6 +110,7 @@ public class Renderer {
 
 		cubeTexture = new Texture(Gdx.files.internal("data/grassmap.png"));
 		lightTexture = new Texture(Gdx.files.internal("data/light.png"));
+		blood = new Texture(Gdx.files.internal("data/blood.png"));
 		//texture av Remus tagen 2012-07-16 m�ste ge credit om ska anv�ndas
 		//http://forums.epicgames.com/threads/603122-Remus-high-resolution-skydome-texture-pack
 		skysphereTexture = new Texture(Gdx.files.internal("data/skydome.bmp"));
@@ -172,33 +176,38 @@ public class Renderer {
 	public void renderMultiplayer(Application app) {
 		for(int i = 0; i< app.players.length; i++){
 			if(app.clientid != i)
-			if(app.players[i] != null){
-				skysphereTexture.bind(0);
-				simpleShader.begin();
-				simpleShader.setUniform4fv("scene_light", app.light.color, 0, 4);
-				simpleShader.setUniformf("scene_ambient_light", 0.2f,0.2f,0.2f, 1.0f);
-				simpleShader.setUniformi("s_texture", 0);
-				cubeModel.setToTranslation(app.players[i].posX,app.players[i].posY,app.players[i].posZ);
+				if(app.players[i] != null){
 
-				modelViewProjectionMatrix.set(app.cam.combined);
-				modelViewProjectionMatrix.mul(cubeModel);
-				modelViewMatrix.set(app.cam.view);
-				modelViewMatrix.mul(cubeModel);
-				normalMatrix.set(modelViewMatrix);
-				simpleShader.setUniformMatrix("normalMatrix", normalMatrix);
-				simpleShader.setUniformMatrix("u_modelViewMatrix", modelViewMatrix);
-				simpleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
-				simpleShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
-				simpleShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
-				simpleShader.setUniformf("material_shininess", 0.5f);
-				//				simpleShader.setUniformf("dir_light",0f,1f,0f);
+					if(TimeUtils.millis() - app.players[i].lasthit >= 2000)
+						blood.bind(0);
+					else
+						skysphereTexture.bind(0);
 
-				app.cube.cubeMesh.render(simpleShader, GL20.GL_TRIANGLES);
-			}
+					simpleShader.begin();
+					simpleShader.setUniform4fv("scene_light", app.light.color, 0, 4);
+					simpleShader.setUniformf("scene_ambient_light", 0.2f,0.2f,0.2f, 1.0f);
+					simpleShader.setUniformi("s_texture", 0);
+					cubeModel.setToTranslation(app.players[i].posX,app.players[i].posY,app.players[i].posZ);
+
+					modelViewProjectionMatrix.set(app.cam.combined);
+					modelViewProjectionMatrix.mul(cubeModel);
+					modelViewMatrix.set(app.cam.view);
+					modelViewMatrix.mul(cubeModel);
+					normalMatrix.set(modelViewMatrix);
+					simpleShader.setUniformMatrix("normalMatrix", normalMatrix);
+					simpleShader.setUniformMatrix("u_modelViewMatrix", modelViewMatrix);
+					simpleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
+					simpleShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
+					simpleShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
+					simpleShader.setUniformf("material_shininess", 0.5f);
+					//				simpleShader.setUniformf("dir_light",0f,1f,0f);
+
+					app.cube.cubeMesh.render(simpleShader, GL20.GL_TRIANGLES);
+				}
 		}
 	}
 	public void renderMapChunks(Application app) {
-		
+
 		boolean onlyShadowmap;
 		if (Gdx.input.isKeyPressed(Input.Keys.M)) {
 			renderMode = 1;
@@ -237,11 +246,11 @@ public class Renderer {
 					shadowMapShader.setUniformi("s_shadowMap", 0);
 					cubeModel.setToTranslation(app.map.chunks.get(i).x*Map.chunkSize,app.map.chunks.get(i).y*Map.chunkSize,app.map.chunks.get(i).z*Map.chunkSize);
 					modelViewProjectionMatrix.set(app.cam.combined);
-				//	modelViewProjectionMatrix.mul(cubeModel);
+					//	modelViewProjectionMatrix.mul(cubeModel);
 					shadowMapShader.setUniformMatrix("u_projTrans", modelViewProjectionMatrix);
 
 					modelViewProjectionMatrix.set(lightCam.combined);
-				//	modelViewProjectionMatrix.mul(cubeModel);
+					//	modelViewProjectionMatrix.mul(cubeModel);
 					shadowMapShader.setUniformMatrix("u_lightProjTrans",modelViewProjectionMatrix);
 					shadowMapShader.setUniformf("u_color", 1, 0, 0, 1);
 
@@ -255,8 +264,8 @@ public class Renderer {
 			app.cam.up.set(lightCam.up);
 			app.cam.update();
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);                    
-//			Gdx.gl.glEnable(GL20.GL_CULL_FACE);
-//			Gdx.gl.glCullFace(GL20.GL_FRONT);
+			//			Gdx.gl.glEnable(GL20.GL_CULL_FACE);
+			//			Gdx.gl.glCullFace(GL20.GL_FRONT);
 			Gdx.gl.glDisable(GL20.GL_CULL_FACE);
 			shadowGenShader.begin();
 			for (int i = 0; i < app.map.chunks.size;i++) {

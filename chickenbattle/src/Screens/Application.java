@@ -37,10 +37,11 @@ public class Application extends Screen implements InputProcessor{
 	public Vector3 startpos;
 	public Vector3 to;
 	public Vector3 oldPos;
+	public Vector3 zoomVector;
 	public Spelet.Character ch;
 	public Array<BlockUpdate> chunkstoupdate;
 	public Array<Chunk> chunkstorebuild;
-
+	public boolean zoom;
 	Vector3 movement;
 	GameClient client;
 	public int clientid;
@@ -59,6 +60,8 @@ public class Application extends Screen implements InputProcessor{
 		ch.setPos(startpos.x,startpos.y,startpos.z);
 		oldPos = new Vector3();
 		comparevec = new Vector3();
+		zoom=false;
+		zoomVector = new Vector3();
 		from = new Vector3(0,0,0);
 		to = new Vector3(0,0,0);
 		light = new LightSource(200,500,16);
@@ -86,10 +89,10 @@ public class Application extends Screen implements InputProcessor{
 		Gdx.input.setCursorCatched(true);
 		map.update();
 		ch.inventory.get(ch.weapon).update();
-		//		if(client.dead){
-		//			ch.setPos(startpos.x,startpos.y,startpos.z);
-		//		}
-		if (Gdx.input.isTouched())
+		if(multiplayer && client.dead){
+			ch.setPos(startpos.x,startpos.y,startpos.z);
+		}
+		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
 			touchDown(draggedX, draggedY, 0, 0);
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			oldPos.set(ch.position);
@@ -267,6 +270,13 @@ public class Application extends Screen implements InputProcessor{
 		//movement.sub(oldPos);
 		movement.add(0,2,0);
 		cam.position.set(movement);
+		if(zoom){
+			zoomVector.set(cam.direction);
+			cam.position.add(zoomVector.mul(10f));
+		}    
+		else{
+			cam.position.set(movement);
+		}
 		cam.update();
 		mptimer+= Gdx.graphics.getDeltaTime()*1000;
 		if(mptimer > 60){
@@ -330,84 +340,89 @@ public class Application extends Screen implements InputProcessor{
 	}
 	@Override
 	public boolean touchDown(int arg0, int arg1, int arg2, int arg3) {
-		if (ch.inventory.get(ch.weapon).shoot()) {
-			float range = 0;
-			Vector3 point = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).origin);
-			Vector3 direction = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).direction);
-			from.set(point);
-			to.set(from);
-			direction.mul(100);
-			to.add(direction);
-			direction.nor();
-			direction.mul(0.5f);
-			boolean hit = false;
-			int pointX = (int) point.x;
-			int pointY = (int) point.y;
-			int pointZ = (int) point.z;
-			
-			
-			recoil();
-			
-			if(multiplayer){		
-				client.sendBullet(point,direction);
-			}
-			while (!hit && range < 200) {
-				range += direction.len();
-				point.add(direction);
-				pointX = (int) point.x;
-				pointY = (int) point.y;
-				pointZ = (int) point.z;
-				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {		
-					for (Chunk c : map.chunks) {
-						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
-								hit = true;
-							}
-							break;
-						}
-					}
+		if(arg3 == Input.Buttons.RIGHT ){
+			zoom = true;
+		}
+		else{
+			if (ch.inventory.get(ch.weapon).shoot()) {
+				float range = 0;
+				Vector3 point = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).origin);
+				Vector3 direction = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).direction);
+				from.set(point);
+				to.set(from);
+				direction.mul(100);
+				to.add(direction);
+				direction.nor();
+				direction.mul(0.5f);
+				boolean hit = false;
+				int pointX = (int) point.x;
+				int pointY = (int) point.y;
+				int pointZ = (int) point.z;
+
+
+				recoil();
+
+				if(multiplayer){		
+					client.sendBullet(point,direction);
 				}
-			}
-			if (hit) {
-				if (ch.weapon == Weapon.block) {
-					point.sub(direction);
+				while (!hit && range < 200) {
+					range += direction.len();
+					point.add(direction);
 					pointX = (int) point.x;
 					pointY = (int) point.y;
 					pointZ = (int) point.z;
-					if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-						for (int i = 0; i < map.chunks.size; i++){
-							Chunk c = map.chunks.get(i);
+					if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {		
+						for (Chunk c : map.chunks) {
 							if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-								if(multiplayer){
-									client.sendChunkUpdate(i, pointX, pointY, pointZ, Map.chunkSize, 1);
-									//								System.out.println("mprevmoce");
+								if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
+									hit = true;
 								}
-								else{
-									c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.grass;
-									c.rebuildChunk();
-									break;
-								}
-							}		
-						}
-					}
-				} else {
-					if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-						for (int i = 0; i < map.chunks.size; i++){
-							Chunk c = map.chunks.get(i);
-							if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-								if(multiplayer){
-									client.sendChunkUpdate(i, pointX, pointY, pointZ, Map.chunkSize, 0);
-								} else {
-									c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.nothing;
-									c.rebuildChunk();
-									break;
-								}
+								break;
 							}
-
 						}
 					}
 				}
+				if (hit) {
+					if (ch.weapon == Weapon.block) {
+						point.sub(direction);
+						pointX = (int) point.x;
+						pointY = (int) point.y;
+						pointZ = (int) point.z;
+						if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
+							for (int i = 0; i < map.chunks.size; i++){
+								Chunk c = map.chunks.get(i);
+								if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
+									if(multiplayer){
+										client.sendChunkUpdate(i, pointX, pointY, pointZ, Map.chunkSize, 1);
+										//								System.out.println("mprevmoce");
+									}
+									else{
+										c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.grass;
+										c.rebuildChunk();
+										break;
+									}
+								}		
+							}
+						}
+					} else {
+						if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
+							for (int i = 0; i < map.chunks.size; i++){
+								Chunk c = map.chunks.get(i);
+								if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
+									if(multiplayer){
+										client.sendChunkUpdate(i, pointX, pointY, pointZ, Map.chunkSize, 0);
+									} else {
+										c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.nothing;
+										c.rebuildChunk();
+										break;
+									}
+								}
 
+							}
+						}
+					}
+
+				}
 			}
 		}
 		return false;
@@ -419,7 +434,9 @@ public class Application extends Screen implements InputProcessor{
 	}
 	@Override
 	public boolean touchUp(int arg0, int arg1, int arg2, int arg3) {
-		// TODO Auto-generated method stub
+		if(arg3 == Input.Buttons.RIGHT ){
+			zoom = false;
+		}
 		return false;
 	}
 	@Override
@@ -456,18 +473,18 @@ public class Application extends Screen implements InputProcessor{
 			cam.rotate(angleLeft, 0, 1, 0);
 			cam.update();
 		}
-		else if(ch.weapon == Weapon.gun ){
+		/*else if(ch.weapon == Weapon.gun ){
 			cam.direction.set(0,0,-1);
 			cam.up.set(0,1,0);
 			angleUP += 2;
 			cam.rotate(angleUP, 1, 0, 0);
 			cam.rotate(angleLeft, 0, 1, 0);
 			cam.update();
-		}
+		}*/
 	}
 	@Override
 	public void enter() {
 		Gdx.input.setInputProcessor(this);
-		
+
 	}
 }
