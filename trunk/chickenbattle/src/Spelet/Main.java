@@ -2,6 +2,7 @@ package Spelet;
 import java.util.HashMap;
 
 import Screens.Application;
+import Screens.Lobby;
 import Screens.MainMenu;
 import Screens.Screen;
 
@@ -17,6 +18,7 @@ public class Main implements ApplicationListener{
 	public HashMap<Integer, Screen> screens;
 	public static final int MAINMENU = 0;
 	public static final int GAME = 1;
+	public static final int LOBBY = 2;
 	public Application app;
 	public Main (){
 	
@@ -28,6 +30,7 @@ public class Main implements ApplicationListener{
 		screens = new HashMap<Integer, Screen>();
 		screens.put(MAINMENU, new MainMenu(this));
 		screens.put(GAME, new Application(this));
+		screens.put(LOBBY, new Lobby(this));
 		activeScreen = screens.get(MAINMENU);
 		activeScreen.enter();
 		Gdx.graphics.setVSync(true);

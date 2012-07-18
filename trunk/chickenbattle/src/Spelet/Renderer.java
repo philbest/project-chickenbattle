@@ -18,7 +18,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.loaders.ModelLoaderRegistry;
 import com.badlogic.gdx.graphics.g3d.loaders.obj.ObjLoader;
+import com.badlogic.gdx.graphics.g3d.materials.Material;
+import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.model.keyframe.KeyframedAnimation;
+import com.badlogic.gdx.graphics.g3d.model.keyframe.KeyframedModel;
+import com.badlogic.gdx.graphics.g3d.model.keyframe.KeyframedSubMesh;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix3;
@@ -45,7 +51,7 @@ public class Renderer {
 	Texture skysphereTexture;
 	Texture blood;
 
-	ShaderProgram simpleShader;
+	ShaderProgram simpleShader,charShader;
 	ShaderProgram particleShader;
 	ShaderProgram skysphereShader;
 
@@ -55,6 +61,11 @@ public class Renderer {
 	ShaderProgram shadowMapShader;
 	int renderMode;
 	PerspectiveCamera lightCam;
+	
+	private KeyframedModel charModel;
+	private KeyframedAnimation anim;
+	private Texture modelTexture = null;
+	private float animTime = 0;
 	public void initiateShadows() {
 		shadowMap = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 		lightCam = new PerspectiveCamera(67, shadowMap.getWidth(), shadowMap.getHeight());
@@ -93,6 +104,13 @@ public class Renderer {
 		if (!simpleShader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile simple shader: "
 					+ simpleShader.getLog());
+		
+		charShader = new ShaderProgram(Gdx.files.internal(
+		"data/shaders/charsimple.vert").readString(), Gdx.files.internal(
+		"data/shaders/charsimple.frag").readString());
+		if (!simpleShader.isCompiled())
+			throw new GdxRuntimeException("Couldn't compile simple shader: "
+					+ charShader.getLog());
 
 		particleShader = new ShaderProgram(Gdx.files.internal(
 		"data/shaders/particleShader.vert").readString(), Gdx.files.internal(
@@ -114,6 +132,20 @@ public class Renderer {
 		//texture av Remus tagen 2012-07-16 m�ste ge credit om ska anv�ndas
 		//http://forums.epicgames.com/threads/603122-Remus-high-resolution-skydome-texture-pack
 		skysphereTexture = new Texture(Gdx.files.internal("data/skydome.bmp"));
+
+		charModel = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/TankTracks.md2"));
+		modelTexture = new Texture(Gdx.files.internal("data/Test.png"), Format.RGB565, true);
+
+
+		charModel.setMaterial(new Material("s_texture", new TextureAttribute(modelTexture, 0, "a_texCoord2")));
+		anim = (KeyframedAnimation)charModel.getAnimations()[0];
+		System.out.println("NORMALS?" + hasNormals());
+	}
+	private boolean hasNormals () {
+		for (KeyframedSubMesh mesh : charModel.subMeshes) {
+			if (mesh.mesh.getVertexAttribute(Usage.Normal) == null) return false;
+		}
+		return true;
 	}
 	public void render(Application app) {
 		app.cam.update();
@@ -131,7 +163,7 @@ public class Renderer {
 			renderMultiplayer(app);
 		}
 		renderVector(app.from,app.to,app);
-		//renderCharacter(app);
+		renderCharacter(app);
 		for (int i = 0; i < app.map.chunks.size;i++) {
 			if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0) {
 				this.renderBoundingBox(app,app.map.chunks.get(i).bounds);
@@ -161,16 +193,22 @@ public class Renderer {
 		skysphere.render(skysphereShader, GL20.GL_TRIANGLES);
 		skysphereShader.end();
 	}
-
 	public void renderCharacter(Application app) {
 		lightTexture.bind(0);
-		simpleShader.begin();
-		simpleShader.setUniformi("s_texture", 0);
+		charShader.begin();
+		charShader.setUniformi("s_texture", 0);
 		modelViewProjectionMatrix.set(app.cam.combined);
 		modelViewProjectionMatrix.mul(app.ch.modelMatrix);
-		simpleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
-		app.cube.cubeMesh.render(simpleShader, GL20.GL_TRIANGLES);
-		simpleShader.end();
+		modelViewProjectionMatrix.scale(0.1f,0.1f,0.1f);
+		charShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
+		animTime += Gdx.graphics.getDeltaTime()*10;
+		if (animTime >= anim.totalDuration) {
+			animTime -= ((int)(animTime/anim.totalDuration))*anim.totalDuration;
+		}
+		charModel.setAnimation(anim.name, animTime, false);
+		charModel.render(charShader);
+		
+		charShader.end();
 	}
 
 	public void renderMultiplayer(Application app) {
