@@ -19,6 +19,7 @@ public class Main implements ApplicationListener{
 		StaticVariables.initiate();
 		app = new Application();
 		Gdx.graphics.setVSync(true);
+	//	Gdx.graphics.setDisplayMode(800,600,true);
 	}
 
 
