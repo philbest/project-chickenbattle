@@ -177,7 +177,6 @@ public class Renderer {
 		for(int i = 0; i< app.players.length; i++){
 			if(app.clientid != i)
 				if(app.players[i] != null){
-
 					if(TimeUtils.millis() - app.players[i].lasthit <= 2000)
 						blood.bind(0);
 					else

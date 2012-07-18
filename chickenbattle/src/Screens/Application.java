@@ -79,7 +79,6 @@ public class Application extends Screen implements InputProcessor{
 			players = new Player[10];
 			client = new GameClient();
 			System.out.println("Client created");
-			clientid = client.id;
 		}
 	}
 	public void render() {
@@ -87,6 +86,7 @@ public class Application extends Screen implements InputProcessor{
 	}
 	public void update() {
 		Gdx.input.setCursorCatched(true);
+		clientid = client.id;
 		map.update();
 		ch.inventory.get(ch.weapon).update();
 		if(multiplayer && client.dead){
