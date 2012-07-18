@@ -178,7 +178,7 @@ public class Renderer {
 			if(app.clientid != i)
 				if(app.players[i] != null){
 
-					if(TimeUtils.millis() - app.players[i].lasthit >= 2000)
+					if(TimeUtils.millis() - app.players[i].lasthit <= 2000)
 						blood.bind(0);
 					else
 						skysphereTexture.bind(0);

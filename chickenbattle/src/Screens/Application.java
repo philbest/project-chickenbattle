@@ -56,7 +56,7 @@ public class Application extends Screen implements InputProcessor{
 		main = m;
 		movement = new Vector3();
 		ch = new Spelet.Character();
-		startpos = new Vector3(10,50,10);
+		startpos = new Vector3(30,50,10);
 		ch.setPos(startpos.x,startpos.y,startpos.z);
 		oldPos = new Vector3();
 		comparevec = new Vector3();
@@ -74,7 +74,7 @@ public class Application extends Screen implements InputProcessor{
 		cam.update();
 		renderer = new Renderer();
 
-		multiplayer = false;
+		multiplayer = true;
 		if(multiplayer){
 			players = new Player[10];
 			client = new GameClient();
