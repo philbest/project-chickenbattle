@@ -1,3 +1,5 @@
+package Spelet;
+
 
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;

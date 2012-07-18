@@ -1,8 +1,12 @@
+package Spelet;
 
 
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import Map.Map;
+import Screens.Application;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;

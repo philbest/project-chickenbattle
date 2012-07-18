@@ -1,5 +1,9 @@
+package Spelet;
+import java.util.HashMap;
 
-
+import Screens.Application;
+import Screens.MainMenu;
+import Screens.Screen;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -9,7 +13,10 @@ import com.badlogic.gdx.graphics.GL20;
 
 
 public class Main implements ApplicationListener{
-
+	public Screen activeScreen;
+	public HashMap<Integer, Screen> screens;
+	public static final int MAINMENU = 0;
+	public static final int GAME = 1;
 	public Application app;
 	public Main (){
 	
@@ -18,13 +25,19 @@ public class Main implements ApplicationListener{
 		VertexAttributes.initiate();
 		Cube.initiate();
 		StaticVariables.initiate();
-		app = new Application();
+		screens = new HashMap<Integer, Screen>();
+		screens.put(MAINMENU, new MainMenu());
+		screens.put(GAME, new Application());
+		activeScreen = screens.get(GAME);
+		activeScreen.enter();
 		Gdx.graphics.setVSync(true);
-	//	Gdx.graphics.setDisplayMode(800,600,true);
 	}
 
 
 	public void setScreen(int id) {
+		activeScreen.leave();
+		activeScreen = screens.get(id);
+		activeScreen.enter();
 	}
 
 	public void dispose() {
@@ -37,8 +50,8 @@ public class Main implements ApplicationListener{
 //		System.out.println(Gdx.graphics.getFramesPerSecond());
 		GL20 gl = Gdx.graphics.getGL20();
 		gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		app.update();
-		app.render();
+		activeScreen.update();
+		activeScreen.render();
 	}
 
 	public void resize(int arg0, int arg1) {

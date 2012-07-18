@@ -1,3 +1,4 @@
+package Map;
 
 public class Voxel {
 	public static final int nothing = 0;

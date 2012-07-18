@@ -1,3 +1,8 @@
+package Map;
+
+
+import Spelet.StaticVariables;
+import Spelet.VertexAttributes;
 
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.math.Matrix4;
@@ -7,8 +12,8 @@ import com.badlogic.gdx.utils.FloatArray;
 
 public class Chunk {
 	public Voxel[][][] map;
-	Mesh chunkMesh;
-	BoundingBox bounds;
+	public Mesh chunkMesh;
+	public BoundingBox bounds;
 	public int x, y, z;
 	float distance;
 

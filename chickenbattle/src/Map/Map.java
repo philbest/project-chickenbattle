@@ -1,3 +1,8 @@
+package Map;
+
+
+import Spelet.Heightmap;
+import Spelet.HeightmapUtils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
