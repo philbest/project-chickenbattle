@@ -133,7 +133,7 @@ public class Renderer {
 		//http://forums.epicgames.com/threads/603122-Remus-high-resolution-skydome-texture-pack
 		skysphereTexture = new Texture(Gdx.files.internal("data/skydome.bmp"));
 
-		charModel = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/TankTracks.md2"));
+		charModel = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/test.md2"));
 		modelTexture = new Texture(Gdx.files.internal("data/Test.png"), Format.RGB565, true);
 
 
@@ -199,9 +199,9 @@ public class Renderer {
 		charShader.setUniformi("s_texture", 0);
 		modelViewProjectionMatrix.set(app.cam.combined);
 		modelViewProjectionMatrix.mul(app.ch.modelMatrix);
-		modelViewProjectionMatrix.scale(0.1f,0.1f,0.1f);
+		modelViewProjectionMatrix.scale(20f,20f,20f);
 		charShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
-		animTime += Gdx.graphics.getDeltaTime()*10;
+		animTime += Gdx.graphics.getDeltaTime();
 		if (animTime >= anim.totalDuration) {
 			animTime -= ((int)(animTime/anim.totalDuration))*anim.totalDuration;
 		}
