@@ -171,6 +171,7 @@ public class Renderer {
 
 	public void renderMultiplayer(Application app) {
 		for(int i = 0; i< app.players.length; i++){
+			if(app.clientid != i)
 			if(app.players[i] != null){
 				skysphereTexture.bind(0);
 				simpleShader.begin();
