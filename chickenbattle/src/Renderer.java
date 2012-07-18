@@ -13,7 +13,6 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.loaders.obj.ObjLoader;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -45,16 +44,15 @@ public class Renderer {
 	ShaderProgram skysphereShader;
 
 	SpriteBatch sb;
-	boolean hasShadows;
 	FrameBuffer shadowMap;
 	ShaderProgram shadowGenShader;
 	ShaderProgram shadowMapShader;
-
+	int renderMode;
 	PerspectiveCamera lightCam;
 	public void initiateShadows() {
 		shadowMap = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 		lightCam = new PerspectiveCamera(67, shadowMap.getWidth(), shadowMap.getHeight());
-		lightCam.position.set(-20, 10, 16);
+		lightCam.position.set(-10, 5, 16);
 		lightCam.lookAt(16, 0, 16);
 		lightCam.update();
 
@@ -195,15 +193,22 @@ public class Renderer {
 		}
 	}
 	public void renderMapChunks(Application app) {
+		
+		boolean onlyShadowmap;
 		if (Gdx.input.isKeyPressed(Input.Keys.M)) {
-			hasShadows = false;
+			renderMode = 1;
 		} else if (Gdx.input.isKeyPressed(Input.Keys.N)) {
-			hasShadows = true;
+			renderMode = 2;
+		} else if (Gdx.input.isKeyPressed(Input.Keys.B)) {
+			renderMode = 3;
+		} else if (Gdx.input.isKeyPressed(Input.Keys.V)) {
+			renderMode = 4;
 		}
-		if (this.hasShadows) {
+		if (renderMode == 2) {
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);                    
-			Gdx.gl.glEnable(GL20.GL_CULL_FACE);
-			Gdx.gl.glCullFace(GL20.GL_FRONT);
+			//Gdx.gl.glEnable(GL20.GL_CULL_FACE);
+			//Gdx.gl.glCullFace(GL20.GL_FRONT);
+			Gdx.gl.glDisable(GL20.GL_CULL_FACE);
 			shadowMap.begin();
 			shadowGenShader.begin();
 			for (int i = 0; i < app.map.chunks.size;i++) {
@@ -227,11 +232,11 @@ public class Renderer {
 					shadowMapShader.setUniformi("s_shadowMap", 0);
 					cubeModel.setToTranslation(app.map.chunks.get(i).x*Map.chunkSize,app.map.chunks.get(i).y*Map.chunkSize,app.map.chunks.get(i).z*Map.chunkSize);
 					modelViewProjectionMatrix.set(app.cam.combined);
-					modelViewProjectionMatrix.mul(cubeModel);
+				//	modelViewProjectionMatrix.mul(cubeModel);
 					shadowMapShader.setUniformMatrix("u_projTrans", modelViewProjectionMatrix);
 
 					modelViewProjectionMatrix.set(lightCam.combined);
-					modelViewProjectionMatrix.mul(cubeModel);
+				//	modelViewProjectionMatrix.mul(cubeModel);
 					shadowMapShader.setUniformMatrix("u_lightProjTrans",modelViewProjectionMatrix);
 					shadowMapShader.setUniformf("u_color", 1, 0, 0, 1);
 
@@ -239,6 +244,72 @@ public class Renderer {
 				}
 			}
 			shadowMapShader.end();
+		} else if (renderMode == 3) {
+			app.cam.position.set(lightCam.position);
+			app.cam.direction.set(lightCam.direction);
+			app.cam.up.set(lightCam.up);
+			app.cam.update();
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);                    
+//			Gdx.gl.glEnable(GL20.GL_CULL_FACE);
+//			Gdx.gl.glCullFace(GL20.GL_FRONT);
+			Gdx.gl.glDisable(GL20.GL_CULL_FACE);
+			shadowGenShader.begin();
+			for (int i = 0; i < app.map.chunks.size;i++) {
+				if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0 && app.cam.frustum.boundsInFrustum(app.map.chunks.get(i).bounds)) {
+					cubeModel.setToTranslation(app.map.chunks.get(i).x*Map.chunkSize,app.map.chunks.get(i).y*Map.chunkSize,app.map.chunks.get(i).z*Map.chunkSize);
+					modelViewProjectionMatrix.set(lightCam.combined);
+					modelViewProjectionMatrix.mul(cubeModel);
+					shadowGenShader.setUniformMatrix("u_projTrans", modelViewProjectionMatrix);
+					app.map.chunks.get(i).chunkMesh.render(shadowGenShader, GL20.GL_TRIANGLES);
+				}
+			}			
+			shadowGenShader.end();
+		} else if (renderMode == 4) {
+			app.cam.position.set(lightCam.position);
+			app.cam.direction.set(lightCam.direction);
+			app.cam.up.set(lightCam.up);
+			app.cam.update();
+			cubeTexture.bind(0);
+			simpleShader.begin();
+			simpleShader.setUniform4fv("scene_light", app.light.color, 0, 4);
+			simpleShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
+			//		Vector3 temp = new Vector3();
+			//		for (int i = 0; i < app.map.chunks.size; i++) {
+			//			Chunk c = app.map.chunks.get(i);
+			//			temp.set(c.x,c.y,c.z);
+			//			temp.sub(app.cam.position);
+			//			c.distance = temp.len();
+			//		}
+			//app.map.chunks.sort();
+			int vertices = 0;
+			for (int i = 0; i < app.map.chunks.size;i++) {
+				if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0 && app.cam.frustum.boundsInFrustum(app.map.chunks.get(i).bounds)) {
+					//if (app.map.chunks[x][y][z].chunkMesh != null && app.map.chunks[x][y][z].chunkMesh.getNumVertices() > 0) {
+					simpleShader.setUniformi("s_texture", 0);
+					cubeModel.setToTranslation(app.map.chunks.get(i).x*Map.chunkSize,app.map.chunks.get(i).y*Map.chunkSize,app.map.chunks.get(i).z*Map.chunkSize);
+
+					modelViewProjectionMatrix.set(app.cam.combined);
+					modelViewProjectionMatrix.mul(cubeModel);
+					modelViewMatrix.set(app.cam.view);
+					modelViewMatrix.mul(cubeModel);
+					normalMatrix.set(modelViewMatrix);
+					simpleShader.setUniformMatrix("normalMatrix", normalMatrix);
+					simpleShader.setUniformMatrix("u_modelViewMatrix", modelViewMatrix);
+					simpleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
+					simpleShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
+					simpleShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
+					simpleShader.setUniformf("material_shininess", 0.5f);
+					simpleShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
+
+
+					//simpleShader.setUniformf("dir_light",0,0,0);
+
+					app.map.chunks.get(i).chunkMesh.render(simpleShader, GL20.GL_TRIANGLES);
+					vertices+=app.map.chunks.get(i).chunkMesh.getNumVertices();
+				}
+			}
+			//System.out.println("Vertices: " + vertices);
+			simpleShader.end();
 		} else {
 			cubeTexture.bind(0);
 			simpleShader.begin();

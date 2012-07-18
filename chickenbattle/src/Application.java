@@ -46,7 +46,7 @@ public class Application implements InputProcessor{
 		comparevec = new Vector3();
 		from = new Vector3(0,0,0);
 		to = new Vector3(0,0,0);
-		light = new LightSource(-100,200,0);
+		light = new LightSource(-10,50,16);
 		chunkstoupdate = new Array<BlockUpdate>();
 		chunkstorebuild = new Array<Chunk>();
 		map = new Map();
@@ -69,6 +69,7 @@ public class Application implements InputProcessor{
 	}
 	public void update() {
 		Gdx.input.setCursorCatched(true);
+		map.update();
 //		if(client.dead){
 //			ch.setPos(startpos.x,startpos.y,startpos.z);
 //		}
@@ -86,7 +87,7 @@ public class Application implements InputProcessor{
 				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
 					for (Chunk c : map.chunks) {
 						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] == 1) {
+							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id == Voxel.grass) {
 								ch.setPos(oldPos);
 							}		
 							break;
@@ -109,7 +110,7 @@ public class Application implements InputProcessor{
 				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
 					for (Chunk c : map.chunks) {
 						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] == 1) {
+							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id == Voxel.grass) {
 								ch.setPos(oldPos);
 							}		
 							break;
@@ -133,7 +134,7 @@ public class Application implements InputProcessor{
 				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
 					for (Chunk c : map.chunks) {
 						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] == 1) {
+							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
 								ch.setPos(oldPos);
 							}		
 							break;
@@ -157,7 +158,7 @@ public class Application implements InputProcessor{
 				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
 					for (Chunk c : map.chunks) {
 						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] == 1) {
+							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
 								ch.setPos(oldPos);
 							}		
 							break;
@@ -178,7 +179,7 @@ public class Application implements InputProcessor{
 				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
 					for (Chunk c : map.chunks) {
 						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] == 1) {
+							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
 								jumping = true;
 								forceUp = 5;
 							}		
@@ -200,7 +201,7 @@ public class Application implements InputProcessor{
 				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
 					for (Chunk c : map.chunks) {
 						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] == 1) {
+							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
 								ch.setPos(oldPos);
 								jumping = false;
 							}		
@@ -227,7 +228,7 @@ public class Application implements InputProcessor{
 				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
 					for (Chunk c : map.chunks) {
 						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] == 1) {
+							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
 								ch.setPos(oldPos);
 								forceUp = 0;
 							}		
@@ -277,7 +278,7 @@ public class Application implements InputProcessor{
 			chunkstoupdate = client.getChunks();
 			for(int i=0; i < chunkstoupdate.size; i++ ){
 				Chunk c = map.chunks.get(chunkstoupdate.get(i).chunk);
-				c.map[chunkstoupdate.get(i).x-c.x*chunkstoupdate.get(i).size][chunkstoupdate.get(i).y-c.y*chunkstoupdate.get(i).size][chunkstoupdate.get(i).z-c.z*chunkstoupdate.get(i).size] = chunkstoupdate.get(i).modi;	
+				c.map[chunkstoupdate.get(i).x-c.x*chunkstoupdate.get(i).size][chunkstoupdate.get(i).y-c.y*chunkstoupdate.get(i).size][chunkstoupdate.get(i).z-c.z*chunkstoupdate.get(i).size].id = chunkstoupdate.get(i).modi;	
 				chunkstorebuild.add(c);
 			}
 
@@ -337,7 +338,7 @@ public class Application implements InputProcessor{
 			if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {		
 				for (Chunk c : map.chunks) {
 					if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-						if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] == 1) {
+						if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
 							hit = true;
 							//							System.out.println("hit" + pointX + " " + pointY + " " + pointZ);
 						}
@@ -355,7 +356,7 @@ public class Application implements InputProcessor{
 				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
 					for (Chunk c : map.chunks) {
 						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] = 1;
+							c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.grass;
 							c.rebuildChunk();
 							break;
 						}		
@@ -374,7 +375,7 @@ public class Application implements InputProcessor{
 								//								System.out.println("mprevmoce");
 							}
 							else{
-								c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] = 0;
+								c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.nothing;
 								c.rebuildChunk();
 								break;
 							}
