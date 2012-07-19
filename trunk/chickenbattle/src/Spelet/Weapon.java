@@ -50,6 +50,27 @@ public class Weapon {
 			cooldown = 500;
 		}
 	}
+	public void restart() {
+		if (weaponID == gun) {
+			maxBullets = 28;
+			magSize = 8;
+			currentBullets = 28;
+			magBullets = 8;
+			cooldown = 500;
+		} else if (weaponID == ak) {
+			maxBullets = 90;
+			currentBullets = 90;
+			magBullets = 30;
+			magSize = 30;
+			cooldown = 100;
+		} else if (weaponID == block) {
+			maxBullets = 30;
+			currentBullets = 30;
+			magBullets = 30;
+			magSize = 30;
+			cooldown = 500;
+		}
+	}
 	public void render(SpriteBatch sb) {
 		wpn.setPosition(Gdx.graphics.getWidth()-wpn.getWidth(), 0+offset);
 		wpn.draw(sb);

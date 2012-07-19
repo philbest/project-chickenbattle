@@ -34,7 +34,6 @@ public class Application extends Screen implements InputProcessor{
 	public LightSource light;
 	public Vector3 from;
 	public Vector3 comparevec;
-	public Vector3 startpos;
 	public Vector3 to;
 	public Vector3 oldPos;
 	public Spelet.Character ch;
@@ -46,8 +45,6 @@ public class Application extends Screen implements InputProcessor{
 	public int clientid;
 	public Player[] players;
 	public boolean scoreboard;
-	float forceUp;
-	boolean jumping;
 	int timer;
 	public boolean multiplayer;
 	int mptimer;
@@ -57,8 +54,7 @@ public class Application extends Screen implements InputProcessor{
 		movement = new Vector3();
 		scoreboard = false;
 		ch = new Spelet.Character();
-		startpos = new Vector3(30,60,50);
-		ch.setPos(startpos.x,startpos.y,startpos.z);
+		ch.setPos(30,60,50);
 		oldPos = new Vector3();
 		comparevec = new Vector3();
 		zoom=false;
@@ -81,189 +77,19 @@ public class Application extends Screen implements InputProcessor{
 	}
 	public void update() {
 		Gdx.input.setCursorCatched(true);
+		ch.update(this);
 		if (multiplayer) {
 			clientid = client.id;
 		}
 		map.update();
 		ch.inventory.get(ch.weapon).update();
 		if(multiplayer && client.dead){
-			ch.setPos(startpos.x,startpos.y,startpos.z);
+			ch.ressurrect();
 		}
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
 			touchDown(draggedX, draggedY, 0, 0);
-		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-			oldPos.set(ch.position);
-			movement.set(cam.direction.x,0,cam.direction.z);
-			movement.nor();
-			movement.mul(Gdx.graphics.getDeltaTime()*10);
-			ch.addMovement(movement);
-
-			for (Vector3 vec : ch.box.getCorners()) {
-				int pointX = (int) vec.x;
-				int pointY = (int) vec.y;
-				int pointZ = (int) vec.z;
-				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-					for (Chunk c : map.chunks) {
-						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id == Voxel.grass) {
-								ch.setPos(oldPos);
-							}		
-							break;
-						}
-					}
-				}
-			}
-			cam.update();
-		}
-		if (Gdx.input.isKeyPressed((Input.Keys.S))) {
-			oldPos.set(ch.position);
-			movement.set(cam.direction.x,0,cam.direction.z);
-			movement.nor();
-			movement.mul(Gdx.graphics.getDeltaTime()*10*-1);
-			ch.addMovement(movement);
-			for (Vector3 vec : ch.box.getCorners()) {
-				int pointX = (int) vec.x;
-				int pointY = (int) vec.y;
-				int pointZ = (int) vec.z;
-				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-					for (Chunk c : map.chunks) {
-						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id == Voxel.grass) {
-								ch.setPos(oldPos);
-							}		
-							break;
-						}
-					}
-				}
-			}
-			cam.update();
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-			oldPos.set(ch.position);
-			movement.set(cam.direction.x,0,cam.direction.z);
-			movement.crs(cam.up);
-			movement.nor();
-			movement.mul(Gdx.graphics.getDeltaTime()*10);
-			ch.addMovement(movement);
-			for (Vector3 vec : ch.box.getCorners()) {
-				int pointX = (int) vec.x;
-				int pointY = (int) vec.y;
-				int pointZ = (int) vec.z;
-				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-					for (Chunk c : map.chunks) {
-						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
-								ch.setPos(oldPos);
-							}		
-							break;
-						}
-					}
-				}
-			}
-			cam.update();
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-			oldPos.set(ch.position);
-			movement.set(cam.direction.x,0,cam.direction.z);
-			movement.crs(cam.up);
-			movement.nor();
-			movement.mul(Gdx.graphics.getDeltaTime()*-10);
-			ch.addMovement(movement);
-			for (Vector3 vec : ch.box.getCorners()) {
-				int pointX = (int) vec.x;
-				int pointY = (int) vec.y;
-				int pointZ = (int) vec.z;
-				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-					for (Chunk c : map.chunks) {
-						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
-								ch.setPos(oldPos);
-							}		
-							break;
-						}
-					}
-				}
-			}
-			cam.update();
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-			oldPos.set(ch.position);
-			movement.set(0,-1*Gdx.graphics.getDeltaTime()*10,0);
-			ch.addMovement(movement);
-			for (Vector3 vec : ch.box.getCorners()) {
-				int pointX = (int) vec.x;
-				int pointY = (int) vec.y;
-				int pointZ = (int) vec.z;
-				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-					for (Chunk c : map.chunks) {
-						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
-								jumping = true;
-								forceUp = 5;
-							}		
-							break;
-						}
-					}
-				}
-			}
-			ch.position.set(oldPos);
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.R)) {
-			ch.inventory.get(ch.weapon).reload();		
-		}
-		if (jumping) {
-			oldPos.set(ch.position);
-			movement.set(0,Gdx.graphics.getDeltaTime()*10*forceUp,0);
-			ch.addMovement(movement);
-			for (Vector3 vec : ch.box.getCorners()) {
-				int pointX = (int) vec.x;
-				int pointY = (int) vec.y;
-				int pointZ = (int) vec.z;
-				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-					for (Chunk c : map.chunks) {
-						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
-								ch.setPos(oldPos);
-								jumping = false;
-							}		
-							break;
-						}
-					}
-				}
-				forceUp -= 2.5f*Gdx.graphics.getDeltaTime();
-				if (forceUp < 0) {
-					jumping = false;
-					forceUp = 0;
-				}
-			}
-			cam.update();
-		} else {
-			oldPos.set(ch.position);
-			movement.set(0,Gdx.graphics.getDeltaTime()*10*forceUp,0);
-			forceUp -= 2.5f*Gdx.graphics.getDeltaTime();
-			ch.addMovement(movement);
-			for (Vector3 vec : ch.box.getCorners()) {
-				int pointX = (int) vec.x;
-				int pointY = (int) vec.y;
-				int pointZ = (int) vec.z;
-				if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-					for (Chunk c : map.chunks) {
-						if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-							if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
-								ch.setPos(oldPos);
-								forceUp = 0;
-							}		
-							break;
-						}
-					}
-				}
-			}
-		}
-		//oldPos.set(cam.direction);
-		//oldPos.nor();
-		//oldPos.mul(5);
+		
 		movement.set(ch.position);
-		//movement.sub(oldPos);
 		movement.add(0,2,0);
 		cam.position.set(movement);
 		if(zoom){
@@ -313,7 +139,7 @@ public class Application extends Screen implements InputProcessor{
 		} else if (Input.Keys.NUM_3 == arg0) {
 			ch.weapon = ch.inventory.get(2).weaponID;
 		}else if (Input.Keys.NUM_9 == arg0){
-			ch.setPos(startpos.x,startpos.y,startpos.z);
+			ch.setPos(30,60,50);
 		}
 		else if (Input.Keys.TAB == arg0){
 			scoreboard = true;
