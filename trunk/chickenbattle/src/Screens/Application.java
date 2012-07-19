@@ -84,6 +84,7 @@ public class Application extends Screen implements InputProcessor{
 		map.update();
 		ch.inventory.get(ch.weapon).update();
 		if(multiplayer && client.dead){
+			client.dead = false;
 			ch.ressurrect();
 		}
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
@@ -99,7 +100,7 @@ public class Application extends Screen implements InputProcessor{
 		}
 		cam.update();
 		mptimer+= Gdx.graphics.getDeltaTime()*1000;
-		if(mptimer > 60){
+		if(mptimer > 30){
 			mptimer = 0;
 			send = true;
 		}
