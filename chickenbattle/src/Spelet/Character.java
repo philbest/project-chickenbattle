@@ -35,7 +35,25 @@ public class Character {
 	float forceUp;
 	boolean hookshotting;
 	public KeyframedModel charModel;
+	public KeyframedModel charState;
+	public KeyframedModel charChill;
+	public KeyframedModel charDuck;
+	public KeyframedModel charWalk;
+	public KeyframedModel charDuckup;
+	public KeyframedModel charJump;
+	public KeyframedModel charLand;
+	public KeyframedModel charStrafeLeft;
+	public KeyframedModel charStrafeRight;
 	public KeyframedAnimation anim;
+	public KeyframedAnimation animState;
+	public KeyframedAnimation animChill;
+	public KeyframedAnimation animDuck;
+	public KeyframedAnimation animWalk;
+	public KeyframedAnimation animDuckup;
+	public KeyframedAnimation animJump;
+	public KeyframedAnimation animLand;
+	public KeyframedAnimation animStrafeLeft;
+	public KeyframedAnimation animStrafeRight;
 	public Texture modelTexture = null;
 	public Character() {
 		hookshotting = false;
@@ -51,24 +69,43 @@ public class Character {
 		box = new BoundingBox();
 		meshbox = new BoundingBox();
 		modelMatrix = new Matrix4();
-		
-		charModel = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_walk.md2"));
+		charChill = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_chill.md2"));
+		charDuck = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_duck.md2"));
+		charDuckup = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_duckup.md2"));
+		charWalk = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_walk.md2"));
+		charJump = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_jump.md2"));
+		charLand = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_land.md2"));
+		charStrafeLeft = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_strafeleft.md2"));
+		charStrafeRight = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_straferight.md2"));
+		charState = charChill;
+		modelTexture = new Texture(Gdx.files.internal("data/Test.png"), Format.RGB565, true);
+		charState.setMaterial(new Material("s_texture", new TextureAttribute(modelTexture, 0, "a_texCoord2")));
+		animChill = (KeyframedAnimation)charChill.getAnimations()[0];
+		animDuck = (KeyframedAnimation)charDuck.getAnimations()[0];
+		animDuckup = (KeyframedAnimation)charDuckup.getAnimations()[0];
+		animWalk = (KeyframedAnimation)charWalk.getAnimations()[0];
+		animJump = (KeyframedAnimation)charJump.getAnimations()[0];
+		animLand = (KeyframedAnimation)charLand.getAnimations()[0];
+		animStrafeLeft = (KeyframedAnimation)charStrafeLeft.getAnimations()[0];
+		animStrafeRight = (KeyframedAnimation)charStrafeRight.getAnimations()[0];
+
 		modelTexture = new Texture(Gdx.files.internal("data/md2/tmap.png"), Format.RGB565, true);
 
 
 		charModel.setMaterial(new Material("a_texCoord0", new TextureAttribute(modelTexture, 0, "s_texture")));
 		anim = (KeyframedAnimation)charModel.getAnimations()[0];
+
 		System.out.println("NORMALS?" + hasNormals());
-		model = charModel.subMeshes[0].mesh;
+		model = charState.subMeshes[0].mesh;
 	}
 	private boolean hasNormals () {
-		for (KeyframedSubMesh mesh : charModel.subMeshes) {
+		for (KeyframedSubMesh mesh : charState.subMeshes) {
 			if (mesh.mesh.getVertexAttribute(Usage.Normal) == null) return false;
 		}
 		return true;
 	}
 	public void updateModel() {
-		model = charModel.subMeshes[0].mesh;
+		model = charState.subMeshes[0].mesh;
 	}
 	public void setPos(float x, float y, float z) {
 		
@@ -105,6 +142,7 @@ public class Character {
 
 		} else {
 			if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+				charState = charWalk;
 				oldPos.set(position);
 				movement.set(app.cam.direction.x,0,app.cam.direction.z);
 				movement.nor();
@@ -128,6 +166,7 @@ public class Character {
 				}
 			}
 			if (Gdx.input.isKeyPressed((Input.Keys.S))) {
+				charState = charWalk;
 				oldPos.set(position);
 				movement.set(app.cam.direction.x,0,app.cam.direction.z);
 				movement.nor();
@@ -150,6 +189,7 @@ public class Character {
 				}
 			}
 			if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+				charState = charStrafeRight;
 				oldPos.set(position);
 				movement.set(app.cam.direction.x,0,app.cam.direction.z);
 				movement.crs(app.cam.up);
@@ -174,6 +214,7 @@ public class Character {
 
 			}
 			if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+				charState = charStrafeLeft;
 				oldPos.set(position);
 				movement.set(app.cam.direction.x,0,app.cam.direction.z);
 				movement.crs(app.cam.up);
@@ -198,6 +239,7 @@ public class Character {
 
 			}
 			if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+				charState = charJump;
 				oldPos.set(position);
 				movement.set(0,-1*Gdx.graphics.getDeltaTime()*10,0);
 				addMovement(movement);
@@ -243,12 +285,14 @@ public class Character {
 					}
 					forceUp -= 2.5f*Gdx.graphics.getDeltaTime();
 					if (forceUp < 0) {
+						charState = charLand;
 						jumping = false;
 						forceUp = 0;
 					}
 				}
 
 			} else {
+				charState = charChill;
 				oldPos.set(position);
 				movement.set(0,Gdx.graphics.getDeltaTime()*10*forceUp,0);
 				forceUp -= 2.5f*Gdx.graphics.getDeltaTime();
