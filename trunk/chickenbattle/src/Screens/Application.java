@@ -54,7 +54,6 @@ public class Application extends Screen implements InputProcessor{
 		movement = new Vector3();
 		scoreboard = false;
 		ch = new Spelet.Character();
-		ch.setPos(30,60,30);
 		oldPos = new Vector3();
 		comparevec = new Vector3();
 		zoom=false;
@@ -85,7 +84,7 @@ public class Application extends Screen implements InputProcessor{
 		ch.inventory.get(ch.weapon).update();
 		if(multiplayer && client.dead){
 			client.dead = false;
-			ch.ressurrect();
+			ch.ressurrect(this);
 			System.out.println("CAT");
 		}
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
@@ -141,7 +140,7 @@ public class Application extends Screen implements InputProcessor{
 		} else if (Input.Keys.NUM_3 == arg0) {
 			ch.weapon = ch.inventory.get(2).weaponID;
 		}else if (Input.Keys.NUM_9 == arg0){
-			ch.setPos(30,60,50);
+			ch.setPos(this,30,60,50);
 		}
 		else if (Input.Keys.TAB == arg0){
 			scoreboard = true;

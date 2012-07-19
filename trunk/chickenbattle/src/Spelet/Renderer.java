@@ -144,7 +144,7 @@ public class Renderer {
 		//http://forums.epicgames.com/threads/603122-Remus-high-resolution-skydome-texture-pack
 		skysphereTexture = new Texture(Gdx.files.internal("data/skydome.bmp"));
 
-		charModel = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_walk.md2"));
+		charModel = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_straferight.md2"));
 		modelTexture = new Texture(Gdx.files.internal("data/Test.png"), Format.RGB565, true);
 
 
@@ -275,7 +275,9 @@ public class Renderer {
 					BoundingBox box = new BoundingBox();
 					charModel.subMeshes[0].getBoundingBox(box);
 					box.mul(cubeModel);
-					this.renderBoundingBox(app, box);
+					app.players[i].box.mul(cubeModel);
+					this.renderBoundingBox(app,box);
+					
 				}
 		}
 	}
