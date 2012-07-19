@@ -5,8 +5,7 @@ import com.badlogic.gdx.math.collision.BoundingBox;
 
 public class Player {
 	public String name;
-	public int id;
-	public int hp;
+	public int id,hp,kills,deaths;
 	public long lasthit;
 	public float posX, posY,posZ;  
 	public BoundingBox box;
@@ -17,6 +16,8 @@ public class Player {
 		posX = 0;
 		posY = 0;
 		posZ =0;
+		kills =0;
+		deaths=0;
 		box = new BoundingBox();
 	}
 	public void setBox(Vector3[] x){

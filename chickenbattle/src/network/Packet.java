@@ -49,6 +49,7 @@ public class Packet {
 	}
 
 	static public class Bullet{
+		public int id;
 		public float ox,oy,oz,dx,dy,dz;
 	}
 
