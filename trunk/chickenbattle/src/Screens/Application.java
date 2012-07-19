@@ -37,7 +37,6 @@ public class Application extends Screen implements InputProcessor{
 	public Vector3 startpos;
 	public Vector3 to;
 	public Vector3 oldPos;
-	public Vector3 zoomVector;
 	public Spelet.Character ch;
 	public Array<BlockUpdate> chunkstoupdate;
 	public Array<Chunk> chunkstorebuild;
@@ -61,7 +60,6 @@ public class Application extends Screen implements InputProcessor{
 		oldPos = new Vector3();
 		comparevec = new Vector3();
 		zoom=false;
-		zoomVector = new Vector3();
 		from = new Vector3(0,0,0);
 		to = new Vector3(0,0,0);
 		light = new LightSource(200,500,16);
@@ -267,11 +265,9 @@ public class Application extends Screen implements InputProcessor{
 		movement.add(0,2,0);
 		cam.position.set(movement);
 		if(zoom){
-			zoomVector.set(cam.direction);
-			cam.position.add(zoomVector.mul(10f));
-		}    
-		else{
-			cam.position.set(movement);
+			cam.fieldOfView = 10;
+		} else {
+			cam.fieldOfView = 67;
 		}
 		cam.update();
 		mptimer+= Gdx.graphics.getDeltaTime()*1000;

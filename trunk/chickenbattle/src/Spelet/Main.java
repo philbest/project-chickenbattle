@@ -24,6 +24,7 @@ public class Main implements ApplicationListener{
 	
 	}
 	public void create() {
+		SoundManager.initiate();
 		VertexAttributes.initiate();
 		Cube.initiate();
 		StaticVariables.initiate();
