@@ -69,7 +69,7 @@ public class GameClient{
 				else if ( object instanceof AddPlayer){
 					AddPlayer response = (AddPlayer)object;
 					Player newPlayer = new Player(response.name);
-					System.out.println("box " + response.id + "added");
+					System.out.println("box " + response.name + "added");
 					newPlayer.id = response.id;
 					newPlayer.posX = response.startx;
 					newPlayer.posY = response.starty;
@@ -142,6 +142,7 @@ public class GameClient{
 	}
 
 	public void sendBullet(Vector3 origin, Vector3 dir){
+		bullet.id = id;
 		bullet.ox =origin.x;
 		bullet.oy =origin.y;
 		bullet.oz =origin.z;

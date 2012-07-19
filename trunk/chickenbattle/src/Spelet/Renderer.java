@@ -5,6 +5,8 @@ package Spelet;
 import java.io.IOException;
 import java.io.InputStream;
 
+import network.Player;
+
 import Map.Map;
 import Screens.Application;
 
@@ -17,6 +19,8 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.loaders.ModelLoaderRegistry;
 import com.badlogic.gdx.graphics.g3d.loaders.obj.ObjLoader;
@@ -42,6 +46,7 @@ public class Renderer {
 	Matrix4 cubeModel2 = new Matrix4();
 	Matrix4 skysphereModel = new Matrix4();
 
+
 	Matrix4 modelViewProjectionMatrix = new Matrix4();
 	Matrix4 modelViewMatrix = new Matrix4();
 	Matrix3 normalMatrix = new Matrix3();
@@ -54,14 +59,17 @@ public class Renderer {
 	ShaderProgram simpleShader,charShader;
 	ShaderProgram particleShader;
 	ShaderProgram skysphereShader;
-
+	String playerscore;
 	SpriteBatch sb;
+	Sprite score;
+	BitmapFont font;
+
 	FrameBuffer shadowMap;
 	ShaderProgram shadowGenShader;
 	ShaderProgram shadowMapShader;
 	int renderMode;
 	PerspectiveCamera lightCam;
-	
+
 	private KeyframedModel charModel;
 	private KeyframedAnimation anim;
 	private Texture modelTexture = null;
@@ -87,7 +95,11 @@ public class Renderer {
 	}
 	public Renderer() {
 		initiateShadows();
+
+		score = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/lobbybg.png")));
+
 		sb = new SpriteBatch();
+		font = new BitmapFont();
 
 		InputStream in = Gdx.files.internal("data/SkySphere2.obj").read();
 		skysphere = ObjLoader.loadObj(in);
@@ -104,7 +116,7 @@ public class Renderer {
 		if (!simpleShader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile simple shader: "
 					+ simpleShader.getLog());
-		
+
 		charShader = new ShaderProgram(Gdx.files.internal(
 		"data/shaders/charsimple.vert").readString(), Gdx.files.internal(
 		"data/shaders/charsimple.frag").readString());
@@ -163,7 +175,7 @@ public class Renderer {
 			renderMultiplayer(app);
 		}
 		renderVector(app.from,app.to,app);
-		renderCharacter(app);
+//		renderCharacter(app);
 		for (int i = 0; i < app.map.chunks.size;i++) {
 			if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0) {
 				this.renderBoundingBox(app,app.map.chunks.get(i).bounds);
@@ -172,6 +184,21 @@ public class Renderer {
 		Gdx.gl20.glDisable(GL20.GL_CULL_FACE);
 		sb.begin();
 		app.ch.inventory.get(app.ch.weapon).render(sb);
+		if(app.scoreboard){
+			score.setPosition(300, 100);
+			score.draw(sb,0.80f);
+			for(int i =0; i < app.players.length; i++){	
+				Player x = app.players[i];
+				if(x != null){
+					playerscore = x.name +" kills : " +x.kills + " deaths" + x.deaths;
+					float textWidth = font.getBounds(playerscore).width;
+					float textHeight = font.getBounds(playerscore).height;
+					font.draw(sb, playerscore, Gdx.graphics.getWidth()/2 - textWidth/2, 400 - (i*20) + textHeight / 2);
+				}
+			}
+
+
+		}
 		sb.end();
 	}
 
@@ -207,7 +234,7 @@ public class Renderer {
 		}
 		charModel.setAnimation(anim.name, animTime, false);
 		charModel.render(charShader);
-		
+
 		charShader.end();
 	}
 

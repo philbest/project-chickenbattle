@@ -66,6 +66,7 @@ public class GameServer {
 						for(int i=0; i <gameState.length; i++){
 							if(gameState[i] != null){
 								oldPlayers.id = i;
+								oldPlayers.name = gameState[i].name;
 								oldPlayers.startx = gameState[i].posX;
 								oldPlayers.starty = gameState[i].posY;
 								oldPlayers.startz = gameState[i].posZ;
@@ -78,6 +79,7 @@ public class GameServer {
 
 						AddPlayer newPlayer = new AddPlayer();
 						newPlayer.id = ids;
+						newPlayer.name = received.name;
 						newPlayer.startx = startx;
 						newPlayer.starty = starty;
 						newPlayer.startz = startz;
@@ -132,7 +134,8 @@ public class GameServer {
 									hittoSend.id = i;
 									gameState[i].hp =gameState[i].hp-1;
 									if(gameState[i].hp < 0){
-										System.out.println(gameState[i].name + "IS DEAD");
+										gameState[b.id].kills += 1;
+										gameState[i].deaths += 1;
 										gameState[i].hp = 10;
 									}
 									hit = true;

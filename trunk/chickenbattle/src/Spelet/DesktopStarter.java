@@ -8,4 +8,4 @@ public class DesktopStarter {
 	public static void main(String[] args) {
 		new LwjglApplication(new Main(), "Game",1000,600,true);
 	}
-}
+}		

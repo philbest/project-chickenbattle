@@ -45,6 +45,7 @@ public class Application extends Screen implements InputProcessor{
 	GameClient client;
 	public int clientid;
 	public Player[] players;
+	public boolean scoreboard;
 	float forceUp;
 	boolean jumping;
 	int timer;
@@ -54,6 +55,7 @@ public class Application extends Screen implements InputProcessor{
 	public Application(Main m){
 		main = m;
 		movement = new Vector3();
+		scoreboard = false;
 		ch = new Spelet.Character();
 		startpos = new Vector3(30,60,50);
 		ch.setPos(startpos.x,startpos.y,startpos.z);
@@ -72,7 +74,7 @@ public class Application extends Screen implements InputProcessor{
 		cam.update();
 		renderer = new Renderer();
 
-		multiplayer = false;
+		multiplayer = true;
 	}
 	public void render() {
 		renderer.render(this);
@@ -313,6 +315,9 @@ public class Application extends Screen implements InputProcessor{
 		}else if (Input.Keys.NUM_9 == arg0){
 			ch.setPos(startpos.x,startpos.y,startpos.z);
 		}
+		else if (Input.Keys.TAB == arg0){
+			scoreboard = true;
+		}
 		return false;
 	}
 	@Override
@@ -323,6 +328,9 @@ public class Application extends Screen implements InputProcessor{
 	@Override
 	public boolean keyUp(int arg0) {
 		// TODO Auto-generated method stub
+		if (Input.Keys.TAB == arg0){
+			scoreboard = false;
+		}
 		return false;
 	}
 	@Override
@@ -340,7 +348,7 @@ public class Application extends Screen implements InputProcessor{
 				currentweapon=ch.inventory.size-1;
 			ch.weapon = ch.inventory.get(currentweapon).weaponID;
 		}
-		
+
 		return false;
 	}
 	@Override
