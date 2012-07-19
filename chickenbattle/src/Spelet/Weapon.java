@@ -39,7 +39,7 @@ public class Weapon {
 			currentBullets = 90;
 			magBullets = 30;
 			magSize = 30;
-			cooldown = 200;
+			cooldown = 100;
 		} else if (weaponID == block) {
 			crosshair = new Sprite(new Texture(Gdx.files.internal("data/crosshairsmaller.png")));
 			wpn = new Sprite(new Texture(Gdx.files.internal("data/block.png")));
@@ -63,6 +63,7 @@ public class Weapon {
 		if (magBullets > 0 && currentCooldown <= 0) {
 			magBullets--;
 			currentCooldown = cooldown;
+			SoundManager.playWeaponSound(weaponID);
 			return true;
 		}
 		return false;
