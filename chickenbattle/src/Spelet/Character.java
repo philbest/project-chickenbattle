@@ -42,9 +42,9 @@ public class Character {
 		meshbox = new BoundingBox();
 		modelMatrix = new Matrix4();
 	}
-	public void setPos(float x, float y, float z) {
+	public void setPos(Application app, float x, float y, float z) {
+		model = app.renderer.charModel.subMeshes[0].mesh;
 		position.set(x,y,z);
-		model = Cube.cubeMesh;
 		modelMatrix = new Matrix4();
 		modelMatrix.setToTranslation(position);
 		model.calculateBoundingBox(meshbox);
@@ -63,8 +63,8 @@ public class Character {
 		box.set(meshbox);
 		box.mul(modelMatrix);
 	}
-	public void ressurrect() {
-		setPos(30,60,50);
+	public void ressurrect(Application app) {
+		setPos(app,30,60,50);
 		forceUp = 0;
 		jumping = false;
 		for (int i = 0; i < inventory.size; i++) {
@@ -72,7 +72,7 @@ public class Character {
 		}
 	}
 	public void update(Application app) {
-		model = app.renderer.charModel.subMeshes[0].mesh;
+
 		if (hookshotting) {
 
 		} else {
