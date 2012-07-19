@@ -92,8 +92,8 @@ public class Character {
 		modelTexture = new Texture(Gdx.files.internal("data/md2/tmap.png"), Format.RGB565, true);
 
 
-		charModel.setMaterial(new Material("a_texCoord0", new TextureAttribute(modelTexture, 0, "s_texture")));
-		anim = (KeyframedAnimation)charModel.getAnimations()[0];
+		charState.setMaterial(new Material("a_texCoord0", new TextureAttribute(modelTexture, 0, "s_texture")));
+		anim = (KeyframedAnimation)charState.getAnimations()[0];
 
 		System.out.println("NORMALS?" + hasNormals());
 		model = charState.subMeshes[0].mesh;
