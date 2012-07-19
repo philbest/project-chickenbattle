@@ -37,12 +37,14 @@ public class Character {
 		inventory.add(new Weapon(Weapon.ak));
 		inventory.add(new Weapon(Weapon.block));
 		weapon = inventory.get(0).weaponID;
-	}
-	public void setPos(float x, float y, float z) {
-		position = new Vector3(x,y,z);
-		model = Cube.cubeMesh;
+		position = new Vector3();
 		box = new BoundingBox();
 		meshbox = new BoundingBox();
+		modelMatrix = new Matrix4();
+	}
+	public void setPos(float x, float y, float z) {
+		position.set(x,y,z);
+		model = Cube.cubeMesh;
 		modelMatrix = new Matrix4();
 		modelMatrix.setToTranslation(position);
 		model.calculateBoundingBox(meshbox);

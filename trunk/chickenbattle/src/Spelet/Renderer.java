@@ -271,6 +271,11 @@ public class Renderer {
 					}
 					charModel.setAnimation(anim.name, app.players[i].animTimer, false);
 					charModel.render(charShader);
+					charShader.end();
+					BoundingBox box = new BoundingBox();
+					charModel.subMeshes[0].getBoundingBox(box);
+					box.mul(cubeModel);
+					this.renderBoundingBox(app, box);
 				}
 		}
 	}
