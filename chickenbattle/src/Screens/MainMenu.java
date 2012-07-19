@@ -67,7 +67,7 @@ public class MainMenu extends Screen {
 			main.setScreen(Main.LOBBY);
 		}
 		if (sp.getBoundingRectangle().contains(xpos,ypos)) {
-			((Application)main.screens.get(Main.GAME)).multiplayer = false;
+			((Application)main.screens.get(Main.GAME)).multiplayer = true;
 			main.setScreen(Main.GAME);
 		}
 

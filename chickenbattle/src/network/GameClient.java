@@ -47,7 +47,7 @@ public class GameClient{
 		servedchunks = new Array<BlockUpdate>();
 
 		Packet.register(client);
-		name = "Malin&Elin";
+		name = "Elin";
 		try {
 			client.connect(5000, "129.16.21.56", 54555, 54778);
 		} catch (IOException e) {
@@ -83,15 +83,9 @@ public class GameClient{
 						players[response.id].posX = response.x;
 						players[response.id].posY = response.y;			
 						players[response.id].posZ = response.z;	
-						players[response.id].hp = response.hp;
-						if(response.id == id){
-							if(response.hp < 0){
-								dead = true;
-							}
-							else{
-								dead = false;
-							}
-						}
+						players[response.id].hp = response.hp;	
+						players[response.id].kills = response.kills;	
+						players[response.id].deaths = response.deaths;	
 					}
 				}
 
@@ -112,6 +106,11 @@ public class GameClient{
 				else if(object instanceof Hit){
 					Hit response = (Hit)object;
 					players[response.id].lasthit = TimeUtils.millis();
+					if(response.id == id){
+						if(players[response.id].hp == 1){
+							dead = true;
+						}
+					}
 				}
 			}
 		});		
