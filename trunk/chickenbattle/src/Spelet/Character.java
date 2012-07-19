@@ -78,8 +78,14 @@ public class Character {
 		charStrafeLeft = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_strafeleft.md2"));
 		charStrafeRight = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_straferight.md2"));
 		charState = charChill;
-		modelTexture = new Texture(Gdx.files.internal("data/Test.png"), Format.RGB565, true);
-		charState.setMaterial(new Material("s_texture", new TextureAttribute(modelTexture, 0, "a_texCoord2")));
+		modelTexture = new Texture(Gdx.files.internal("data/md2/tmap.png"), Format.RGB565, true);
+		charChill.setMaterial(new Material("s_texture", new TextureAttribute(modelTexture, 0, "a_texCoord2")));
+		charDuck.setMaterial(new Material("s_texture", new TextureAttribute(modelTexture, 0, "a_texCoord2")));
+		charDuckup.setMaterial(new Material("s_texture", new TextureAttribute(modelTexture, 0, "a_texCoord2")));
+		charJump.setMaterial(new Material("s_texture", new TextureAttribute(modelTexture, 0, "a_texCoord2")));
+		charLand.setMaterial(new Material("s_texture", new TextureAttribute(modelTexture, 0, "a_texCoord2")));
+		charStrafeLeft.setMaterial(new Material("s_texture", new TextureAttribute(modelTexture, 0, "a_texCoord2")));
+		charStrafeRight.setMaterial(new Material("s_texture", new TextureAttribute(modelTexture, 0, "a_texCoord2")));
 		animChill = (KeyframedAnimation)charChill.getAnimations()[0];
 		animDuck = (KeyframedAnimation)charDuck.getAnimations()[0];
 		animDuckup = (KeyframedAnimation)charDuckup.getAnimations()[0];
@@ -90,10 +96,6 @@ public class Character {
 		animStrafeRight = (KeyframedAnimation)charStrafeRight.getAnimations()[0];
 
 		modelTexture = new Texture(Gdx.files.internal("data/md2/tmap.png"), Format.RGB565, true);
-
-
-		charState.setMaterial(new Material("a_texCoord0", new TextureAttribute(modelTexture, 0, "s_texture")));
-		anim = (KeyframedAnimation)charState.getAnimations()[0];
 
 		System.out.println("NORMALS?" + hasNormals());
 		model = charState.subMeshes[0].mesh;

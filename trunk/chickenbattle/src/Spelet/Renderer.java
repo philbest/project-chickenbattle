@@ -248,9 +248,11 @@ public class Renderer {
 					if (app.players[i].animTimer >= app.ch.anim.totalDuration) {
 						app.players[i].animTimer -= ((int)(app.players[i].animTimer/app.ch.anim.totalDuration))*app.ch.anim.totalDuration;
 					}
-					app.ch.charModel.setAnimation(app.ch.anim.name, app.players[i].animTimer, false);
-					app.ch.charModel.render(simpleShader);
+
+					app.ch.charState.setAnimation(app.ch.anim.name, app.players[i].animTimer, false);
+					app.ch.charState.render(simpleShader);
 					simpleShader.end();
+
 //					BoundingBox box = new BoundingBox();
 //					app.ch.charModel.subMeshes[0].getBoundingBox(box);
 //					box.mul(cubeModel);
