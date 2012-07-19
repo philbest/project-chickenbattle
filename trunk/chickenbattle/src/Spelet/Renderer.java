@@ -70,9 +70,9 @@ public class Renderer {
 	int renderMode;
 	PerspectiveCamera lightCam;
 
-	private KeyframedModel charModel;
-	private KeyframedAnimation anim;
-	private Texture modelTexture = null;
+	public KeyframedModel charModel;
+	public KeyframedAnimation anim;
+	public Texture modelTexture = null;
 	public void initiateShadows() {
 		shadowMap = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 		lightCam = new PerspectiveCamera(67, shadowMap.getWidth(), shadowMap.getHeight());
@@ -265,7 +265,7 @@ public class Renderer {
 					charShader.setUniformf("material_shininess", 0.5f);
 					//				charShader.setUniformf("dir_light",0f,1f,0f);
 
-					app.players[i].animTimer += Gdx.graphics.getDeltaTime();
+					app.players[i].animTimer += Gdx.graphics.getDeltaTime()*10;
 					if (app.players[i].animTimer >= anim.totalDuration) {
 						app.players[i].animTimer -= ((int)(app.players[i].animTimer/anim.totalDuration))*anim.totalDuration;
 					}
