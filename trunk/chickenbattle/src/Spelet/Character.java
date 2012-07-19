@@ -52,11 +52,11 @@ public class Character {
 		meshbox = new BoundingBox();
 		modelMatrix = new Matrix4();
 		
-		charModel = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_straferight.md2"));
-		modelTexture = new Texture(Gdx.files.internal("data/Test.png"), Format.RGB565, true);
+		charModel = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_walk.md2"));
+		modelTexture = new Texture(Gdx.files.internal("data/md2/tmap.png"), Format.RGB565, true);
 
 
-		charModel.setMaterial(new Material("s_texture", new TextureAttribute(modelTexture, 0, "a_texCoord2")));
+		charModel.setMaterial(new Material("a_texCoord0", new TextureAttribute(modelTexture, 0, "s_texture")));
 		anim = (KeyframedAnimation)charModel.getAnimations()[0];
 		System.out.println("NORMALS?" + hasNormals());
 		model = charModel.subMeshes[0].mesh;
