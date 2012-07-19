@@ -47,7 +47,7 @@ public class GameClient{
 		servedchunks = new Array<BlockUpdate>();
 
 		Packet.register(client);
-		name = "Gustv";
+		name = "Malin&Elin";
 		try {
 			client.connect(5000, "129.16.21.56", 54555, 54778);
 		} catch (IOException e) {

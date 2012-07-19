@@ -67,10 +67,10 @@ public class MainMenu extends Screen {
 			main.setScreen(Main.LOBBY);
 		}
 		if (sp.getBoundingRectangle().contains(xpos,ypos)) {
-			((Application)main.screens.get(Main.GAME)).multiplayer = true;
+			((Application)main.screens.get(Main.GAME)).multiplayer = false;
 			main.setScreen(Main.GAME);
 		}
-		
+
 		return false;
 	}
 
@@ -103,7 +103,7 @@ public class MainMenu extends Screen {
 		} else {
 			sp.setColor(0f,0f,0f,1);
 		}
-		
+
 	}
 
 	public void render() {
@@ -111,17 +111,17 @@ public class MainMenu extends Screen {
 		background.draw(batch);
 		exit.setPosition(50, 50);
 		exit.draw(batch);
-		
+
 		sp.setPosition(50, 400);
 		sp.draw(batch);
-		
+
 		mp.setPosition(50, 300);
 		mp.draw(batch);
-		
+
 		crosshair.setPosition(xpos-crosshair.getWidth()/2,ypos-crosshair.getHeight()/2);
 		crosshair.draw(batch);
 		batch.end();
-		
+
 	}
 
 
