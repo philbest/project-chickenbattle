@@ -85,7 +85,7 @@ public class GameClient{
 						players[response.id].posZ = response.z;	
 						players[response.id].hp = response.hp;
 						if(response.id == id){
-							if(response.hp == 0){
+							if(response.hp < 0){
 								dead = true;
 							}
 							else{
