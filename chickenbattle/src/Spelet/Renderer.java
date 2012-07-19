@@ -22,13 +22,7 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.loaders.ModelLoaderRegistry;
 import com.badlogic.gdx.graphics.g3d.loaders.obj.ObjLoader;
-import com.badlogic.gdx.graphics.g3d.materials.Material;
-import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
-import com.badlogic.gdx.graphics.g3d.model.keyframe.KeyframedAnimation;
-import com.badlogic.gdx.graphics.g3d.model.keyframe.KeyframedModel;
-import com.badlogic.gdx.graphics.g3d.model.keyframe.KeyframedSubMesh;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix3;
@@ -245,11 +239,11 @@ public class Renderer {
 					simpleShader.setUniformf("material_shininess", 0.5f);
 
 					app.players[i].animTimer += Gdx.graphics.getDeltaTime()*10;
-					if (app.players[i].animTimer >= app.ch.anim.totalDuration) {
-						app.players[i].animTimer -= ((int)(app.players[i].animTimer/app.ch.anim.totalDuration))*app.ch.anim.totalDuration;
+					if (app.players[i].animTimer >= app.ch.animState.totalDuration) {
+						app.players[i].animTimer -= ((int)(app.players[i].animTimer/app.ch.animState.totalDuration))*app.ch.animState.totalDuration;
 					}
 
-					app.ch.charState.setAnimation(app.ch.anim.name, app.players[i].animTimer, false);
+					app.ch.charState.setAnimation(app.ch.animState.name, app.players[i].animTimer, false);
 					app.ch.charState.render(simpleShader);
 					simpleShader.end();
 

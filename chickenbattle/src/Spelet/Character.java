@@ -44,7 +44,6 @@ public class Character {
 	public KeyframedModel charLand;
 	public KeyframedModel charStrafeLeft;
 	public KeyframedModel charStrafeRight;
-	public KeyframedAnimation anim;
 	public KeyframedAnimation animState;
 	public KeyframedAnimation animChill;
 	public KeyframedAnimation animDuck;
