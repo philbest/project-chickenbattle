@@ -80,6 +80,7 @@ public class Character {
 		modelTexture = new Texture(Gdx.files.internal("data/md2/tmap.png"), Format.RGB565, true);
 		charChill.setMaterial(new Material("a_texCoord0", new TextureAttribute(modelTexture, 0, "s_texture")));
 		charDuck.setMaterial(new Material("a_texCoord0", new TextureAttribute(modelTexture, 0, "s_texture")));
+		charWalk.setMaterial(new Material("a_texCoord0", new TextureAttribute(modelTexture, 0, "s_texture")));
 		charDuckup.setMaterial(new Material("a_texCoord0", new TextureAttribute(modelTexture, 0, "s_texture")));
 		charJump.setMaterial(new Material("a_texCoord0", new TextureAttribute(modelTexture, 0, "s_texture")));
 		charLand.setMaterial(new Material("a_texCoord0", new TextureAttribute(modelTexture, 0, "s_texture")));
@@ -138,7 +139,7 @@ public class Character {
 		}
 	}
 	public void update(Application app) {
-
+		updateModel();
 		if (hookshotting) {
 
 		} else {
