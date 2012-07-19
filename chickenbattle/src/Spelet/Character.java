@@ -93,8 +93,8 @@ public class Character {
 		animLand = (KeyframedAnimation)charLand.getAnimations()[0];
 		animStrafeLeft = (KeyframedAnimation)charStrafeLeft.getAnimations()[0];
 		animStrafeRight = (KeyframedAnimation)charStrafeRight.getAnimations()[0];
-
-		modelTexture = new Texture(Gdx.files.internal("data/md2/tmap.png"), Format.RGB565, true);
+		animState = animChill;
+		
 
 		System.out.println("NORMALS?" + hasNormals());
 		model = charState.subMeshes[0].mesh;
@@ -144,6 +144,7 @@ public class Character {
 		} else {
 			if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 				charState = charWalk;
+				animState = animWalk;
 				oldPos.set(position);
 				movement.set(app.cam.direction.x,0,app.cam.direction.z);
 				movement.nor();
@@ -168,6 +169,7 @@ public class Character {
 			}
 			if (Gdx.input.isKeyPressed((Input.Keys.S))) {
 				charState = charWalk;
+				animState = animWalk;
 				oldPos.set(position);
 				movement.set(app.cam.direction.x,0,app.cam.direction.z);
 				movement.nor();
@@ -191,6 +193,7 @@ public class Character {
 			}
 			if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 				charState = charStrafeRight;
+				animState = animStrafeRight;
 				oldPos.set(position);
 				movement.set(app.cam.direction.x,0,app.cam.direction.z);
 				movement.crs(app.cam.up);
@@ -216,6 +219,7 @@ public class Character {
 			}
 			if (Gdx.input.isKeyPressed(Input.Keys.A)) {
 				charState = charStrafeLeft;
+				animState = animStrafeLeft;
 				oldPos.set(position);
 				movement.set(app.cam.direction.x,0,app.cam.direction.z);
 				movement.crs(app.cam.up);
@@ -241,6 +245,7 @@ public class Character {
 			}
 			if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
 				charState = charJump;
+				animState = animJump;
 				oldPos.set(position);
 				movement.set(0,-1*Gdx.graphics.getDeltaTime()*10,0);
 				addMovement(movement);
@@ -287,6 +292,7 @@ public class Character {
 					forceUp -= 2.5f*Gdx.graphics.getDeltaTime();
 					if (forceUp < 0) {
 						charState = charLand;
+						animState = animLand;
 						jumping = false;
 						forceUp = 0;
 					}
@@ -294,6 +300,7 @@ public class Character {
 
 			} else {
 				charState = charChill;
+				animState = animChill;
 				oldPos.set(position);
 				movement.set(0,Gdx.graphics.getDeltaTime()*10*forceUp,0);
 				forceUp -= 2.5f*Gdx.graphics.getDeltaTime();
