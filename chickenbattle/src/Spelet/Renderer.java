@@ -70,9 +70,7 @@ public class Renderer {
 	int renderMode;
 	PerspectiveCamera lightCam;
 
-	public KeyframedModel charModel;
-	public KeyframedAnimation anim;
-	public Texture modelTexture = null;
+
 	public void initiateShadows() {
 		shadowMap = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 		lightCam = new PerspectiveCamera(67, shadowMap.getWidth(), shadowMap.getHeight());
@@ -144,20 +142,9 @@ public class Renderer {
 		//http://forums.epicgames.com/threads/603122-Remus-high-resolution-skydome-texture-pack
 		skysphereTexture = new Texture(Gdx.files.internal("data/skydome.bmp"));
 
-		charModel = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_straferight.md2"));
-		modelTexture = new Texture(Gdx.files.internal("data/Test.png"), Format.RGB565, true);
 
+	}
 
-		charModel.setMaterial(new Material("s_texture", new TextureAttribute(modelTexture, 0, "a_texCoord2")));
-		anim = (KeyframedAnimation)charModel.getAnimations()[0];
-		System.out.println("NORMALS?" + hasNormals());
-	}
-	private boolean hasNormals () {
-		for (KeyframedSubMesh mesh : charModel.subMeshes) {
-			if (mesh.mesh.getVertexAttribute(Usage.Normal) == null) return false;
-		}
-		return true;
-	}
 	public void render(Application app) {
 		app.cam.update();
 		Gdx.gl20.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -169,7 +156,7 @@ public class Renderer {
 
 		renderSkySphere(app);
 		renderMapChunks(app);
-		renderLights(app);
+//		renderLights(app);
 		if(app.multiplayer){
 			renderMultiplayer(app);
 		}
@@ -266,15 +253,16 @@ public class Renderer {
 					//				charShader.setUniformf("dir_light",0f,1f,0f);
 
 					app.players[i].animTimer += Gdx.graphics.getDeltaTime()*10;
-					if (app.players[i].animTimer >= anim.totalDuration) {
-						app.players[i].animTimer -= ((int)(app.players[i].animTimer/anim.totalDuration))*anim.totalDuration;
+					if (app.players[i].animTimer >= app.ch.anim.totalDuration) {
+						app.players[i].animTimer -= ((int)(app.players[i].animTimer/app.ch.anim.totalDuration))*app.ch.anim.totalDuration;
 					}
-					charModel.setAnimation(anim.name, app.players[i].animTimer, false);
-					charModel.render(charShader);
+					app.ch.charModel.setAnimation(app.ch.anim.name, app.players[i].animTimer, false);
+					app.ch.charModel.render(charShader);
 					charShader.end();
 					BoundingBox box = new BoundingBox();
-					charModel.subMeshes[0].getBoundingBox(box);
+					app.ch.charModel.subMeshes[0].getBoundingBox(box);
 					box.mul(cubeModel);
+					app.players[i].box.mul(cubeModel);
 					this.renderBoundingBox(app,app.players[i].box);
 					
 				}
@@ -474,17 +462,17 @@ public class Renderer {
 		vectorTest.dispose();
 	}
 
-	public void renderLights(Application app) {
-		lightTexture.bind(0);
-		simpleShader.begin();
-		simpleShader.setUniformi("s_texture", 0);
-		cubeModel.setToTranslation(app.light.posX,app.light.posY,app.light.posZ);
-		modelViewProjectionMatrix.set(app.cam.combined);
-		modelViewProjectionMatrix.mul(cubeModel);
-		simpleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
-		app.cube.cubeMesh.render(simpleShader, GL20.GL_TRIANGLES);
-		simpleShader.end();
-	}
+//	public void renderLights(Application app) {
+//		lightTexture.bind(0);
+//		simpleShader.begin();
+//		simpleShader.setUniformi("s_texture", 0);
+//		cubeModel.setToTranslation(app.light.posX,app.light.posY,app.light.posZ);
+//		modelViewProjectionMatrix.set(app.cam.combined);
+//		modelViewProjectionMatrix.mul(cubeModel);
+//		simpleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
+//		app.cube.cubeMesh.render(simpleShader, GL20.GL_TRIANGLES);
+//		simpleShader.end();
+//	}
 
 	public void renderVector(Vector3 from,Vector3 to, Application app) {
 		Mesh vectorTest = new Mesh(true,2,0,new VertexAttribute(Usage.Position, 3,"a_position"));
