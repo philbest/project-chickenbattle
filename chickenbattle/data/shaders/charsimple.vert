@@ -15,7 +15,7 @@ varying float v_occlusion;
 void main()
 {
 	v_occlusion = a_occlusion;
-	v_texCoord = a_texCoord2;
+	v_texCoord = a_texCoord0;
 	v = vec3(u_modelViewMatrix * a_position);
 	N = normalize(normalMatrix * a_normal);
 	gl_Position = u_mvpMatrix * a_position;
