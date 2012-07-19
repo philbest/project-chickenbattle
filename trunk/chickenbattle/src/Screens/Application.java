@@ -86,6 +86,7 @@ public class Application extends Screen implements InputProcessor{
 		if(multiplayer && client.dead){
 			client.dead = false;
 			ch.ressurrect();
+			System.out.println("CAT");
 		}
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
 			touchDown(draggedX, draggedY, 0, 0);

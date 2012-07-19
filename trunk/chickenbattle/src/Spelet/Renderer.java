@@ -73,7 +73,6 @@ public class Renderer {
 	private KeyframedModel charModel;
 	private KeyframedAnimation anim;
 	private Texture modelTexture = null;
-	private float animTime = 0;
 	public void initiateShadows() {
 		shadowMap = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 		lightCam = new PerspectiveCamera(67, shadowMap.getWidth(), shadowMap.getHeight());
@@ -220,23 +219,23 @@ public class Renderer {
 		skysphere.render(skysphereShader, GL20.GL_TRIANGLES);
 		skysphereShader.end();
 	}
-	public void renderCharacter(Application app) {
-		lightTexture.bind(0);
-		charShader.begin();
-		charShader.setUniformi("s_texture", 0);
-		modelViewProjectionMatrix.set(app.cam.combined);
-		modelViewProjectionMatrix.mul(app.ch.modelMatrix);
-		modelViewProjectionMatrix.scale(20f,20f,20f);
-		charShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
-		animTime += Gdx.graphics.getDeltaTime();
-		if (animTime >= anim.totalDuration) {
-			animTime -= ((int)(animTime/anim.totalDuration))*anim.totalDuration;
-		}
-		charModel.setAnimation(anim.name, animTime, false);
-		charModel.render(charShader);
-
-		charShader.end();
-	}
+//	public void renderCharacter(Application app) {
+//		lightTexture.bind(0);
+//		charShader.begin();
+//		charShader.setUniformi("s_texture", 0);
+//		modelViewProjectionMatrix.set(app.cam.combined);
+//		modelViewProjectionMatrix.mul(app.ch.modelMatrix);
+//		modelViewProjectionMatrix.scale(20f,20f,20f);
+//		charShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
+//		animTime += Gdx.graphics.getDeltaTime();
+//		if (animTime >= anim.totalDuration) {
+//			animTime -= ((int)(animTime/anim.totalDuration))*anim.totalDuration;
+//		}
+//		charModel.setAnimation(anim.name, animTime, false);
+//		charModel.render(charShader);
+//
+//		charShader.end();
+//	}
 
 	public void renderMultiplayer(Application app) {
 		for(int i = 0; i< app.players.length; i++){
@@ -247,10 +246,10 @@ public class Renderer {
 					else
 						skysphereTexture.bind(0);
 
-					simpleShader.begin();
-					simpleShader.setUniform4fv("scene_light", app.light.color, 0, 4);
-					simpleShader.setUniformf("scene_ambient_light", 0.2f,0.2f,0.2f, 1.0f);
-					simpleShader.setUniformi("s_texture", 0);
+					charShader.begin();
+					charShader.setUniform4fv("scene_light", app.light.color, 0, 4);
+					charShader.setUniformf("scene_ambient_light", 0.2f,0.2f,0.2f, 1.0f);
+					charShader.setUniformi("s_texture", 0);
 					cubeModel.setToTranslation(app.players[i].posX,app.players[i].posY,app.players[i].posZ);
 
 					modelViewProjectionMatrix.set(app.cam.combined);
@@ -258,15 +257,20 @@ public class Renderer {
 					modelViewMatrix.set(app.cam.view);
 					modelViewMatrix.mul(cubeModel);
 					normalMatrix.set(modelViewMatrix);
-					simpleShader.setUniformMatrix("normalMatrix", normalMatrix);
-					simpleShader.setUniformMatrix("u_modelViewMatrix", modelViewMatrix);
-					simpleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
-					simpleShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
-					simpleShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
-					simpleShader.setUniformf("material_shininess", 0.5f);
-					//				simpleShader.setUniformf("dir_light",0f,1f,0f);
+					charShader.setUniformMatrix("normalMatrix", normalMatrix);
+					charShader.setUniformMatrix("u_modelViewMatrix", modelViewMatrix);
+					charShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
+					charShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
+					charShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
+					charShader.setUniformf("material_shininess", 0.5f);
+					//				charShader.setUniformf("dir_light",0f,1f,0f);
 
-					app.cube.cubeMesh.render(simpleShader, GL20.GL_TRIANGLES);
+					app.players[i].animTimer += Gdx.graphics.getDeltaTime();
+					if (app.players[i].animTimer >= anim.totalDuration) {
+						app.players[i].animTimer -= ((int)(app.players[i].animTimer/anim.totalDuration))*anim.totalDuration;
+					}
+					charModel.setAnimation(anim.name, app.players[i].animTimer, false);
+					charModel.render(charShader);
 				}
 		}
 	}

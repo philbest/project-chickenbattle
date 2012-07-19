@@ -9,7 +9,7 @@ public class Player {
 	public long lasthit;
 	public float posX, posY,posZ;  
 	public BoundingBox box;
-
+	public float animTimer;
 	public Player(String xs){
 		this.name = xs;
 		hp = 10;
