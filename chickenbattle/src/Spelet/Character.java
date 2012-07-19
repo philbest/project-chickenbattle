@@ -70,6 +70,7 @@ public class Character {
 		}
 	}
 	public void update(Application app) {
+		model = app.renderer.charModel.subMeshes[0].mesh;
 		if (hookshotting) {
 
 		} else {
