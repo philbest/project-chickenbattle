@@ -7,7 +7,15 @@ import Screens.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g3d.loaders.ModelLoaderRegistry;
+import com.badlogic.gdx.graphics.g3d.materials.Material;
+import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.model.keyframe.KeyframedAnimation;
 import com.badlogic.gdx.graphics.g3d.model.keyframe.KeyframedModel;
+import com.badlogic.gdx.graphics.g3d.model.keyframe.KeyframedSubMesh;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
@@ -22,11 +30,13 @@ public class Character {
 	public Matrix4 modelMatrix;
 	public int weapon;
 	public Array<Weapon> inventory;
-	KeyframedModel charModel;
 	public boolean jumping;
 	public Vector3 movement, oldPos;
 	float forceUp;
 	boolean hookshotting;
+	public KeyframedModel charModel;
+	public KeyframedAnimation anim;
+	public Texture modelTexture = null;
 	public Character() {
 		hookshotting = false;
 		forceUp = 0;
@@ -41,9 +51,27 @@ public class Character {
 		box = new BoundingBox();
 		meshbox = new BoundingBox();
 		modelMatrix = new Matrix4();
+		
+		charModel = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_straferight.md2"));
+		modelTexture = new Texture(Gdx.files.internal("data/Test.png"), Format.RGB565, true);
+
+
+		charModel.setMaterial(new Material("s_texture", new TextureAttribute(modelTexture, 0, "a_texCoord2")));
+		anim = (KeyframedAnimation)charModel.getAnimations()[0];
+		System.out.println("NORMALS?" + hasNormals());
+		model = charModel.subMeshes[0].mesh;
 	}
-	public void setPos(Application app, float x, float y, float z) {
-		model = app.renderer.charModel.subMeshes[0].mesh;
+	private boolean hasNormals () {
+		for (KeyframedSubMesh mesh : charModel.subMeshes) {
+			if (mesh.mesh.getVertexAttribute(Usage.Normal) == null) return false;
+		}
+		return true;
+	}
+	public void updateModel() {
+		model = charModel.subMeshes[0].mesh;
+	}
+	public void setPos(float x, float y, float z) {
+		
 		position.set(x,y,z);
 		modelMatrix = new Matrix4();
 		modelMatrix.setToTranslation(position);
@@ -63,8 +91,8 @@ public class Character {
 		box.set(meshbox);
 		box.mul(modelMatrix);
 	}
-	public void ressurrect(Application app) {
-		setPos(app,30,60,50);
+	public void ressurrect() {
+		setPos(30,60,50);
 		forceUp = 0;
 		jumping = false;
 		for (int i = 0; i < inventory.size; i++) {

@@ -26,7 +26,6 @@ public class Main implements ApplicationListener{
 	public void create() {
 		SoundManager.initiate();
 		VertexAttributes.initiate();
-		Cube.initiate();
 		StaticVariables.initiate();
 		screens = new HashMap<Integer, Screen>();
 		screens.put(MAINMENU, new MainMenu(this));

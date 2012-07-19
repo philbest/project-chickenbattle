@@ -7,7 +7,6 @@ import network.Player;
 import Map.Chunk;
 import Map.Map;
 import Map.Voxel;
-import Spelet.Cube;
 import Spelet.LightSource;
 import Spelet.Main;
 import Spelet.Renderer;
@@ -24,7 +23,6 @@ import com.badlogic.gdx.utils.Array;
 
 public class Application extends Screen implements InputProcessor{
 	public Renderer renderer;
-	public Cube cube;
 	public Boolean send;
 	public PerspectiveCamera cam;
 	int draggedX;
@@ -54,6 +52,7 @@ public class Application extends Screen implements InputProcessor{
 		movement = new Vector3();
 		scoreboard = false;
 		ch = new Spelet.Character();
+		ch.setPos(5,20,5);
 		oldPos = new Vector3();
 		comparevec = new Vector3();
 		zoom=false;
@@ -84,7 +83,7 @@ public class Application extends Screen implements InputProcessor{
 		ch.inventory.get(ch.weapon).update();
 		if(multiplayer && client.dead){
 			client.dead = false;
-			ch.ressurrect(this);
+			ch.ressurrect();
 			System.out.println("CAT");
 		}
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
@@ -140,7 +139,7 @@ public class Application extends Screen implements InputProcessor{
 		} else if (Input.Keys.NUM_3 == arg0) {
 			ch.weapon = ch.inventory.get(2).weaponID;
 		}else if (Input.Keys.NUM_9 == arg0){
-			ch.setPos(this,30,60,50);
+			ch.setPos(30,60,50);
 		}
 		else if (Input.Keys.TAB == arg0){
 			scoreboard = true;
