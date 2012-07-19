@@ -111,7 +111,40 @@ public class GameServer {
 					bbCorners[4].set(received.x5, received.y5, received.z5);
 					bbCorners[5].set(received.x6, received.y6, received.z6);
 					bbCorners[6].set(received.x7, received.y7, received.z7);
-					bbCorners[7].set(received.x8, received.y8, received.z8);
+					bbCorners[7].set(received.x8, received.y8, received.z8);		
+
+					toSend.x1 = received.x1;
+					toSend.y1 = received.y1;
+					toSend.z1 = received.z1;
+
+					toSend.x2 = received.x2;
+					toSend.y2 = received.y2;
+					toSend.z2 = received.z2;
+
+					toSend.x3 = received.x3;
+					toSend.y3 = received.y3;
+					toSend.z3 = received.z3;
+
+					toSend.x4 = received.x4;
+					toSend.y4 = received.y4;
+					toSend.z4 = received.z4;
+
+					toSend.x5 = received.x5;
+					toSend.y5 = received.y5;
+					toSend.z5 = received.z5;
+
+					toSend.x6 = received.x6;
+					toSend.y6 = received.y6;
+					toSend.z6 = received.z6;
+
+					toSend.x7 = received.x7;
+					toSend.y7 = received.y7;
+					toSend.z7 = received.z7;
+
+					toSend.x8 = received.x8;
+					toSend.y8 = received.y8;
+					toSend.z8 = received.z8;
+					
 
 					gameState[received.id].setBox(bbCorners);
 					server.sendToAllTCP(toSend);

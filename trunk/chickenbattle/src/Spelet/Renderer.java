@@ -262,7 +262,7 @@ public class Renderer {
 					BoundingBox box = new BoundingBox();
 					app.ch.charModel.subMeshes[0].getBoundingBox(box);
 					box.mul(cubeModel);
-					app.players[i].box.mul(cubeModel);
+//					app.players[i].box.mul(cubeModel);
 					this.renderBoundingBox(app,app.players[i].box);
 					
 				}

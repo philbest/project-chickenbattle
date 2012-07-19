@@ -26,6 +26,7 @@ public class GameClient{
 	Array<BlockUpdate> chunkstoupdate;
 	Array<BlockUpdate> servedchunks;
 	Semaphore listsafe;
+	Vector3[] bbCorners;
 	String name;
 	Update update;
 	Bullet bullet;
@@ -41,6 +42,9 @@ public class GameClient{
 		update = new Update();
 		bupdate = new BlockUpdate();
 		hit = false;
+		bbCorners = new Vector3[8];
+		for(int i=0; i < 8; i++)
+			bbCorners[i] = new Vector3(0,0,0);
 		bullet = new Bullet();
 		listsafe = new Semaphore(1);
 		chunkstoupdate = new Array<BlockUpdate>();
@@ -86,6 +90,18 @@ public class GameClient{
 						players[response.id].hp = response.hp;	
 						players[response.id].kills = response.kills;	
 						players[response.id].deaths = response.deaths;	
+								
+						bbCorners[0].set(response.x1, response.y1, response.z1);
+						bbCorners[1].set(response.x2, response.y2, response.z2);
+						bbCorners[2].set(response.x3, response.y3, response.z3);
+						bbCorners[3].set(response.x4, response.y4, response.z4);
+						bbCorners[4].set(response.x5, response.y5, response.z5);
+						bbCorners[5].set(response.x6, response.y6, response.z6);
+						bbCorners[6].set(response.x7, response.y7, response.z7);
+						bbCorners[7].set(response.x8, response.y8, response.z8);					
+						
+						players[response.id].setBox(bbCorners);				
+							
 					}
 				}
 

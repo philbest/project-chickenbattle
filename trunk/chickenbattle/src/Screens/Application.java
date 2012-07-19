@@ -99,7 +99,7 @@ public class Application extends Screen implements InputProcessor{
 		}
 		cam.update();
 		mptimer+= Gdx.graphics.getDeltaTime()*1000;
-		if(mptimer > 30){
+		if(mptimer > 50){
 			mptimer = 0;
 			send = true;
 		}
