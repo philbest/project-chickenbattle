@@ -52,7 +52,7 @@ public class Application extends Screen implements InputProcessor{
 		movement = new Vector3();
 		scoreboard = false;
 		ch = new Spelet.Character();
-		ch.setPos(5,20,5);
+		ch.setPos(50,60,50);
 		oldPos = new Vector3();
 		comparevec = new Vector3();
 		zoom=false;
