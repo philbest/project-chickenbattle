@@ -56,7 +56,7 @@ public class Renderer {
 	Texture skysphereTexture;
 	Texture blood;
 
-	ShaderProgram simpleShader,charShader;
+	ShaderProgram simpleShader;
 	ShaderProgram particleShader;
 	ShaderProgram skysphereShader;
 	String playerscore;
@@ -113,13 +113,6 @@ public class Renderer {
 		if (!simpleShader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile simple shader: "
 					+ simpleShader.getLog());
-
-		charShader = new ShaderProgram(Gdx.files.internal(
-		"data/shaders/charsimple.vert").readString(), Gdx.files.internal(
-		"data/shaders/charsimple.frag").readString());
-		if (!simpleShader.isCompiled())
-			throw new GdxRuntimeException("Couldn't compile simple shader: "
-					+ charShader.getLog());
 
 		particleShader = new ShaderProgram(Gdx.files.internal(
 		"data/shaders/particleShader.vert").readString(), Gdx.files.internal(
@@ -233,10 +226,10 @@ public class Renderer {
 					else
 						skysphereTexture.bind(0);
 
-					charShader.begin();
-					charShader.setUniform4fv("scene_light", app.light.color, 0, 4);
-					charShader.setUniformf("scene_ambient_light", 0.2f,0.2f,0.2f, 1.0f);
-					charShader.setUniformi("s_texture", 0);
+					simpleShader.begin();
+					simpleShader.setUniform4fv("scene_light", app.light.color, 0, 4);
+					simpleShader.setUniformf("scene_ambient_light", 0.2f,0.2f,0.2f, 1.0f);
+					simpleShader.setUniformi("s_texture", 0);
 					cubeModel.setToTranslation(app.players[i].posX,app.players[i].posY,app.players[i].posZ);
 
 					modelViewProjectionMatrix.set(app.cam.combined);
@@ -244,21 +237,20 @@ public class Renderer {
 					modelViewMatrix.set(app.cam.view);
 					modelViewMatrix.mul(cubeModel);
 					normalMatrix.set(modelViewMatrix);
-					charShader.setUniformMatrix("normalMatrix", normalMatrix);
-					charShader.setUniformMatrix("u_modelViewMatrix", modelViewMatrix);
-					charShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
-					charShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
-					charShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
-					charShader.setUniformf("material_shininess", 0.5f);
-					//				charShader.setUniformf("dir_light",0f,1f,0f);
+					simpleShader.setUniformMatrix("normalMatrix", normalMatrix);
+					simpleShader.setUniformMatrix("u_modelViewMatrix", modelViewMatrix);
+					simpleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
+					simpleShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
+					simpleShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
+					simpleShader.setUniformf("material_shininess", 0.5f);
 
 					app.players[i].animTimer += Gdx.graphics.getDeltaTime()*10;
 					if (app.players[i].animTimer >= app.ch.anim.totalDuration) {
 						app.players[i].animTimer -= ((int)(app.players[i].animTimer/app.ch.anim.totalDuration))*app.ch.anim.totalDuration;
 					}
 					app.ch.charModel.setAnimation(app.ch.anim.name, app.players[i].animTimer, false);
-					app.ch.charModel.render(charShader);
-					charShader.end();
+					app.ch.charModel.render(simpleShader);
+					simpleShader.end();
 //					BoundingBox box = new BoundingBox();
 //					app.ch.charModel.subMeshes[0].getBoundingBox(box);
 //					box.mul(cubeModel);
