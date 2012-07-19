@@ -96,11 +96,16 @@ public class GameServer {
 					toSend.x = received.x;
 					toSend.y = received.y;	
 					toSend.z = received.z;	
+					toSend.kills = received.kills;
+					toSend.deaths = received.deaths;
 					toSend.hp = gameState[received.id].hp;
 
 					gameState[received.id].posX = received.x;
 					gameState[received.id].posY = received.y;
 					gameState[received.id].posZ = received.z;
+					
+					gameState[received.id].kills = received.kills;
+					gameState[received.id].deaths = received.deaths;
 
 					bbCorners[0].set(received.x1, received.y1, received.z1);
 					bbCorners[1].set(received.x2, received.y2, received.z2);
@@ -134,7 +139,9 @@ public class GameServer {
 									hittoSend.id = i;
 									gameState[i].hp =gameState[i].hp-1;
 									if(gameState[i].hp < 0){
+										System.out.println(b.id + " killed " + i);
 										gameState[b.id].kills += 1;
+										System.out.println(b.id + " now haskilled " + gameState[b.id].kills );
 										gameState[i].deaths += 1;
 										gameState[i].hp = 10;
 									}
