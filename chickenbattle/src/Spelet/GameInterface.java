@@ -78,6 +78,10 @@ public class GameInterface {
 	public void updateHealth(int hp){
 		currentHealth = healthsprites[hp-1];
 	}
+	
+	public void updateShields(int shield){
+		currentShield = shieldsprites[shield];
+	}
 
 	public void updateWeapon(int weapon){
 		currentWeapon = weaponsprites[weapon];

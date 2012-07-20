@@ -88,7 +88,8 @@ public class GameClient{
 						players[response.id].posX = response.x;
 						players[response.id].posY = response.y;			
 						players[response.id].posZ = response.z;	
-						players[response.id].hp = response.hp;	
+						players[response.id].hp = response.hp;
+						players[response.id].shields = response.shields;
 						players[response.id].kills = response.kills;	
 						players[response.id].deaths = response.deaths;	
 								
