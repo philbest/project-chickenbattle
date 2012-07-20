@@ -21,9 +21,9 @@ public class GameInterface {
 	public Sprite[] weaponsprites;
 	public Sprite currentWeapon;
 	public Sprite items, item1, item2, item3;
-	public Sprite currentItem;
-	public boolean swapWeapon;
-	public int currentCooldown, switchRender;
+	public Sprite currentItem, bloodSprite;
+	public boolean swapWeapon, blood;
+	public int currentCooldown, switchRender, bloodTimer;
 
 	public GameInterface() {
 		healthbar = new TextureAtlas(Gdx.files.internal("data/gameinterface/health/pack"));
@@ -33,6 +33,8 @@ public class GameInterface {
 		item1 = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/items/1.png")));
 		item2 = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/items/2.png")));
 		item3 = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/items/3.png")));
+		bloodSprite = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/other/bloodsplatt.png")));
+		bloodSprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		healthsprites = new Sprite[10];
 		healthsprites[0] = healthbar.createSprite("1");
 		healthsprites[1] = healthbar.createSprite("2");
@@ -68,8 +70,12 @@ public class GameInterface {
 		currentShield.setPosition(3+currentShield.getWidth()/7, 5+currentHealth.getHeight());
 		currentShield.draw(sb);
 		currentWeapon.setPosition(Gdx.graphics.getWidth()-currentWeapon.getWidth(), 0+currentWeapon.getHeight()*2);
+		bloodSprite.setPosition(0, 0);
 		if(swapWeapon){
 			currentWeapon.draw(sb);
+		}
+		if(blood){
+			bloodSprite.draw(sb);
 		}
 		currentItem.setPosition(Gdx.graphics.getWidth()/2-items.getWidth()/2, 0);
 		currentItem.draw(sb);
@@ -78,9 +84,15 @@ public class GameInterface {
 	public void updateHealth(int hp){
 		currentHealth = healthsprites[hp-1];
 	}
-	
+
 	public void updateShields(int shield){
 		currentShield = shieldsprites[shield];
+	}
+
+	public void updateBlood(boolean bool){
+		if(bool){
+			bloodTimer = 200;
+		}
 	}
 
 	public void updateWeapon(int weapon){
@@ -103,11 +115,18 @@ public class GameInterface {
 	public void update() {
 		currentCooldown -= Gdx.graphics.getDeltaTime()*1000;
 		switchRender -= Gdx.graphics.getDeltaTime()*1000;
+		bloodTimer -= Gdx.graphics.getDeltaTime()*1000;
 		if(switchRender > 0){
 			swapWeapon = true;
 		}
 		else{
 			swapWeapon = false;
+		}
+		if(bloodTimer > 0){
+			blood = true;
+		}
+		else{
+			blood = false;
 		}
 	}
 

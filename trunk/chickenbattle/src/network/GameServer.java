@@ -46,7 +46,6 @@ public class GameServer {
 		connectionIDs = new HashMap<Connection,Integer>();
 		server.start();
 		Packet.register(server);
-
 		server.bind(54555, 54778);   
 		startx = 0;
 		starty = 0;
@@ -217,7 +216,7 @@ public class GameServer {
 	}
 	public static void main (String[] args) throws IOException {
 		new GameServer();
-		System.out.println("rnning");
+		System.out.println("Game server is online!");
 	}
 
 }

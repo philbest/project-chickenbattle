@@ -137,6 +137,7 @@ public class Application extends Screen implements InputProcessor{
 			}
 		}
 		gi.updateHealth(ch.health);
+		gi.updateBlood(ch.bloodsplatt);
 		gi.updateShields(ch.shields);
 	}
 	@Override
