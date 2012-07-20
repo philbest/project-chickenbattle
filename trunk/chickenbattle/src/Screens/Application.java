@@ -111,7 +111,6 @@ public class Application extends Screen implements InputProcessor{
 		if(multiplayer){
 			players = client.getPlayers();
 			if(players[client.id] != null){	
-				System.out.println("SHIELD: " + players[client.id].shields);
 				players[client.id].posX = ch.position.x; 
 				players[client.id].posY = ch.position.y; 
 				players[client.id].posZ = ch.position.z; 
