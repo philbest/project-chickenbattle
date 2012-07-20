@@ -111,11 +111,13 @@ public class Application extends Screen implements InputProcessor{
 		if(multiplayer){
 			players = client.getPlayers();
 			if(players[client.id] != null){	
+				System.out.println("SHIELD: " + players[client.id].shields);
 				players[client.id].posX = ch.position.x; 
 				players[client.id].posY = ch.position.y; 
 				players[client.id].posZ = ch.position.z; 
 				players[client.id].box = ch.box;
 				ch.updateHealth(players[client.id].hp);
+				ch.updateShield(players[client.id].shields);
 				if(send){
 					client.sendMessage(players[client.id],ch.box.getCorners());
 					send = false;
@@ -135,6 +137,7 @@ public class Application extends Screen implements InputProcessor{
 			}
 		}
 		gi.updateHealth(ch.health);
+		gi.updateShields(ch.shields);
 	}
 	@Override
 	public boolean keyDown(int arg0) {

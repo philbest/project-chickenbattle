@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.collision.BoundingBox;
 
 public class Player {
 	public String name;
-	public int id,hp,kills,deaths;
+	public int id,hp,kills,deaths, shields;
 	public long lasthit;
 	public float posX, posY,posZ;  
 	public BoundingBox box;
@@ -13,6 +13,7 @@ public class Player {
 	public Player(String xs){
 		this.name = xs;
 		hp = 10;
+		shields = 5;
 		posX = 0;
 		posY = 0;
 		posZ =0;

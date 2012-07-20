@@ -99,11 +99,12 @@ public class GameServer {
 					toSend.kills = gameState[received.id].kills;
 					toSend.deaths = gameState[received.id].deaths;
 					toSend.hp = gameState[received.id].hp;
+					toSend.shields = gameState[received.id].shields;
 
 					gameState[received.id].posX = received.x;
 					gameState[received.id].posY = received.y;
 					gameState[received.id].posZ = received.z;
-					
+
 					bbCorners[0].set(received.x1, received.y1, received.z1);
 					bbCorners[1].set(received.x2, received.y2, received.z2);
 					bbCorners[2].set(received.x3, received.y3, received.z3);
@@ -144,7 +145,7 @@ public class GameServer {
 					toSend.x8 = received.x8;
 					toSend.y8 = received.y8;
 					toSend.z8 = received.z8;
-					
+
 
 					gameState[received.id].setBox(bbCorners);
 					server.sendToAllTCP(toSend);
@@ -167,13 +168,21 @@ public class GameServer {
 							if(gameState[i] != null){
 								if(gameState[i].box.contains(point)){
 									hittoSend.id = i;
-									gameState[i].hp =gameState[i].hp-1;
+									if(gameState[i].shields > 0){
+										gameState[i].shields =gameState[i].shields-1;
+										System.out.println("shield: " + gameState[i].shields);
+									}
+									else{
+										gameState[i].hp =gameState[i].hp-1;
+										System.out.println("shot: " + gameState[i].hp);
+									}
 									if(gameState[i].hp == 0){
 										System.out.println(b.id + " killed " + i);
 										gameState[b.id].kills += 1;
 										System.out.println(b.id + " now haskilled " + gameState[b.id].kills );
 										gameState[i].deaths += 1;
 										gameState[i].hp = 10;
+										gameState[i].shields = 5;
 									}
 									hit = true;
 									server.sendToAllTCP(hittoSend);

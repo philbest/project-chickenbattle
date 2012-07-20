@@ -56,8 +56,10 @@ public class Character {
 	public String state;
 	public Texture modelTexture = null;
 	public int health;
+	public int shields;
 	public Character() {
 		health = 10;
+		shields = 5;
 		hookshotting = false;
 		state = "chill";
 		forceUp = 0;
@@ -153,6 +155,16 @@ public class Character {
 	
 	public void updateHealth(int hp){
 		health = hp;
+	}
+	
+	public void updateShield(int s){
+		shields = s;
+	}
+	
+	public void regenShield(){
+		if(shields < 5){
+			shields++;
+		}
 	}
 	
 	public void update(Application app) {
