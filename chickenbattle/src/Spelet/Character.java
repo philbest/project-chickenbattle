@@ -57,9 +57,11 @@ public class Character {
 	public Texture modelTexture = null;
 	public int health;
 	public int shields;
+	public boolean bloodsplatt;
 	public Character() {
 		health = 10;
 		shields = 5;
+		bloodsplatt = false;
 		hookshotting = false;
 		state = "chill";
 		forceUp = 0;
@@ -101,7 +103,7 @@ public class Character {
 		animStrafeLeft = (KeyframedAnimation)charStrafeLeft.getAnimations()[0];
 		animStrafeRight = (KeyframedAnimation)charStrafeRight.getAnimations()[0];
 		animState = animChill;
-
+		
 		System.out.println("NORMALS?" + hasNormals());
 		model = charState.subMeshes[0].mesh;
 	}
@@ -154,7 +156,14 @@ public class Character {
 	}
 	
 	public void updateHealth(int hp){
-		health = hp;
+		if(hp < health && health <= 4){
+			bloodsplatt = true;
+			health = hp;
+		}
+		else{
+			health = hp;
+			bloodsplatt = false;
+		}
 	}
 	
 	public void updateShield(int s){
