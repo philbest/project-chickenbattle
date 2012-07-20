@@ -1,0 +1,26 @@
+
+weapons1.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+usp
+  rotate: false
+  xy: 2, 2
+  size: 128, 64
+  orig: 128, 64
+  offset: 0, 0
+  index: -1
+block
+  rotate: false
+  xy: 132, 2
+  size: 128, 64
+  orig: 128, 64
+  offset: 0, 0
+  index: -1
+ak
+  rotate: false
+  xy: 262, 2
+  size: 128, 64
+  orig: 128, 64
+  offset: 0, 0
+  index: -1
