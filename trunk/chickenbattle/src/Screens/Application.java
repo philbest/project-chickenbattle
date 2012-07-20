@@ -7,6 +7,7 @@ import network.Player;
 import Map.Chunk;
 import Map.Map;
 import Map.Voxel;
+import Spelet.GameInterface;
 import Spelet.LightSource;
 import Spelet.Main;
 import Spelet.Renderer;
@@ -42,6 +43,7 @@ public class Application extends Screen implements InputProcessor{
 	GameClient client;
 	public int clientid;
 	public Player[] players;
+	public GameInterface gi;
 	public boolean scoreboard;
 	int timer;
 	public boolean multiplayer;
@@ -67,7 +69,7 @@ public class Application extends Screen implements InputProcessor{
 		cam.position.set(0,50,40);
 		cam.update();
 		renderer = new Renderer();
-
+		gi = new GameInterface();
 		multiplayer = true;
 	}
 	public void render() {
@@ -80,7 +82,9 @@ public class Application extends Screen implements InputProcessor{
 			clientid = client.id;
 		}
 		map.update();
+		gi.update();
 		ch.inventory.get(ch.weapon).update();
+		gi.updateWeapon(ch.weapon);
 		if(multiplayer && client.dead){
 			client.dead = false;
 			ch.ressurrect();
@@ -111,6 +115,7 @@ public class Application extends Screen implements InputProcessor{
 				players[client.id].posY = ch.position.y; 
 				players[client.id].posZ = ch.position.z; 
 				players[client.id].box = ch.box;
+				ch.updateHealth(players[client.id].hp);
 				if(send){
 					client.sendMessage(players[client.id],ch.box.getCorners());
 					send = false;
@@ -129,15 +134,19 @@ public class Application extends Screen implements InputProcessor{
 				chunkstorebuild.get(i).rebuildChunk();
 			}
 		}
+		gi.updateHealth(ch.health);
 	}
 	@Override
 	public boolean keyDown(int arg0) {
 		if (Input.Keys.NUM_1 == arg0) {
 			ch.weapon = ch.inventory.get(0).weaponID;
+			gi.swapWeapon();
 		} else if (Input.Keys.NUM_2 == arg0) {
 			ch.weapon = ch.inventory.get(1).weaponID;
+			gi.swapWeapon();
 		} else if (Input.Keys.NUM_3 == arg0) {
 			ch.weapon = ch.inventory.get(2).weaponID;
+			gi.swapWeapon();
 		}else if (Input.Keys.NUM_9 == arg0){
 			ch.setPos(30,60,50);
 		}
@@ -174,7 +183,7 @@ public class Application extends Screen implements InputProcessor{
 				currentweapon=ch.inventory.size-1;
 			ch.weapon = ch.inventory.get(currentweapon).weaponID;
 		}
-
+		gi.swapWeapon();
 		return false;
 	}
 	@Override

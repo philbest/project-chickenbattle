@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Thu Jul 19 20:04:09 CEST 2012
+onejar.license.required=false
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=false
+jarname=chickenbattle_fat.jar
+manifest.mergeall=true
+manifest.mainclass=Spelet.DesktopStarter
+manifest.file=<createnew>
+jarname.isextern=false
+onejar.expand=
+excludes=
+includes=

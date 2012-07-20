@@ -53,9 +53,13 @@ public class Character {
 	public KeyframedAnimation animLand;
 	public KeyframedAnimation animStrafeLeft;
 	public KeyframedAnimation animStrafeRight;
+	public String state;
 	public Texture modelTexture = null;
+	public int health;
 	public Character() {
+		health = 10;
 		hookshotting = false;
+		state = "chill";
 		forceUp = 0;
 		movement = new Vector3();
 		oldPos = new Vector3();
@@ -95,7 +99,6 @@ public class Character {
 		animStrafeLeft = (KeyframedAnimation)charStrafeLeft.getAnimations()[0];
 		animStrafeRight = (KeyframedAnimation)charStrafeRight.getAnimations()[0];
 		animState = animChill;
-		
 
 		System.out.println("NORMALS?" + hasNormals());
 		model = charState.subMeshes[0].mesh;
@@ -109,8 +112,17 @@ public class Character {
 	public void updateModel() {
 		model = charState.subMeshes[0].mesh;
 	}
+
+	public void setActiveState(KeyframedModel cs, KeyframedAnimation as){
+		if(charState != cs && as != animState){
+			System.out.println("hello");
+			charState = cs;
+			animState = as;
+			updateModel();
+		}
+	}
 	public void setPos(float x, float y, float z) {
-		
+
 		position.set(x,y,z);
 		modelMatrix = new Matrix4();
 		modelMatrix.setToTranslation(position);
@@ -138,14 +150,17 @@ public class Character {
 			inventory.get(i).restart();
 		}
 	}
+	
+	public void updateHealth(int hp){
+		health = hp;
+	}
+	
 	public void update(Application app) {
-		updateModel();
+
 		if (hookshotting) {
 
 		} else {
 			if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-				charState = charWalk;
-				animState = animWalk;
 				oldPos.set(position);
 				movement.set(app.cam.direction.x,0,app.cam.direction.z);
 				movement.nor();
@@ -169,8 +184,6 @@ public class Character {
 				}
 			}
 			if (Gdx.input.isKeyPressed((Input.Keys.S))) {
-				charState = charWalk;
-				animState = animWalk;
 				oldPos.set(position);
 				movement.set(app.cam.direction.x,0,app.cam.direction.z);
 				movement.nor();
@@ -193,8 +206,6 @@ public class Character {
 				}
 			}
 			if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-				charState = charStrafeRight;
-				animState = animStrafeRight;
 				oldPos.set(position);
 				movement.set(app.cam.direction.x,0,app.cam.direction.z);
 				movement.crs(app.cam.up);
@@ -219,8 +230,6 @@ public class Character {
 
 			}
 			if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-				charState = charStrafeLeft;
-				animState = animStrafeLeft;
 				oldPos.set(position);
 				movement.set(app.cam.direction.x,0,app.cam.direction.z);
 				movement.crs(app.cam.up);
@@ -245,8 +254,6 @@ public class Character {
 
 			}
 			if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-				charState = charJump;
-				animState = animJump;
 				oldPos.set(position);
 				movement.set(0,-1*Gdx.graphics.getDeltaTime()*10,0);
 				addMovement(movement);
@@ -292,16 +299,13 @@ public class Character {
 					}
 					forceUp -= 2.5f*Gdx.graphics.getDeltaTime();
 					if (forceUp < 0) {
-						charState = charLand;
-						animState = animLand;
 						jumping = false;
 						forceUp = 0;
 					}
 				}
 
 			} else {
-				charState = charChill;
-				animState = animChill;
+				setActiveState(charWalk, animWalk);
 				oldPos.set(position);
 				movement.set(0,Gdx.graphics.getDeltaTime()*10*forceUp,0);
 				forceUp -= 2.5f*Gdx.graphics.getDeltaTime();

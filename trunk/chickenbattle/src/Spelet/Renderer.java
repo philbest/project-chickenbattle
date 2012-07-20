@@ -86,7 +86,7 @@ public class Renderer {
 	}
 	public Renderer() {
 		initiateShadows();
-
+		
 		score = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/lobbybg.png")));
 
 		sb = new SpriteBatch();
@@ -157,6 +157,8 @@ public class Renderer {
 		Gdx.gl20.glDisable(GL20.GL_CULL_FACE);
 		sb.begin();
 		app.ch.inventory.get(app.ch.weapon).render(sb);
+		app.gi.render(sb);
+		
 		if(app.scoreboard){
 			score.setPosition(300, 100);
 			score.draw(sb,0.80f);
@@ -244,6 +246,7 @@ public class Renderer {
 					}
 
 					app.ch.charState.setAnimation(app.ch.animState.name, app.players[i].animTimer, false);
+					//System.out.println(app.ch.charState);
 					app.ch.charState.render(simpleShader);
 					simpleShader.end();
 
