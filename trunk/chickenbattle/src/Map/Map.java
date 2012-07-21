@@ -36,6 +36,7 @@ public class Map {
 			chunksToRebuild.get(i).rebuildChunk();
 		}
 	}
+
 	public void update() {
 //		int startValue = Math.min(chunksToRebuild.size-1, 1);
 //		for (int i = startValue; i >= 0; i--) {
