@@ -66,6 +66,7 @@ public class Application extends Screen implements InputProcessor{
 		map = new Map();
 		send = false;
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		cam.near = 0.1f;
 		cam.position.set(0,50,40);
 		cam.update();
 		renderer = new Renderer();

@@ -58,6 +58,7 @@ public class Character {
 	public int health;
 	public int shields;
 	public boolean bloodsplatt, killer, killed;
+	public static final float FALL_DEATH_LIMIT = -50f;
 	public Character() {
 		health = 10;
 		shields = 5;
@@ -357,6 +358,8 @@ public class Character {
 					}
 				}
 			}
+			if(position.y < FALL_DEATH_LIMIT)
+				ressurrect();
 		}
 	}
 }
