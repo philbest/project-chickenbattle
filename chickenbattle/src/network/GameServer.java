@@ -19,7 +19,7 @@ import com.esotericsoftware.kryonet.Server;
 
 public class GameServer {
 	Server server;
-	Player[] gameState;
+	Player[] player;
 	Vector3[] bbCorners;
 	HashMap<Connection,Integer> connectionIDs;
 	Connection[] connections;
@@ -34,7 +34,7 @@ public class GameServer {
 
 	public GameServer () throws IOException {
 		server = new Server();
-		gameState = new Player[10];
+		player = new Player[10];
 		connections = new Connection[10];
 		bbCorners = new Vector3[8];
 		for(int i=0; i < 8; i++)
@@ -62,17 +62,17 @@ public class GameServer {
 						System.out.println(received.name + "gets id: " + ids);
 						connection.sendTCP(reply);
 						AddPlayer oldPlayers = new AddPlayer();
-						for(int i=0; i <gameState.length; i++){
-							if(gameState[i] != null){
+						for(int i=0; i <player.length; i++){
+							if(player[i] != null){
 								oldPlayers.id = i;
-								oldPlayers.name = gameState[i].name;
-								oldPlayers.startx = gameState[i].posX;
-								oldPlayers.starty = gameState[i].posY;
-								oldPlayers.startz = gameState[i].posZ;
+								oldPlayers.name = player[i].name;
+								oldPlayers.startx = player[i].posX;
+								oldPlayers.starty = player[i].posY;
+								oldPlayers.startz = player[i].posZ;
 								connection.sendTCP(oldPlayers);
 							}
 						}
-						gameState[ids] = new Player(received.name);
+						player[ids] = new Player(received.name);
 						connections[ids] = connection; 
 						connectionIDs.put(connection, ids);
 
@@ -95,14 +95,16 @@ public class GameServer {
 					toSend.x = received.x;
 					toSend.y = received.y;	
 					toSend.z = received.z;	
-					toSend.kills = gameState[received.id].kills;
-					toSend.deaths = gameState[received.id].deaths;
-					toSend.hp = gameState[received.id].hp;
-					toSend.shields = gameState[received.id].shields;
+					toSend.kills = player[received.id].kills;
+					toSend.deaths = player[received.id].deaths;
+					toSend.hp = player[received.id].hp;
+					toSend.shields = player[received.id].shields;
+					toSend.killer = player[received.id].killer;
+					toSend.killed = player[received.id].killed;
 
-					gameState[received.id].posX = received.x;
-					gameState[received.id].posY = received.y;
-					gameState[received.id].posZ = received.z;
+					player[received.id].posX = received.x;
+					player[received.id].posY = received.y;
+					player[received.id].posZ = received.z;
 
 					bbCorners[0].set(received.x1, received.y1, received.z1);
 					bbCorners[1].set(received.x2, received.y2, received.z2);
@@ -146,7 +148,7 @@ public class GameServer {
 					toSend.z8 = received.z8;
 
 
-					gameState[received.id].setBox(bbCorners);
+					player[received.id].setBox(bbCorners);
 					server.sendToAllTCP(toSend);
 				}
 				else if (object instanceof BlockUpdate){
@@ -156,6 +158,7 @@ public class GameServer {
 				}
 				else if(object instanceof Bullet){
 					hit = false;
+
 					float range = 0;
 					Bullet b = (Bullet)object;
 					direction.set(b.dx, b.dy, b.dz);
@@ -163,25 +166,32 @@ public class GameServer {
 					while (!hit && range < 200) {
 						range += direction.len();
 						point.add(direction);
-						for(int i=0; i < gameState.length; i++){				
-							if(gameState[i] != null && i != b.id){
-								if(gameState[i].box.contains(point)){
+						for(int i=0; i < player.length; i++){				
+							if(player[i] != null && i != b.id){
+								if(player[i].box.contains(point)){
+
 									hittoSend.id = i;
-									if(gameState[i].shields > 0){
-										gameState[i].shields =gameState[i].shields-1;
-										System.out.println("shield: " + gameState[i].shields);
+									if(player[i].shields > 0){
+										player[i].shields =player[i].shields-1;
+										System.out.println("shield: " + player[i].shields);
 									}
 									else{
-										gameState[i].hp =gameState[i].hp-1;
-										System.out.println("shot: " + gameState[i].hp);
+										player[i].hp =player[i].hp-1;
+										System.out.println("shot: " + player[i].hp);
 									}
-									if(gameState[i].hp == 0){
-										System.out.println(b.id + " killed " + i);
-										gameState[b.id].kills += 1;
-										System.out.println(b.id + " now haskilled " + gameState[b.id].kills );
-										gameState[i].deaths += 1;
-										gameState[i].hp = 10;
-										gameState[i].shields = 5;
+
+									if(player[i].hp == 0){
+										player[i].killed = true;
+										player[b.id].killer = true;
+										player[b.id].kills += 1;
+										System.out.println(player[b.id].name + " has now " + player[b.id].kills + " kills!");
+										player[i].deaths += 1;
+										player[i].hp = 10;
+										player[i].shields = 5;
+									}
+									else{
+										player[i].killed = false;
+										player[b.id].killer = false;
 									}
 									hit = true;
 									server.sendToAllTCP(hittoSend);
@@ -192,22 +202,27 @@ public class GameServer {
 				}
 			}
 
+
+
+
+
 			public void disconnected (Connection c) {
 				if(connectionIDs.get(c)!= null){
 					Disconnected dc = new Disconnected();	
 					dc.id = connectionIDs.get(c);
 					connectionIDs.remove(c);
-					gameState[dc.id] = null;
+					player[dc.id] = null;
 					connections[dc.id] = null;
 					server.sendToAllTCP(dc);
 				}
 			}
+
 		});
 	}
 
 	public boolean fixId(){
-		for(int i=0; i < gameState.length; i++){
-			if(gameState[i] == null){
+		for(int i=0; i < player.length; i++){
+			if(player[i] == null){
 				ids = i;
 				return true;
 			}		 

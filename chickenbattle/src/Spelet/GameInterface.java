@@ -1,6 +1,10 @@
 package Spelet;
+
+import network.Player;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -22,10 +26,13 @@ public class GameInterface {
 	public Sprite currentWeapon;
 	public Sprite items, item1, item2, item3;
 	public Sprite currentItem, bloodSprite;
-	public boolean swapWeapon, blood;
-	public int currentCooldown, switchRender, bloodTimer;
+	public BitmapFont font;
+	public boolean swapWeapon, blood, frag;
+	public String killerName, killedName;
+	public int currentCooldown, switchRender, bloodTimer, fragTimer;
 
 	public GameInterface() {
+		font = new BitmapFont();
 		healthbar = new TextureAtlas(Gdx.files.internal("data/gameinterface/health/pack"));
 		shieldbar = new TextureAtlas(Gdx.files.internal("data/gameinterface/shield/pack"));
 		weapons = new TextureAtlas(Gdx.files.internal("data/gameinterface/weapons/pack"));
@@ -60,6 +67,8 @@ public class GameInterface {
 		shieldsprites[5] = shieldbar.createSprite("5");
 		currentShield = shieldsprites[5];
 		currentItem = item1;
+		killerName = "null";
+		killedName = "null";
 	}
 	public void restart() {
 
@@ -79,6 +88,19 @@ public class GameInterface {
 		}
 		currentItem.setPosition(Gdx.graphics.getWidth()/2-items.getWidth()/2, 0);
 		currentItem.draw(sb);
+		if(frag){
+			font.draw(sb, killerName + " has fragged " + killedName, Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight());
+		}
+	}
+
+	public void updateKiller(Player killer){
+		killerName = killer.name;
+		fragTimer = 2000;
+	}
+
+	public void updateKilled(Player killed){
+		killedName = killed.name;
+		fragTimer = 2000;
 	}
 
 	public void updateHealth(int hp){
@@ -116,6 +138,8 @@ public class GameInterface {
 		currentCooldown -= Gdx.graphics.getDeltaTime()*1000;
 		switchRender -= Gdx.graphics.getDeltaTime()*1000;
 		bloodTimer -= Gdx.graphics.getDeltaTime()*1000;
+		fragTimer -= Gdx.graphics.getDeltaTime()*1000;
+		//System.out.println(fragTimer);
 		if(switchRender > 0){
 			swapWeapon = true;
 		}
@@ -127,6 +151,12 @@ public class GameInterface {
 		}
 		else{
 			blood = false;
+		}
+		if(fragTimer > 0){
+			frag = true;
+		}
+		else{
+			frag = false;
 		}
 	}
 
