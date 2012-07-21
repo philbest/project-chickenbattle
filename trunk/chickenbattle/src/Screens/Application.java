@@ -74,6 +74,7 @@ public class Application extends Screen implements InputProcessor{
 	}
 	public void render() {
 		renderer.render(this);
+		
 	}
 	public void update() {
 		Gdx.input.setCursorCatched(true);
@@ -117,6 +118,18 @@ public class Application extends Screen implements InputProcessor{
 				players[client.id].box = ch.box;
 				ch.updateHealth(players[client.id].hp);
 				ch.updateShield(players[client.id].shields);
+				if(players[client.id].killer == true){
+					//System.out.println("Killer" + players[client.id].killer);
+					gi.updateKiller(players[client.id]);
+					players[client.id].killer = false;
+					
+				}
+				if(players[client.id].killed == true){
+					//System.out.println("Killed: " + players[client.id].killed);
+					gi.updateKilled(players[client.id]);
+					players[client.id].killed = false;
+					
+				}
 				if(send){
 					client.sendMessage(players[client.id],ch.box.getCorners());
 					send = false;

@@ -54,8 +54,13 @@ public class GameClient{
 		name = "pEKKA";
 		try {
 			//client.connect(5000, "129.16.21.56", 54555, 54778);
+
+			//client.connect(5000, "192.168.0.100", 54555, 54778);
+			client.connect(5000, "129.16.177.67", 54555, 54778);
+
 			client.connect(5000, "129.16.177.67", 54555, 54778);
 			//client.connect(5000, "192.168.0.100", 54555, 54778);
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -93,6 +98,8 @@ public class GameClient{
 						players[response.id].shields = response.shields;
 						players[response.id].kills = response.kills;	
 						players[response.id].deaths = response.deaths;	
+						players[response.id].killer = response.killer;
+						players[response.id].killed = response.killed;
 								
 						bbCorners[0].set(response.x1, response.y1, response.z1);
 						bbCorners[1].set(response.x2, response.y2, response.z2);

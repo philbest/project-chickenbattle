@@ -10,10 +10,13 @@ public class Player {
 	public float posX, posY,posZ;  
 	public BoundingBox box;
 	public float animTimer;
+	public boolean killer, killed;
 	public Player(String xs){
 		this.name = xs;
 		hp = 10;
 		shields = 5;
+		killer = false;
+		killed = false;
 		posX = 0;
 		posY = 0;
 		posZ =0;
