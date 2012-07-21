@@ -213,7 +213,7 @@ public class Application extends Screen implements InputProcessor{
 				recoil();
 
 				if(multiplayer){		
-					client.sendBullet(point,direction);
+					client.sendBullet(point,direction, clientid);
 				}
 				while (!hit && range < 200) {
 					range += direction.len();

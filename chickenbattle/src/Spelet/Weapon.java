@@ -79,6 +79,8 @@ public class Weapon {
 	}
 	public void update() {
 		currentCooldown -= Gdx.graphics.getDeltaTime()*1000;
+		if(currentCooldown<0)
+			currentCooldown = 0;
 	}
 	public boolean shoot() {
 		if (magBullets > 0 && currentCooldown <= 0) {

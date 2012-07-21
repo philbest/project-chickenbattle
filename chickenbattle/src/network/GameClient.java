@@ -51,10 +51,11 @@ public class GameClient{
 		servedchunks = new Array<BlockUpdate>();
 
 		Packet.register(client);
-		name = "Elin";
+		name = "pEKKA";
 		try {
 			//client.connect(5000, "129.16.21.56", 54555, 54778);
-			client.connect(5000, "192.168.0.100", 54555, 54778);
+			client.connect(5000, "129.16.177.67", 54555, 54778);
+			//client.connect(5000, "192.168.0.100", 54555, 54778);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -74,7 +75,7 @@ public class GameClient{
 				else if ( object instanceof AddPlayer){
 					AddPlayer response = (AddPlayer)object;
 					Player newPlayer = new Player(response.name);
-					System.out.println("box " + response.name + "added");
+					System.out.println("box " + response.name + " added.");
 					newPlayer.id = response.id;
 					newPlayer.posX = response.startx;
 					newPlayer.posY = response.starty;
@@ -158,7 +159,7 @@ public class GameClient{
 
 	}
 
-	public void sendBullet(Vector3 origin, Vector3 dir){
+	public void sendBullet(Vector3 origin, Vector3 dir, int id){
 		bullet.id = id;
 		bullet.ox =origin.x;
 		bullet.oy =origin.y;

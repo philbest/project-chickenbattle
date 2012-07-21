@@ -164,7 +164,7 @@ public class GameServer {
 						range += direction.len();
 						point.add(direction);
 						for(int i=0; i < gameState.length; i++){				
-							if(gameState[i] != null){
+							if(gameState[i] != null && i != b.id){
 								if(gameState[i].box.contains(point)){
 									hittoSend.id = i;
 									if(gameState[i].shields > 0){
