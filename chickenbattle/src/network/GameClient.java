@@ -34,6 +34,7 @@ public class GameClient{
 	public int id;
 	public boolean hit;
 	public boolean dead;
+	public int ping;
 
 	public GameClient(){
 		client = new Client();
@@ -111,7 +112,7 @@ public class GameClient{
 						bbCorners[7].set(response.x8, response.y8, response.z8);					
 						
 						players[response.id].setBox(bbCorners);				
-							
+						ping = connection.getReturnTripTime();
 					}
 				}
 
