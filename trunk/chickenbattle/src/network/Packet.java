@@ -1,5 +1,6 @@
 package network;
 
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
 
@@ -21,7 +22,7 @@ public class Packet {
 
 	static public class Update {
 		public int id,hp, shields, kills,deaths;
-		public float x,y,z;
+		public float x,y,z, shieldTimer, shieldTimer2;
 		public float x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4,x5,y5,z5,x6,y6,z6,x7,y7,z7,x8,y8,z8;
 		public int currentbox;
 		public boolean killer, killed;
