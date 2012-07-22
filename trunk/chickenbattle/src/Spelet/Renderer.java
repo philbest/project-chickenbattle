@@ -165,7 +165,7 @@ public class Renderer {
 			for(int i =0; i < app.players.length; i++){	
 				Player x = app.players[i];
 				if(x != null){
-					playerscore = x.name +" kills : " +x.kills + " deaths" + x.deaths;
+					playerscore = x.name +" kills : " +x.kills + ". Deaths " + x.deaths + ". Ping: " + app.ping;
 					float textWidth = font.getBounds(playerscore).width;
 					float textHeight = font.getBounds(playerscore).height;
 					font.draw(sb, playerscore, Gdx.graphics.getWidth()/2 - textWidth/2, 400 - (i*20) + textHeight / 2);
