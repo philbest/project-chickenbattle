@@ -12,4 +12,5 @@ public abstract class Screen implements InputProcessor{
 	
 	public void leave(){
 	}
+
 }

@@ -31,4 +31,8 @@ public class Player {
 		box.set(x);
 	}	
 
+	public void setName(String xs){
+		this.name = xs;
+	}
+	
 }

@@ -32,6 +32,7 @@ public class Character {
 	public Array<Weapon> inventory;
 	public boolean jumping;
 	public Vector3 movement, oldPos;
+	public String charName;
 	float forceUp;
 	boolean hookshotting;
 	public KeyframedModel charModel;
@@ -59,12 +60,13 @@ public class Character {
 	public int shields;
 	public boolean bloodsplatt, killer, killed;
 	public static final float FALL_DEATH_LIMIT = -50f;
-	public Character() {
+	public Character(String name) {
 		health = 10;
 		shields = 5;
 		bloodsplatt = false;
 		killer = false;
 		killed = false;
+		this.charName = name;
 		hookshotting = false;
 		state = "chill";
 		forceUp = 0;
@@ -123,6 +125,10 @@ public class Character {
 	public void updateKill(boolean k1, boolean k2){
 		this.killer = k1;
 		this.killed = k2;
+	}
+	
+	public void updateName(String xs){
+		charName = xs;
 	}
 
 	public void setActiveState(KeyframedModel cs, KeyframedAnimation as){
