@@ -27,7 +27,7 @@ public class GameClient{
 	Array<BlockUpdate> servedchunks;
 	Semaphore listsafe;
 	Vector3[] bbCorners;
-	String name;
+	
 	Update update;
 	Bullet bullet;
 	BlockUpdate bupdate;
@@ -35,14 +35,16 @@ public class GameClient{
 	public boolean hit;
 	public boolean dead;
 	public int ping;
+	public String name;
 
-	public GameClient(){
+	public GameClient(String xs){
 		client = new Client();
 		client.start();
 		players = new Player[10];
 		update = new Update();
 		bupdate = new BlockUpdate();
 		hit = false;
+		this.name = xs;
 		bbCorners = new Vector3[8];
 		for(int i=0; i < 8; i++)
 			bbCorners[i] = new Vector3(0,0,0);
@@ -52,14 +54,13 @@ public class GameClient{
 		servedchunks = new Array<BlockUpdate>();
 
 		Packet.register(client);
-		name = "pEKKA";
 		try {
 			//client.connect(5000, "129.16.21.56", 54555, 54778);
 
 			client.connect(5000, "192.168.0.100", 54555, 54778);
 			//client.connect(5000, "129.16.177.67", 54555, 54778);
 
-
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -79,12 +80,12 @@ public class GameClient{
 				else if ( object instanceof AddPlayer){
 					AddPlayer response = (AddPlayer)object;
 					Player newPlayer = new Player(response.name);
-					System.out.println("box " + response.name + " added.");
 					newPlayer.id = response.id;
 					newPlayer.posX = response.startx;
 					newPlayer.posY = response.starty;
 					newPlayer.posZ = response.startz;
 					players[response.id] = newPlayer;
+					System.out.println("box " + players[response.id].name + " added.");
 
 				}
 				else if (object instanceof Update) {
@@ -101,6 +102,7 @@ public class GameClient{
 						players[response.id].killed = response.killed;
 						players[response.id].shieldTimer = response.shieldTimer;
 						players[response.id].shieldTimer2 = response.shieldTimer2;
+						//players[response.id].name = name;
 								
 						bbCorners[0].set(response.x1, response.y1, response.z1);
 						bbCorners[1].set(response.x2, response.y2, response.z2);
@@ -110,6 +112,7 @@ public class GameClient{
 						bbCorners[5].set(response.x6, response.y6, response.z6);
 						bbCorners[6].set(response.x7, response.y7, response.z7);
 						bbCorners[7].set(response.x8, response.y8, response.z8);					
+						
 						
 						players[response.id].setBox(bbCorners);				
 						ping = connection.getReturnTripTime();
@@ -130,6 +133,7 @@ public class GameClient{
 					chunkstoupdate.add(response);
 					listsafe.release();
 				}
+				
 				else if(object instanceof Hit){
 					Hit response = (Hit)object;
 					players[response.id].lasthit = TimeUtils.millis();
@@ -145,6 +149,10 @@ public class GameClient{
 	
 	public Player[] getPlayers(){
 		return players;
+	}
+	
+	public void changeName(String xs, int id){
+		players[id].setName(xs);
 	}
 
 	public Array<BlockUpdate> getChunks(){	

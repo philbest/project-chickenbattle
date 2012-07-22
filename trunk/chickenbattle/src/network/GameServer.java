@@ -30,6 +30,7 @@ public class GameServer {
 	HashMap<Connection,Integer> connectionIDs;
 	Connection[] connections;
 	Update toSend;
+	Update newN;
 	BlockUpdate btoSend;
 	Hit hittoSend;
 	Vector3 point;
@@ -111,6 +112,7 @@ public class GameServer {
 					toSend.shields = player[received.id].shields;
 					toSend.killer = player[received.id].killer;
 					toSend.killed = player[received.id].killed;
+					toSend.name = player[received.id].name;
 
 
 					player[received.id].posX = received.x;
@@ -162,7 +164,7 @@ public class GameServer {
 					player[received.id].setBox(bbCorners);
 					player[received.id].killer = false;
 					player[received.id].killed = false;
-
+					player[received.id].name = received.name;
 					/*
 					ActionListener regenShield = new ActionListener(){
 						public void actionPerformed(ActionEvent evt){

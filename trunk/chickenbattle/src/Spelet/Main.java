@@ -29,8 +29,8 @@ public class Main implements ApplicationListener{
 		StaticVariables.initiate();
 		screens = new HashMap<Integer, Screen>();
 		screens.put(MAINMENU, new MainMenu(this));
-		screens.put(GAME, new Application(this));
 		screens.put(LOBBY, new Lobby(this));
+		screens.put(GAME, new Application(this));
 		activeScreen = screens.get(MAINMENU);
 		activeScreen.enter();
 		Gdx.graphics.setVSync(true);

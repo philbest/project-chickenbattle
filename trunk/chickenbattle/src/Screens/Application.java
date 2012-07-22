@@ -54,10 +54,10 @@ public class Application extends Screen implements InputProcessor{
 		main = m;
 		movement = new Vector3();
 		scoreboard = false;
-		ch = new Spelet.Character();
+		ch = new Spelet.Character(((Lobby)main.screens.get(Main.LOBBY)).playerName);
 		ch.setPos(50,60,50);
 		players = new Player[10];
-		client = new GameClient();
+		client = new GameClient(ch.charName);
 		oldPos = new Vector3();
 		comparevec = new Vector3();
 		zoom=false;
@@ -78,6 +78,7 @@ public class Application extends Screen implements InputProcessor{
 		multiplayer = true;
 		mute = true;
 	}
+	
 	public void render() {
 		renderer.render(this);
 		
@@ -90,6 +91,9 @@ public class Application extends Screen implements InputProcessor{
 		}
 		map.update();
 		gi.update();
+		ch.updateName(((Lobby)main.screens.get(Main.LOBBY)).playerName);
+		//client.changeName(ch.charName);
+		System.out.println(client.name);
 		ch.inventory.get(ch.weapon).update();
 		gi.updateWeapon(ch.weapon);
 		if(multiplayer && client.dead){
@@ -124,7 +128,6 @@ public class Application extends Screen implements InputProcessor{
 				players[client.id].box = ch.box;
 				ch.updateHealth(players[client.id].hp);
 				ch.updateShield(players[client.id].shields);
-				
 				if(players[client.id].killer == true){
 					gi.updateKiller(players[client.id]);
 				}
@@ -135,6 +138,7 @@ public class Application extends Screen implements InputProcessor{
 					client.sendMessage(players[client.id],ch.box.getCorners());
 					send = false;
 				}
+				client.changeName(ch.charName, client.id);
 			}
 			chunkstoupdate.clear();
 			chunkstorebuild.clear();
