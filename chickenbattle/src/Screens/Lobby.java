@@ -42,6 +42,7 @@ public class Lobby extends Screen{
 	boolean write;
 	float textWidth, textHeight;
 	public Main main;
+	int numPlayers;
 	public Lobby(Main m) {
 		main = m;
 		font = new BitmapFont();
@@ -61,14 +62,21 @@ public class Lobby extends Screen{
 			e.getStackTrace();
 			System.out.println("No players online!");
 		}
-		playerName = "Player";
+		init();
+		playerName = "Player"+numPlayers;
 		tempName = "";
 		write = false;
 	}
 
-	
-	
-	
+	public void init(){
+		numPlayers = 0;
+		try{
+			numPlayers = ((Application)main.screens.get(Main.GAME)).clientid+1;
+		}
+		catch(NullPointerException e){
+			e.getStackTrace();
+		}
+	}
 
 	public boolean keyDown(int arg0) {
 		// TODO Auto-generated method stub

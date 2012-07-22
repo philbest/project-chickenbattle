@@ -79,6 +79,8 @@ public class Application extends Screen implements InputProcessor{
 		mute = true;
 	}
 	
+
+	
 	public void render() {
 		renderer.render(this);
 		
@@ -93,7 +95,6 @@ public class Application extends Screen implements InputProcessor{
 		gi.update();
 		ch.updateName(((Lobby)main.screens.get(Main.LOBBY)).playerName);
 		//client.changeName(ch.charName);
-		System.out.println(client.name);
 		ch.inventory.get(ch.weapon).update();
 		gi.updateWeapon(ch.weapon);
 		if(multiplayer && client.dead){
