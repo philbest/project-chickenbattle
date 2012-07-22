@@ -309,6 +309,7 @@ public class Character {
 			if (Gdx.input.isKeyPressed(Input.Keys.R)) {
 				inventory.get(weapon).reload();		
 			}
+			
 			if (jumping) {
 				oldPos.set(position);
 				movement.set(0,Gdx.graphics.getDeltaTime()*10*forceUp,0);

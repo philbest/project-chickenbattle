@@ -82,11 +82,13 @@ public class Weapon {
 		if(currentCooldown<0)
 			currentCooldown = 0;
 	}
-	public boolean shoot() {
+	public boolean shoot(boolean mute) {
 		if (magBullets > 0 && currentCooldown <= 0) {
 			magBullets--;
 			currentCooldown = cooldown;
-			SoundManager.playWeaponSound(weaponID);
+			if(!mute){
+				SoundManager.playWeaponSound(weaponID);
+			}
 			return true;
 		}
 		return false;

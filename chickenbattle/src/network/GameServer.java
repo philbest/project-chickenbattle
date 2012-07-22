@@ -1,7 +1,12 @@
 package network;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.HashMap;
+
+import javax.swing.Timer;
+
 
 import network.Packet.AddPlayer;
 import network.Packet.Added;
@@ -12,6 +17,7 @@ import network.Packet.Hit;
 import network.Packet.Reject;
 import network.Packet.Update;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -19,7 +25,7 @@ import com.esotericsoftware.kryonet.Server;
 
 public class GameServer {
 	Server server;
-	Player[] player;
+	public Player[] player;
 	Vector3[] bbCorners;
 	HashMap<Connection,Integer> connectionIDs;
 	Connection[] connections;
@@ -31,6 +37,7 @@ public class GameServer {
 	int startx,starty,startz;
 	int ids;
 	boolean hit;
+	public float sTimer, sTimer2;
 
 	public GameServer () throws IOException {
 		server = new Server();
@@ -50,6 +57,9 @@ public class GameServer {
 		startx = 0;
 		starty = 0;
 		startz = 0;
+		sTimer = 0;
+		sTimer2 = 0;
+
 
 		server.addListener(new Listener() {
 			public void received (Connection connection, Object object) {
@@ -90,7 +100,7 @@ public class GameServer {
 				}
 
 				else if (object instanceof Update) {
-					Update received = (Update)object;
+					final Update received = (Update)object;
 					toSend.id = received.id;
 					toSend.x = received.x;
 					toSend.y = received.y;	
@@ -101,6 +111,7 @@ public class GameServer {
 					toSend.shields = player[received.id].shields;
 					toSend.killer = player[received.id].killer;
 					toSend.killed = player[received.id].killed;
+
 
 					player[received.id].posX = received.x;
 					player[received.id].posY = received.y;
@@ -149,6 +160,33 @@ public class GameServer {
 
 
 					player[received.id].setBox(bbCorners);
+					player[received.id].killer = false;
+					player[received.id].killed = false;
+
+					/*
+					ActionListener regenShield = new ActionListener(){
+						public void actionPerformed(ActionEvent evt){
+							if(player[received.id].shields < 5){
+								player[received.id].shields++;
+							}
+						}
+					};
+					new Timer(2000, regenShield).start();
+					*/
+					
+					/*
+					player[received.id].shieldTimer = System.currentTimeMillis();
+					player[received.id].shieldTimer2 = System.currentTimeMillis();
+					if((sTimer - System.currentTimeMillis())/1000 > 8){
+						if(player[received.id].shields < 5){
+							if((sTimer2 - System.currentTimeMillis())/1000 > 1.5){
+								System.out.println("Added shield to: " + player[received.id].name);
+								player[received.id].shields++;
+								sTimer2 = System.currentTimeMillis();
+							}
+						}
+					}
+					*/
 					server.sendToAllTCP(toSend);
 				}
 				else if (object instanceof BlockUpdate){
@@ -173,11 +211,13 @@ public class GameServer {
 									hittoSend.id = i;
 									if(player[i].shields > 0){
 										player[i].shields =player[i].shields-1;
-										System.out.println("shield: " + player[i].shields);
+										//sTimer = System.currentTimeMillis();
+										System.out.println(player[i].name +" shield: " + player[i].shields);
 									}
 									else{
 										player[i].hp =player[i].hp-1;
-										System.out.println("shot: " + player[i].hp);
+										//sTimer = System.currentTimeMillis();
+										System.out.println(player[i].name + " got hit: " + player[i].hp);
 									}
 
 									if(player[i].hp == 0){
@@ -188,10 +228,6 @@ public class GameServer {
 										player[i].deaths += 1;
 										player[i].hp = 10;
 										player[i].shields = 5;
-									}
-									else{
-										player[i].killed = false;
-										player[b.id].killer = false;
 									}
 									hit = true;
 									server.sendToAllTCP(hittoSend);

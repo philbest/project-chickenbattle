@@ -2,7 +2,7 @@ package Screens;
 import network.GameClient;
 import network.Packet.BlockUpdate;
 import network.Player;
-
+import Screens.Lobby;
 
 import Map.Chunk;
 import Map.Map;
@@ -44,7 +44,7 @@ public class Application extends Screen implements InputProcessor{
 	public int clientid;
 	public Player[] players;
 	public GameInterface gi;
-	public boolean scoreboard;
+	public boolean scoreboard, mute;
 	int timer;
 	public boolean multiplayer;
 	int mptimer;
@@ -55,6 +55,8 @@ public class Application extends Screen implements InputProcessor{
 		scoreboard = false;
 		ch = new Spelet.Character();
 		ch.setPos(50,60,50);
+		players = new Player[10];
+		client = new GameClient();
 		oldPos = new Vector3();
 		comparevec = new Vector3();
 		zoom=false;
@@ -68,10 +70,12 @@ public class Application extends Screen implements InputProcessor{
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		cam.near = 0.1f;
 		cam.position.set(0,50,40);
+		cam.near = 0.1f;
 		cam.update();
 		renderer = new Renderer();
 		gi = new GameInterface();
 		multiplayer = true;
+		mute = true;
 	}
 	public void render() {
 		renderer.render(this);
@@ -90,7 +94,7 @@ public class Application extends Screen implements InputProcessor{
 		if(multiplayer && client.dead){
 			client.dead = false;
 			ch.ressurrect();
-			System.out.println("CAT");
+			System.out.println("Player has respawned!");
 		}
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
 			touchDown(draggedX, draggedY, 0, 0);
@@ -119,17 +123,12 @@ public class Application extends Screen implements InputProcessor{
 				players[client.id].box = ch.box;
 				ch.updateHealth(players[client.id].hp);
 				ch.updateShield(players[client.id].shields);
+				
 				if(players[client.id].killer == true){
-					//System.out.println("Killer" + players[client.id].killer);
 					gi.updateKiller(players[client.id]);
-					players[client.id].killer = false;
-					
 				}
 				if(players[client.id].killed == true){
-					//System.out.println("Killed: " + players[client.id].killed);
 					gi.updateKilled(players[client.id]);
-					players[client.id].killed = false;
-					
 				}
 				if(send){
 					client.sendMessage(players[client.id],ch.box.getCorners());
@@ -170,6 +169,14 @@ public class Application extends Screen implements InputProcessor{
 		else if (Input.Keys.TAB == arg0){
 			scoreboard = true;
 		}
+		else if (Input.Keys.M == arg0){
+			if(mute){
+				mute = false;
+			}
+			else{
+				mute = true;
+			}
+		}
 		return false;
 	}
 	@Override
@@ -209,7 +216,7 @@ public class Application extends Screen implements InputProcessor{
 			zoom = true;
 		}
 		else{
-			if (ch.inventory.get(ch.weapon).shoot()) {
+			if (ch.inventory.get(ch.weapon).shoot(mute)) {
 				float range = 0;
 				Vector3 point = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).origin);
 				Vector3 direction = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).direction);
@@ -347,11 +354,12 @@ public class Application extends Screen implements InputProcessor{
 	}
 	@Override
 	public void enter() {
+		/*
 		if(multiplayer){
-			players = new Player[10];
 			client = new GameClient();
-			System.out.println("Client created");
+			players = new Player[10];
 		}
+		*/
 		Gdx.input.setInputProcessor(this);
 
 	}
