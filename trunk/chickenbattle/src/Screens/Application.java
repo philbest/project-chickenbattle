@@ -101,6 +101,7 @@ public class Application extends Screen implements InputProcessor{
 		if(multiplayer && client.dead){
 			client.dead = false;
 			ch.resurrect();
+			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 			System.out.println("Player has respawned!");
 		}
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
