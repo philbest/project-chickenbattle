@@ -103,7 +103,8 @@ public class GameServer {
 					toSend.killer = player[received.id].killer;
 					toSend.killed = player[received.id].killed;
 					toSend.name = player[received.id].name;
-
+					toSend.lasthit = player[received.id].lasthit;
+					toSend.lastRegged = player[received.id].lastRegged;
 
 					player[received.id].posX = received.x;
 					player[received.id].posY = received.y;
@@ -158,7 +159,7 @@ public class GameServer {
 					
 					if(player[received.id].shields < 5){
 						long currTime = System.currentTimeMillis();
-						if((player[received.id].lasthit-currTime > 4000l && player[received.id].lastRegged-currTime > 1500l)){
+						if((currTime-player[received.id].lasthit > 4000l && currTime-player[received.id].lastRegged > 1500l)){
 							System.out.println("Added shield to: " + player[received.id].name);
 							player[received.id].shields++;
 							player[received.id].lastRegged = currTime;

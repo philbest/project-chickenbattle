@@ -75,7 +75,7 @@ public class Application extends Screen implements InputProcessor{
 		cam.update();
 		renderer = new Renderer();
 		gi = new GameInterface();
-		gi.updateShells(ch.inventory.get(ch.weapon).magBullets,1);
+		gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 		multiplayer = true;
 		mute = true;
 	}
@@ -163,15 +163,15 @@ public class Application extends Screen implements InputProcessor{
 	public boolean keyDown(int arg0) {
 		if (Input.Keys.NUM_1 == arg0) {
 			ch.weapon = ch.inventory.get(0).weaponID;
-				gi.updateShells(ch.inventory.get(ch.weapon).magBullets, 1);
+				gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 			gi.swapWeapon();
 		} else if (Input.Keys.NUM_2 == arg0) {
 			ch.weapon = ch.inventory.get(1).weaponID;
-				gi.updateShells(ch.inventory.get(ch.weapon).magBullets, 1);
+				gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 			gi.swapWeapon();
 		} else if (Input.Keys.NUM_3 == arg0) {
 			ch.weapon = ch.inventory.get(2).weaponID;
-				gi.updateShells(ch.inventory.get(ch.weapon).magBullets, 1);
+				gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 			gi.swapWeapon();
 		}else if (Input.Keys.NUM_9 == arg0){
 			ch.setPos(30,60,50);
@@ -189,7 +189,7 @@ public class Application extends Screen implements InputProcessor{
 		}
 		else if (Input.Keys.R == arg0){
 			ch.inventory.get(ch.weapon).reload();
-			gi.updateShells(ch.inventory.get(ch.weapon).magBullets, 1);
+			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 		}
 
 		return false;
@@ -222,7 +222,7 @@ public class Application extends Screen implements InputProcessor{
 				currentweapon=ch.inventory.size-1;
 			ch.weapon = ch.inventory.get(currentweapon).weaponID;
 		}
-			gi.updateShells(ch.inventory.get(ch.weapon).magBullets, 1);
+			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 		gi.swapWeapon();
 		return false;
 	}
@@ -231,12 +231,10 @@ public class Application extends Screen implements InputProcessor{
 		if(arg3 == Input.Buttons.RIGHT ){
 			zoom = true;
 		}
-		else{
-			Gdx.app.log("bull", Integer.toString(ch.inventory.get(ch.weapon).magBullets));
-			Gdx.app.log("shot", "pew");
-			
+		else{		
 			if (ch.inventory.get(ch.weapon).shoot(mute)) {
-					gi.updateShells(ch.inventory.get(ch.weapon).magBullets, 1);
+					gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
+					gi.animateShell(ch.inventory.get(ch.weapon).magBullets);
 				//gi.updateShells(ch.inventory.get(ch.weapon).magBullets-1, MathUtils.random(5)+1);
 				float range = 0;
 				Vector3 point = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).origin);

@@ -1,5 +1,7 @@
 package Spelet;
 
+import java.util.Random;
+
 import network.Player;
 
 import com.badlogic.gdx.Gdx;
@@ -25,18 +27,16 @@ public class GameInterface {
 	public static final int bulletShell3 = 4;
 	public static final int bulletShell4 = 5;
 	public int[] currentBullet;
-
+	public float[] bulletTimers;
+	public static final float BULLET_ANIM_TIME = 0.04f;
+	
 	public Sprite[] bulletToDraw;
 	public Sprite currentHealth;
 	public Sprite currentShield;
 	public Sprite[] healthsprites;
 	public Sprite[] shieldsprites;
 	public Sprite[] weaponsprites;
-	public Sprite[] bullet0;
-	public Sprite[] bullet1;
-	public Sprite[] bullet2;
-	public Sprite[] bullet3;
-	public Sprite[] bullet4;
+	public Sprite[][] bulletAnims;
 	public Sprite currentWeapon;
 	public Sprite items, item1, item2, item3;
 	public Sprite currentItem, bloodSprite;
@@ -44,8 +44,8 @@ public class GameInterface {
 	public boolean swapWeapon, blood, frag;
 	public String killerName, killedName;
 	public int currentCooldown, switchRender, bloodTimer, fragTimer;
-	public int shellTimer, anistep;
 	public int renderBullets;
+	private Random rand = new Random();
 
 	public GameInterface() {
 		font = new BitmapFont();
@@ -87,61 +87,64 @@ public class GameInterface {
 		shieldsprites[4] = shieldbar.createSprite("4");
 		shieldsprites[5] = shieldbar.createSprite("5");
 		currentShield = shieldsprites[5];
-		bullet0 = new Sprite[11];
-		bullet0[0] = bulletanim0.createSprite("bullet0");
-		bullet0[1] = bulletanim0.createSprite("bullet1");
-		bullet0[2] = bulletanim0.createSprite("bullet2");
-		bullet0[3] = bulletanim0.createSprite("bullet3");
-		bullet0[4] = bulletanim0.createSprite("bullet4");
-		bullet0[5] = bulletanim0.createSprite("bullet5");
-		bullet0[6] = bulletanim0.createSprite("bullet6");
-		bullet0[7] = bulletanim0.createSprite("bullet7");
-		bullet0[8] = bulletanim0.createSprite("bullet8");
-		bullet0[9] = bulletanim0.createSprite("bullet9");
-		bullet0[10] = bulletanim0.createSprite("bullet10");
-		bullet1 = new Sprite[8];
-		bullet1[0] = bulletanim1.createSprite("bulleta0");
-		bullet1[1] = bulletanim1.createSprite("bulleta1");
-		bullet1[2] = bulletanim1.createSprite("bulleta2");
-		bullet1[3] = bulletanim1.createSprite("bulleta3");
-		bullet1[4] = bulletanim1.createSprite("bulleta4");
-		bullet1[5] = bulletanim1.createSprite("bulleta5");
-		bullet1[6] = bulletanim1.createSprite("bulleta6");
-		bullet1[7] = bulletanim1.createSprite("bulleta7");
-		bullet2 = new Sprite[8];
-		bullet2[0] = bulletanim2.createSprite("bulletb0");
-		bullet2[1] = bulletanim2.createSprite("bulletb1");
-		bullet2[2] = bulletanim2.createSprite("bulletb2");
-		bullet2[3] = bulletanim2.createSprite("bulletb3");
-		bullet2[4] = bulletanim2.createSprite("bulletb4");
-		bullet2[5] = bulletanim2.createSprite("bulletb5");
-		bullet2[6] = bulletanim2.createSprite("bulletb6");
-		bullet2[7] = bulletanim2.createSprite("bulletb7");
-		bullet3 = new Sprite[6];
-		bullet3[0] = bulletanim3.createSprite("bulletc0");
-		bullet3[1] = bulletanim3.createSprite("bulletc1");
-		bullet3[2] = bulletanim3.createSprite("bulletc2");
-		bullet3[3] = bulletanim3.createSprite("bulletc3");
-		bullet3[4] = bulletanim3.createSprite("bulletc4");
-		bullet3[5] = bulletanim3.createSprite("bulletc5");
-		bullet4 = new Sprite[7];
-		bullet4[0] = bulletanim4.createSprite("bulletd0");
-		bullet4[1] = bulletanim4.createSprite("bulletd1");
-		bullet4[2] = bulletanim4.createSprite("bulletd2");
-		bullet4[3] = bulletanim4.createSprite("bulletd3");
-		bullet4[4] = bulletanim4.createSprite("bulletd4");
-		bullet4[5] = bulletanim4.createSprite("bulletd5");
-		bullet4[6] = bulletanim4.createSprite("bulletd6");
+		bulletAnims = new Sprite[5][];
+		bulletAnims[0] = new Sprite[11];
+		bulletAnims[0][0] = bulletanim0.createSprite("bullet0");
+		bulletAnims[0][1] = bulletanim0.createSprite("bullet1");
+		bulletAnims[0][2] = bulletanim0.createSprite("bullet2");
+		bulletAnims[0][3] = bulletanim0.createSprite("bullet3");
+		bulletAnims[0][4] = bulletanim0.createSprite("bullet4");
+		bulletAnims[0][5] = bulletanim0.createSprite("bullet5");
+		bulletAnims[0][6] = bulletanim0.createSprite("bullet6");
+		bulletAnims[0][7] = bulletanim0.createSprite("bullet7");
+		bulletAnims[0][8] = bulletanim0.createSprite("bullet8");
+		bulletAnims[0][9] = bulletanim0.createSprite("bullet9");
+		bulletAnims[0][10] = bulletanim0.createSprite("bullet10");
+		bulletAnims[1] = new Sprite[8];
+		bulletAnims[1][0] = bulletanim1.createSprite("bulleta0");
+		bulletAnims[1][1] = bulletanim1.createSprite("bulleta1");
+		bulletAnims[1][2] = bulletanim1.createSprite("bulleta2");
+		bulletAnims[1][3] = bulletanim1.createSprite("bulleta3");
+		bulletAnims[1][4] = bulletanim1.createSprite("bulleta4");
+		bulletAnims[1][5] = bulletanim1.createSprite("bulleta5");
+		bulletAnims[1][6] = bulletanim1.createSprite("bulleta6");
+		bulletAnims[1][7] = bulletanim1.createSprite("bulleta7");
+		bulletAnims[2] = new Sprite[8];
+		bulletAnims[2][0] = bulletanim2.createSprite("bulletb0");
+		bulletAnims[2][1] = bulletanim2.createSprite("bulletb1");
+		bulletAnims[2][2] = bulletanim2.createSprite("bulletb2");
+		bulletAnims[2][3] = bulletanim2.createSprite("bulletb3");
+		bulletAnims[2][4] = bulletanim2.createSprite("bulletb4");
+		bulletAnims[2][5] = bulletanim2.createSprite("bulletb5");
+		bulletAnims[2][6] = bulletanim2.createSprite("bulletb6");
+		bulletAnims[2][7] = bulletanim2.createSprite("bulletb7");
+		bulletAnims[3] = new Sprite[6];
+		bulletAnims[3][0] = bulletanim3.createSprite("bulletc0");
+		bulletAnims[3][1] = bulletanim3.createSprite("bulletc1");
+		bulletAnims[3][2] = bulletanim3.createSprite("bulletc2");
+		bulletAnims[3][3] = bulletanim3.createSprite("bulletc3");
+		bulletAnims[3][4] = bulletanim3.createSprite("bulletc4");
+		bulletAnims[3][5] = bulletanim3.createSprite("bulletc5");
+		bulletAnims[4] = new Sprite[7];
+		bulletAnims[4][0] = bulletanim4.createSprite("bulletd0");
+		bulletAnims[4][1] = bulletanim4.createSprite("bulletd1");
+		bulletAnims[4][2] = bulletanim4.createSprite("bulletd2");
+		bulletAnims[4][3] = bulletanim4.createSprite("bulletd3");
+		bulletAnims[4][4] = bulletanim4.createSprite("bulletd4");
+		bulletAnims[4][5] = bulletanim4.createSprite("bulletd5");
+		bulletAnims[4][6] = bulletanim4.createSprite("bulletd6");
 		currentItem = item1;
 		killerName = "null";
 		killedName = "null";
 
-
 		bulletToDraw = new Sprite[30];
 		currentBullet = new int[30];
+		bulletTimers = new float[30];
+		
 		for(int i = 0; i < bulletToDraw.length; i++){
-			bulletToDraw[i] = bullet0[0];
+			bulletToDraw[i] = bulletAnims[0][0];
 			currentBullet[i] = idleBullet;
+			bulletTimers[i] = 0f;
 		}
 	}
 	public void restart() {
@@ -163,13 +166,20 @@ public class GameInterface {
 		currentItem.setPosition(Gdx.graphics.getWidth()/2-items.getWidth()/2, 0);
 		currentItem.draw(sb);
 
-		//Gdx.app.log("bull", Integer.toString(renderBullets));
-		
 		for(int i = 0; i < renderBullets; i++){
 			bulletToDraw[i].setPosition(Gdx.graphics.getWidth()-170-(i*10), -50);
 			bulletToDraw[i].draw(sb, 0.75f);
 		}
 
+		for(int i=0;i<30;i++)
+		{
+			if(currentBullet[i] != idleBullet)
+			{
+				bulletToDraw[i].setPosition(Gdx.graphics.getWidth()-170-(i*10), -50);
+				bulletToDraw[i].draw(sb, 1f);
+			}
+		}
+		
 		if(frag){
 			font.draw(sb, killerName + " has fragged " + killedName, Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight());
 		}
@@ -199,8 +209,6 @@ public class GameInterface {
 		}
 	}
 
-
-
 	public void updateWeapon(int weapon){
 		currentWeapon = weaponsprites[weapon];
 		if(weapon == 0){
@@ -218,18 +226,22 @@ public class GameInterface {
 		switchRender = 1700;
 	}
 
-	public void updateShells(int i, int random){
+	public void updateShells(int i){
 		renderBullets = i;
-		//currentBullet[i] = random;
+	}
+	
+	public void animateShell(int index)
+	{
+		currentBullet[index] = rand.nextInt(5)+1;
 	}
 
 	public void update() {
-		currentCooldown -= Gdx.graphics.getDeltaTime()*1000;
-		switchRender -= Gdx.graphics.getDeltaTime()*1000;
-		bloodTimer -= Gdx.graphics.getDeltaTime()*1000;
-		fragTimer -= Gdx.graphics.getDeltaTime()*1000;
-		shellTimer += Gdx.graphics.getDeltaTime()*1000;
-
+		float delta = Gdx.graphics.getDeltaTime();
+		
+		currentCooldown -= delta*1000;
+		switchRender -= delta*1000;
+		bloodTimer -= delta*1000;
+		fragTimer -= delta*1000;
 
 		if(switchRender > 0){
 			swapWeapon = true;
@@ -248,55 +260,34 @@ public class GameInterface {
 		}
 		else{
 			frag = false;
-		}	
+		}
 
-		/*
 		for(int i = 0; i < currentBullet.length; i++){
-			int step = 80;
 			if(currentBullet[i] == idleBullet){
-				//nothing
+				bulletToDraw[i] = bulletAnims[0][0];
 			}
-			else if(currentBullet[i] == bulletShell0){
-				if(shellTimer < step){
-					bulletToDraw[i] = bullet0[0];
+			else
+			{
+				bulletTimers[i] += delta;
+				
+				boolean done = false;
+				
+				if(bulletTimers[i]>=BULLET_ANIM_TIME*(float)(bulletAnims[currentBullet[i]-1].length-1))
+				{
+					done = true;
+					currentBullet[i] = idleBullet;
+					bulletTimers[i] = 0f;
 				}
-				else if(shellTimer < step*2){
-					bulletToDraw[i] = bullet0[1];
+				
+				for(int j=0;!done && j<bulletAnims[currentBullet[i]-1].length-1;j++)
+				{
+					if(bulletTimers[i]<BULLET_ANIM_TIME*((float)j))
+					{
+						done = true;
+						bulletToDraw[i] = bulletAnims[currentBullet[i]-1][j];
+					}
 				}
-				else if(shellTimer < step*3){
-					bulletToDraw[i] = bullet0[2];
-				}
-				else if(shellTimer < step*4){
-					bulletToDraw[i] = bullet0[3];
-				}
-				else if(shellTimer < step*5){
-					bulletToDraw[i] = bullet0[4];
-				}
-				else if(shellTimer < step*6){
-					bulletToDraw[i] = bullet0[5];
-				}
-				else if(shellTimer < step*7){
-					bulletToDraw[i] = bullet0[6];
-				}
-				else if(shellTimer < step*8){
-					bulletToDraw[i] = bullet0[7];
-				}
-				else if(shellTimer < step*9){
-					bulletToDraw[i] = bullet0[8];
-				}
-				else if(shellTimer < step*10){
-					bulletToDraw[i] = bullet0[9];
-				}
-				else if(shellTimer < step*11){
-					bulletToDraw[i] = bullet0[10];
-				}
-				else{
-
-				}
-
 			}
 		}
-		 */
 	}
-
 }
