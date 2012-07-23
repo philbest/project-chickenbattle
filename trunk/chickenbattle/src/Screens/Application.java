@@ -100,7 +100,7 @@ public class Application extends Screen implements InputProcessor{
 		gi.updateWeapon(ch.weapon);
 		if(multiplayer && client.dead){
 			client.dead = false;
-			ch.ressurrect();
+			ch.resurrect();
 			System.out.println("Player has respawned!");
 		}
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
@@ -136,11 +136,15 @@ public class Application extends Screen implements InputProcessor{
 				if(players[client.id].killed == true){
 					gi.updateKilled(players[client.id]);
 				}
+				if(players[client.id].falldeath){
+					gi.updateFallDeath(players[client.id]);
+				}
 				if(send){
 					client.sendMessage(players[client.id],ch.box.getCorners());
 					send = false;
 				}
 				client.changeName(ch.charName, client.id);
+
 			}
 			chunkstoupdate.clear();
 			chunkstorebuild.clear();

@@ -12,7 +12,7 @@ public class Player {
 	public BoundingBox box;
 	public float animTimer;
 	public long lastRegged;
-	public boolean killer, killed;
+	public boolean killer, killed, falldeath = false;
 	public Player(String xs){
 		this.name = xs;
 		hp = 10;
