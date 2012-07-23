@@ -56,9 +56,11 @@ public class GameClient{
 		Packet.register(client);
 		try {
 			//client.connect(5000, "129.16.21.56", 54555, 54778);
-			//client.connect(5000, "localhost", 54555, 54778);
+
 			//client.connect(5000, "192.168.0.100", 54555, 54778);
 			client.connect(5000, "129.16.177.67", 54555, 54778);
+			//client.connect(5000, "localhost", 54555, 54778);
+			//client.connect(5000, "192.168.0.100", 54555, 54778);
 
 			
 		} catch (IOException e) {
