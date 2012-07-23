@@ -1,12 +1,7 @@
 package network;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.HashMap;
-
-import javax.swing.Timer;
-
 
 import network.Packet.AddPlayer;
 import network.Packet.Added;
@@ -17,7 +12,6 @@ import network.Packet.Hit;
 import network.Packet.Reject;
 import network.Packet.Update;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -38,7 +32,6 @@ public class GameServer {
 	int startx,starty,startz;
 	int ids;
 	boolean hit;
-	public float sTimer, sTimer2;
 
 	public GameServer () throws IOException {
 		server = new Server();
@@ -58,9 +51,6 @@ public class GameServer {
 		startx = 0;
 		starty = 0;
 		startz = 0;
-		sTimer = 0;
-		sTimer2 = 0;
-
 
 		server.addListener(new Listener() {
 			public void received (Connection connection, Object object) {
@@ -165,30 +155,16 @@ public class GameServer {
 					player[received.id].killer = false;
 					player[received.id].killed = false;
 					player[received.id].name = received.name;
-					/*
-					ActionListener regenShield = new ActionListener(){
-						public void actionPerformed(ActionEvent evt){
-							if(player[received.id].shields < 5){
-								player[received.id].shields++;
-							}
-						}
-					};
-					new Timer(2000, regenShield).start();
-					*/
 					
-					/*
-					player[received.id].shieldTimer = System.currentTimeMillis();
-					player[received.id].shieldTimer2 = System.currentTimeMillis();
-					if((sTimer - System.currentTimeMillis())/1000 > 8){
-						if(player[received.id].shields < 5){
-							if((sTimer2 - System.currentTimeMillis())/1000 > 1.5){
-								System.out.println("Added shield to: " + player[received.id].name);
-								player[received.id].shields++;
-								sTimer2 = System.currentTimeMillis();
-							}
+					if(player[received.id].shields < 5){
+						long currTime = System.currentTimeMillis();
+						if((player[received.id].lasthit-currTime > 4000l && player[received.id].lastRegged-currTime > 1500l)){
+							System.out.println("Added shield to: " + player[received.id].name);
+							player[received.id].shields++;
+							player[received.id].lastRegged = currTime;
 						}
 					}
-					*/
+					
 					server.sendToAllTCP(toSend);
 				}
 				else if (object instanceof BlockUpdate){
@@ -213,12 +189,12 @@ public class GameServer {
 									hittoSend.id = i;
 									if(player[i].shields > 0){
 										player[i].shields =player[i].shields-1;
-										//sTimer = System.currentTimeMillis();
+										player[i].lasthit = System.currentTimeMillis();
 										System.out.println(player[i].name +" shield: " + player[i].shields);
 									}
 									else{
 										player[i].hp =player[i].hp-1;
-										//sTimer = System.currentTimeMillis();
+										player[i].lasthit = System.currentTimeMillis();
 										System.out.println(player[i].name + " got hit: " + player[i].hp);
 									}
 
@@ -267,9 +243,17 @@ public class GameServer {
 		}
 		return false;
 	}
+	
 	public static void main (String[] args) throws IOException {
-		new GameServer();
-		System.out.println("Game server is online!");
+		try
+		{
+			new GameServer();
+			System.out.println("Game server is online!");
+		}
+		catch(Exception e)
+		{
+			System.out.println("Server fucked up.");
+		}	
 	}
 
 }
