@@ -97,6 +97,7 @@ public class Lobby extends Screen{
 			else{
 				tempName += arg0;
 			}
+
 		}
 		return false;
 	}
