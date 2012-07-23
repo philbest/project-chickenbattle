@@ -75,6 +75,7 @@ public class Application extends Screen implements InputProcessor{
 		cam.update();
 		renderer = new Renderer();
 		gi = new GameInterface();
+		gi.updateShells(ch.inventory.get(ch.weapon).magBullets,1);
 		multiplayer = true;
 		mute = true;
 	}
@@ -162,21 +163,15 @@ public class Application extends Screen implements InputProcessor{
 	public boolean keyDown(int arg0) {
 		if (Input.Keys.NUM_1 == arg0) {
 			ch.weapon = ch.inventory.get(0).weaponID;
-			if(ch.inventory.get(ch.weapon).magBullets>0){
-				gi.updateShells(ch.inventory.get(ch.weapon).magBullets-1, 1);
-			}
+				gi.updateShells(ch.inventory.get(ch.weapon).magBullets, 1);
 			gi.swapWeapon();
 		} else if (Input.Keys.NUM_2 == arg0) {
 			ch.weapon = ch.inventory.get(1).weaponID;
-			if(ch.inventory.get(ch.weapon).magBullets>0){
-				gi.updateShells(ch.inventory.get(ch.weapon).magBullets-1, 1);
-			}
+				gi.updateShells(ch.inventory.get(ch.weapon).magBullets, 1);
 			gi.swapWeapon();
 		} else if (Input.Keys.NUM_3 == arg0) {
 			ch.weapon = ch.inventory.get(2).weaponID;
-			if(ch.inventory.get(ch.weapon).magBullets>0){
-				gi.updateShells(ch.inventory.get(ch.weapon).magBullets-1, 1);
-			}
+				gi.updateShells(ch.inventory.get(ch.weapon).magBullets, 1);
 			gi.swapWeapon();
 		}else if (Input.Keys.NUM_9 == arg0){
 			ch.setPos(30,60,50);
@@ -194,9 +189,7 @@ public class Application extends Screen implements InputProcessor{
 		}
 		else if (Input.Keys.R == arg0){
 			ch.inventory.get(ch.weapon).reload();
-			if(ch.inventory.get(ch.weapon).magBullets>0){
-				gi.updateShells(ch.inventory.get(ch.weapon).magBullets-1, 1);
-			}
+			gi.updateShells(ch.inventory.get(ch.weapon).magBullets, 1);
 		}
 
 		return false;
@@ -229,9 +222,7 @@ public class Application extends Screen implements InputProcessor{
 				currentweapon=ch.inventory.size-1;
 			ch.weapon = ch.inventory.get(currentweapon).weaponID;
 		}
-		if(ch.inventory.get(ch.weapon).magBullets>0){
-			gi.updateShells(ch.inventory.get(ch.weapon).magBullets-1, 1);
-		}
+			gi.updateShells(ch.inventory.get(ch.weapon).magBullets, 1);
 		gi.swapWeapon();
 		return false;
 	}
@@ -241,10 +232,11 @@ public class Application extends Screen implements InputProcessor{
 			zoom = true;
 		}
 		else{
+			Gdx.app.log("bull", Integer.toString(ch.inventory.get(ch.weapon).magBullets));
+			Gdx.app.log("shot", "pew");
+			
 			if (ch.inventory.get(ch.weapon).shoot(mute)) {
-				if(ch.inventory.get(ch.weapon).magBullets>0){
-					gi.updateShells(ch.inventory.get(ch.weapon).magBullets-1, 1);
-				}
+					gi.updateShells(ch.inventory.get(ch.weapon).magBullets, 1);
 				//gi.updateShells(ch.inventory.get(ch.weapon).magBullets-1, MathUtils.random(5)+1);
 				float range = 0;
 				Vector3 point = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).origin);
@@ -366,7 +358,7 @@ public class Application extends Screen implements InputProcessor{
 		if(ch.weapon == Weapon.ak){
 			cam.direction.set(0,0,-1);
 			cam.up.set(0,1,0);
-			angleUP += MathUtils.random(0, 2);;
+			angleUP += MathUtils.random(0, 2);
 			angleLeft += MathUtils.random(-1, 1);
 			cam.rotate(angleUP, 1, 0, 0);
 			cam.rotate(angleLeft, 0, 1, 0);
@@ -383,12 +375,15 @@ public class Application extends Screen implements InputProcessor{
 	}
 	@Override
 	public void enter() {
-		/*
+		
+		ch.inventory.get(ch.weapon).currentCooldown = 200;
+		
 		if(multiplayer){
+			/*
 			client = new GameClient();
 			players = new Player[10];
+			*/
 		}
-		 */
 		Gdx.input.setInputProcessor(this);
 
 	}

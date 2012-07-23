@@ -56,9 +56,9 @@ public class GameClient{
 		Packet.register(client);
 		try {
 			//client.connect(5000, "129.16.21.56", 54555, 54778);
-
-			client.connect(5000, "192.168.0.100", 54555, 54778);
-			//client.connect(5000, "129.16.177.67", 54555, 54778);
+			//client.connect(5000, "localhost", 54555, 54778);
+			//client.connect(5000, "192.168.0.100", 54555, 54778);
+			client.connect(5000, "129.16.177.67", 54555, 54778);
 
 			
 		} catch (IOException e) {
@@ -100,8 +100,8 @@ public class GameClient{
 						players[response.id].deaths = response.deaths;	
 						players[response.id].killer = response.killer;
 						players[response.id].killed = response.killed;
-						players[response.id].shieldTimer = response.shieldTimer;
-						players[response.id].shieldTimer2 = response.shieldTimer2;
+						players[response.id].lasthit = response.lasthit;
+						players[response.id].lastRegged = response.lastRegged;
 						//players[response.id].name = name;
 								
 						bbCorners[0].set(response.x1, response.y1, response.z1);

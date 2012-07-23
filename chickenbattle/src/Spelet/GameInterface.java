@@ -143,7 +143,6 @@ public class GameInterface {
 			bulletToDraw[i] = bullet0[0];
 			currentBullet[i] = idleBullet;
 		}
-		renderBullets = 8;
 	}
 	public void restart() {
 
@@ -164,12 +163,13 @@ public class GameInterface {
 		currentItem.setPosition(Gdx.graphics.getWidth()/2-items.getWidth()/2, 0);
 		currentItem.draw(sb);
 
-		if(renderBullets > 0){
-			for(int i = 0; i <= renderBullets; i++){
-				bulletToDraw[i].setPosition(Gdx.graphics.getWidth()-170-(i*10), -50);
-				bulletToDraw[i].draw(sb, 0.75f);
-			}
+		//Gdx.app.log("bull", Integer.toString(renderBullets));
+		
+		for(int i = 0; i < renderBullets; i++){
+			bulletToDraw[i].setPosition(Gdx.graphics.getWidth()-170-(i*10), -50);
+			bulletToDraw[i].draw(sb, 0.75f);
 		}
+
 		if(frag){
 			font.draw(sb, killerName + " has fragged " + killedName, Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight());
 		}
