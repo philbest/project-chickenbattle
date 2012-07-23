@@ -41,9 +41,9 @@ public class GameInterface {
 	public Sprite items, item1, item2, item3;
 	public Sprite currentItem, bloodSprite;
 	public BitmapFont font;
-	public boolean swapWeapon, blood, frag;
+	public boolean swapWeapon, blood, frag, falldeath;
 	public String killerName, killedName;
-	public int currentCooldown, switchRender, bloodTimer, fragTimer;
+	public int currentCooldown, switchRender, bloodTimer, fragTimer, fallTimer;
 	public int renderBullets;
 	private Random rand = new Random();
 
@@ -183,6 +183,9 @@ public class GameInterface {
 		if(frag){
 			font.draw(sb, killerName + " has fragged " + killedName, Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight());
 		}
+		else if(falldeath){
+			font.draw(sb, killedName+" has fallen to his death!", Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight());
+		}
 	}
 
 	public void updateKiller(Player killer){
@@ -193,6 +196,11 @@ public class GameInterface {
 	public void updateKilled(Player killed){
 		killedName = killed.name;
 		fragTimer = 2000;
+	}
+	
+	public void updateFallDeath(Player dead){
+		killedName = dead.name;
+		fallTimer = 2000;
 	}
 
 	public void updateHealth(int hp){
@@ -242,6 +250,7 @@ public class GameInterface {
 		switchRender -= delta*1000;
 		bloodTimer -= delta*1000;
 		fragTimer -= delta*1000;
+		fallTimer -= delta*1000;
 
 		if(switchRender > 0){
 			swapWeapon = true;
@@ -260,6 +269,12 @@ public class GameInterface {
 		}
 		else{
 			frag = false;
+		}
+		if(fallTimer > 0){
+			falldeath = true;
+		}
+		else{
+			falldeath = false;
 		}
 
 		for(int i = 0; i < currentBullet.length; i++){

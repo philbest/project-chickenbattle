@@ -12,6 +12,7 @@ import network.Packet.Hit;
 import network.Packet.Reject;
 import network.Packet.Update;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -32,6 +33,7 @@ public class GameServer {
 	int startx,starty,startz;
 	int ids;
 	boolean hit;
+	public static final float FALL_DEATH_LIMIT = -50f;
 
 	public GameServer () throws IOException {
 		server = new Server();
@@ -105,6 +107,7 @@ public class GameServer {
 					toSend.name = player[received.id].name;
 					toSend.lasthit = player[received.id].lasthit;
 					toSend.lastRegged = player[received.id].lastRegged;
+					toSend.falldeath = player[received.id].falldeath;
 
 					player[received.id].posX = received.x;
 					player[received.id].posY = received.y;
@@ -155,6 +158,7 @@ public class GameServer {
 					player[received.id].setBox(bbCorners);
 					player[received.id].killer = false;
 					player[received.id].killed = false;
+					player[received.id].falldeath = false;
 					player[received.id].name = received.name;
 					
 					if(player[received.id].shields < 5){
@@ -164,6 +168,14 @@ public class GameServer {
 							player[received.id].shields++;
 							player[received.id].lastRegged = currTime;
 						}
+					}
+					
+					if(player[received.id].posY < FALL_DEATH_LIMIT)
+					{
+						player[received.id].deaths += 1;
+						player[received.id].hp = 10;
+						player[received.id].shields = 5;
+						player[received.id].falldeath = true;
 					}
 					
 					server.sendToAllTCP(toSend);

@@ -58,7 +58,7 @@ public class Character {
 	public Texture modelTexture = null;
 	public int health;
 	public int shields;
-	public boolean bloodsplatt, killer, killed;
+	public boolean bloodsplatt, killer, killed, falldeath = false;
 	public static final float FALL_DEATH_LIMIT = -50f;
 	public Character(String name) {
 		health = 10;
@@ -160,12 +160,14 @@ public class Character {
 		box.set(meshbox);
 		box.mul(modelMatrix);
 	}
-	public void ressurrect() {
+	
+	public void resurrect() {
 		setPos(30,60,50);
 		forceUp = 0;
 		killed = false;
 		killer = false;
 		jumping = false;
+		falldeath = false;
 		for (int i = 0; i < inventory.size; i++) {
 			inventory.get(i).restart();
 		}
@@ -361,8 +363,16 @@ public class Character {
 					}
 				}
 			}
-			if(position.y < FALL_DEATH_LIMIT)
-				ressurrect();
+			//if(position.y < FALL_DEATH_LIMIT)
+			//{	
+			//	falldeath = true;
+			//	ressurrect();
+			//}
 		}
+	}
+	
+	public void updateFallDeath(boolean died)
+	{
+		falldeath = died;
 	}
 }

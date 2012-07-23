@@ -1,15 +1,14 @@
 package Screens;
 
 /**********
- * Får inte servern att fungera och uppdatera clienter uppkopplade, 
- * då gameclient initieras när application startar. Att starta
+ * Fï¿½r inte servern att fungera och uppdatera clienter uppkopplade, 
+ * dï¿½ gameclient initieras nï¿½r application startar. Att starta
  * den vid lobbyn skapar en hel del logiska problem.
- * Får hitta något sätt att gå runt det.
+ * Fï¿½r hitta nï¿½got sï¿½tt att gï¿½ runt det.
  **********/
 
 
 
-import network.GameClient;
 import network.GameServer;
 import network.Player;
 import Spelet.Main;
@@ -56,7 +55,7 @@ public class Lobby extends Screen{
 		exit = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/exit.png")));
 		name = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/name.png")));
 		try{
-			players = server.player;
+			players = ((Application)main.screens.get(Main.GAME)).client.getPlayers();
 		}
 		catch(NullPointerException e){
 			e.getStackTrace();
