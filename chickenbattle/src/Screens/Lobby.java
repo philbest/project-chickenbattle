@@ -48,7 +48,7 @@ public class Lobby extends Screen{
 		fontname = new BitmapFont();
 		sb = new SpriteBatch();
 		players = new Player[10];
-		crosshair = new Sprite(new Texture(Gdx.files.internal("data/crosshairsmaller.png")));
+		crosshair = new Sprite(new Texture(Gdx.files.internal("data/weapons/crosshairsmaller.png")));
 		mainbg = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/bg.png")));
 		background = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/lobbybg.png")));
 		join = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/join.png")));
