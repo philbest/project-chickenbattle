@@ -108,6 +108,7 @@ public class GameServer {
 					toSend.lasthit = player[received.id].lasthit;
 					toSend.lastRegged = player[received.id].lastRegged;
 					toSend.falldeath = player[received.id].falldeath;
+					toSend.initShield = player[received.id].initShield;
 
 					player[received.id].posX = received.x;
 					player[received.id].posY = received.y;
@@ -159,12 +160,16 @@ public class GameServer {
 					player[received.id].killer = false;
 					player[received.id].killed = false;
 					player[received.id].falldeath = false;
+					player[received.id].initShield = false;
 					player[received.id].name = received.name;
 					
 					if(player[received.id].shields < 5){
 						long currTime = System.currentTimeMillis();
 						if((currTime-player[received.id].lasthit > 6000l && currTime-player[received.id].lastRegged > 2000l)){
 							System.out.println("Added shield to: " + player[received.id].name);
+							if(player[received.id].shields == 0){
+								player[received.id].initShield = true;
+							}
 							player[received.id].shields++;
 							player[received.id].lastRegged = currTime;
 						}
@@ -202,6 +207,9 @@ public class GameServer {
 									hittoSend.id = i;
 									if(player[i].shields > 0){
 										player[i].shields =player[i].shields-1;
+										if(player[i].shields == 0){
+											player[i].initShield = true;
+										}
 										player[i].lasthit = System.currentTimeMillis();
 										System.out.println(player[i].name +" shield: " + player[i].shields);
 									}

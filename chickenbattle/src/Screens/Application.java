@@ -95,7 +95,6 @@ public class Application extends Screen implements InputProcessor{
 		map.update();
 		gi.update();
 		ch.updateName(((Lobby)main.screens.get(Main.LOBBY)).playerName);
-		//client.changeName(ch.charName);
 		ch.inventory.get(ch.weapon).update();
 		gi.updateWeapon(ch.weapon);
 		if(multiplayer && client.dead){
@@ -145,7 +144,7 @@ public class Application extends Screen implements InputProcessor{
 					send = false;
 				}
 				client.changeName(ch.charName, client.id);
-
+				gi.updateInitShield(players[client.id].initShield);
 			}
 			chunkstoupdate.clear();
 			chunkstorebuild.clear();
@@ -359,10 +358,10 @@ public class Application extends Screen implements InputProcessor{
 	}
 	private void recoil(){
 		if(ch.weapon == Weapon.ak){
-			cam.direction.set(0,0,-1);
-			cam.up.set(0,1,0);
-			angleUP += MathUtils.random(0, 2);
-			angleLeft += MathUtils.random(-1, 1);
+			cam.direction.set(0,0,-6);
+			cam.up.set(0,6,0);
+			angleUP += MathUtils.random(0, 10);
+			angleLeft += MathUtils.random(-5, 5);
 			cam.rotate(angleUP, 1, 0, 0);
 			cam.rotate(angleLeft, 0, 1, 0);
 			cam.update();
