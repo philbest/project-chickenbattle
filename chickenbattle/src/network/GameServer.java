@@ -163,7 +163,7 @@ public class GameServer {
 					
 					if(player[received.id].shields < 5){
 						long currTime = System.currentTimeMillis();
-						if((currTime-player[received.id].lasthit > 4000l && currTime-player[received.id].lastRegged > 1500l)){
+						if((currTime-player[received.id].lasthit > 6000l && currTime-player[received.id].lastRegged > 2000l)){
 							System.out.println("Added shield to: " + player[received.id].name);
 							player[received.id].shields++;
 							player[received.id].lastRegged = currTime;
