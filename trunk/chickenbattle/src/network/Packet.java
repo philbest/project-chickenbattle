@@ -61,5 +61,16 @@ public class Packet {
 		public int id;
 
 	}
+	static public class AddServer{
+		public String ip;
+		public String motd;
+		public int playercap;
+		public int online;
+	}
+	static public class UpdateServer{
+		public String motd;
+		public int playercap;
+		public int online;
+	}
 
 }
