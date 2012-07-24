@@ -1,6 +1,8 @@
-import com.badlogic.gdx.math.Matrix4;
-
+import com.badlogic.gdx.math.Vector3;
 
 public class KeyFrame {
-	public Matrix4[] partMatrixes;
+	public Vector3[] positions;
+	public KeyFrame(int objects) {
+		positions = new Vector3[objects];
+	}
 }
