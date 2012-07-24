@@ -29,21 +29,25 @@ public class GameInterface {
 	public int[] currentBullet;
 	public float[] bulletTimers;
 	public static final float BULLET_ANIM_TIME = 0.04f;
+	public static final float SHIELD_ANIM_TIME = 0.04f;
 	
 	public Sprite[] bulletToDraw;
 	public Sprite currentHealth;
 	public Sprite currentShield;
+	public Sprite currInitShield;
 	public Sprite[] healthsprites;
 	public Sprite[] shieldsprites;
 	public Sprite[] weaponsprites;
 	public Sprite[][] bulletAnims;
 	public Sprite currentWeapon;
 	public Sprite items, item1, item2, item3;
+	public Sprite[] initShield;
+	public Sprite initShield0, initShield1, initShield2, initShield3, initShield4;
 	public Sprite currentItem, bloodSprite;
 	public BitmapFont font;
-	public boolean swapWeapon, blood, frag, falldeath;
+	public boolean swapWeapon, blood, frag, falldeath, shieldregen;
 	public String killerName, killedName;
-	public int currentCooldown, switchRender, bloodTimer, fragTimer, fallTimer;
+	public int currentCooldown, switchRender, bloodTimer, fragTimer, fallTimer, shieldTimer;
 	public int renderBullets;
 	private Random rand = new Random();
 
@@ -61,8 +65,15 @@ public class GameInterface {
 		item1 = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/items/1.png")));
 		item2 = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/items/2.png")));
 		item3 = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/items/3.png")));
+		initShield = new Sprite[5];
+		initShield[0] = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/initshield/shield0.png")));
+		initShield[1] = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/initshield/shield1.png")));
+		initShield[2] = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/initshield/shield2.png")));
+		initShield[3] = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/initshield/shield3.png")));
+		initShield[4] = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/initshield/shield4.png")));
 		bloodSprite = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/other/bloodsplatt.png")));
 		bloodSprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		currInitShield.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		healthsprites = new Sprite[10];
 		healthsprites[0] = healthbar.createSprite("1");
 		healthsprites[1] = healthbar.createSprite("2");
@@ -136,6 +147,7 @@ public class GameInterface {
 		currentItem = item1;
 		killerName = "null";
 		killedName = "null";
+		shieldregen = false;
 
 		bulletToDraw = new Sprite[30];
 		currentBullet = new int[30];
@@ -168,7 +180,12 @@ public class GameInterface {
 
 		for(int i = 0; i < renderBullets; i++){
 			bulletToDraw[i].setPosition(Gdx.graphics.getWidth()-170-(i*10), -50);
+			if(i != (renderBullets-1)){
 			bulletToDraw[i].draw(sb, 0.75f);
+			}
+			else{
+				bulletToDraw[i].draw(sb);
+			}
 		}
 
 		for(int i=0;i<30;i++)
@@ -185,6 +202,9 @@ public class GameInterface {
 		}
 		else if(falldeath){
 			font.draw(sb, killedName+" has fallen to his death!", Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight());
+		}
+		if(shieldregen){
+			currInitShield.draw(sb, 0.6f);
 		}
 	}
 
@@ -209,6 +229,11 @@ public class GameInterface {
 
 	public void updateShields(int shield){
 		currentShield = shieldsprites[shield];
+	}
+	
+	public void updateInitShield(boolean bool){
+		if(bool)
+		shieldTimer = 500;
 	}
 
 	public void updateBlood(boolean bool){
@@ -242,6 +267,13 @@ public class GameInterface {
 	{
 		currentBullet[index] = rand.nextInt(5)+1;
 	}
+	
+	public boolean checkCooldown(float check){
+		if(check > 0){
+			return true;
+		}
+		return false;
+	}
 
 	public void update() {
 		float delta = Gdx.graphics.getDeltaTime();
@@ -251,32 +283,27 @@ public class GameInterface {
 		bloodTimer -= delta*1000;
 		fragTimer -= delta*1000;
 		fallTimer -= delta*1000;
+		shieldTimer -= delta*1000;
 
-		if(switchRender > 0){
-			swapWeapon = true;
+		swapWeapon = checkCooldown(switchRender);
+		blood = checkCooldown(bloodTimer);
+		frag = checkCooldown(fragTimer);
+		falldeath = checkCooldown(fallTimer);
+		shieldregen = checkCooldown(shieldTimer);
+		
+		if(shieldregen){
+			for(int a = 0; a < initShield.length; a++){
+				if(shieldTimer < a*100){
+					currInitShield = initShield[a];
+				}
+				else{
+					currInitShield = initShield[0];
+				}
+			}
 		}
-		else{
-			swapWeapon = false;
-		}
-		if(bloodTimer > 0){
-			blood = true;
-		}
-		else{
-			blood = false;
-		}
-		if(fragTimer > 0){
-			frag = true;
-		}
-		else{
-			frag = false;
-		}
-		if(fallTimer > 0){
-			falldeath = true;
-		}
-		else{
-			falldeath = false;
-		}
-
+		
+		
+		
 		for(int i = 0; i < currentBullet.length; i++){
 			if(currentBullet[i] == idleBullet){
 				bulletToDraw[i] = bulletAnims[0][0];
@@ -284,7 +311,6 @@ public class GameInterface {
 			else
 			{
 				bulletTimers[i] += delta;
-				
 				boolean done = false;
 				
 				if(bulletTimers[i]>=BULLET_ANIM_TIME*(float)(bulletAnims[currentBullet[i]-1].length-1))

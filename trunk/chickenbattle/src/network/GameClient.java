@@ -61,6 +61,7 @@ public class GameClient{
 			//client.connect(5000, "129.16.177.67", 54555, 54778);
 			client.connect(5000, "localhost", 54555, 54778);
 			//client.connect(5000, "129.16.20.141", 54555, 54778);
+			//client.connect(5000, "46.239.100.249", 54555, 54778);
 
 			
 		} catch (IOException e) {
@@ -104,6 +105,7 @@ public class GameClient{
 						players[response.id].killed = response.killed;
 						players[response.id].lasthit = response.lasthit;
 						players[response.id].lastRegged = response.lastRegged;
+						players[response.id].initShield = response.initShield;
 						//players[response.id].name = name;
 						players[response.id].falldeath = response.falldeath;
 						if(players[id].falldeath)
