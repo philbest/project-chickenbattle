@@ -7,11 +7,12 @@ public class Main implements ApplicationListener{
 	Application app;
 	
 	public Main() {
-		app = new Application();
+
 	}
 	public void create() {
-		// TODO Auto-generated method stub
-		
+		VertexAttributes.initiate();
+		app = new Application();
+		app.setInput();
 	}
 
 	@Override
