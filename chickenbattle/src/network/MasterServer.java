@@ -1,0 +1,68 @@
+package network;
+
+import java.io.IOException;
+import java.util.HashMap;
+
+import network.Packet.AddServer;
+
+import network.Packet.UpdateServer;
+
+import com.badlogic.gdx.utils.Array;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
+import com.esotericsoftware.kryonet.Server;
+
+public class MasterServer {
+	Server wserver;
+	Array<AddServer> servers;
+	HashMap<Connection,Integer> connectionIDs;
+	public MasterServer () throws IOException {
+		servers = new Array<AddServer>();	
+		connectionIDs = new HashMap<Connection,Integer>();
+		wserver = new Server();
+		wserver.start();
+		Packet.register(wserver);
+		wserver.bind(50000, 50002);   
+
+		wserver.addListener(new Listener() {
+			public void received (Connection connection, Object object) {
+				if (object instanceof AddServer){
+					AddServer rec = (AddServer) object;
+					servers.add(rec);
+					connectionIDs.put(connection, connectionIDs.size()-1);
+				}
+				else if(object instanceof UpdateServer){
+
+				}
+			}
+			public void disconnected (Connection c) {
+				if(connectionIDs.get(c)!= null){				
+					servers.removeIndex(connectionIDs.get(c));
+					connectionIDs.remove(c);
+				}
+			}
+		});
+	}
+
+	public int getServers(){
+		return servers.size;
+	}
+
+	public static void main (String[] args) throws IOException {
+		try
+		{
+			new GameServer();
+			System.out.println("Game server is online!");
+			while(true){
+
+//				System.out.println("there is "+ getServers() +" online");
+			}}
+		catch(Exception e)
+		{
+			System.out.println("Server fucked up.");
+		}	
+	}
+
+
+}
+

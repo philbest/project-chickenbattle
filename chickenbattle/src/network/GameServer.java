@@ -14,12 +14,14 @@ import network.Packet.Update;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
+import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 
 public class GameServer {
 	Server server;
+	Client lobbyconnection;
 	public Player[] player;
 	Vector3[] bbCorners;
 	HashMap<Connection,Integer> connectionIDs;
@@ -37,8 +39,10 @@ public class GameServer {
 
 	public GameServer () throws IOException {
 		server = new Server();
+
 		player = new Player[10];
 		connections = new Connection[10];
+
 		bbCorners = new Vector3[8];
 		for(int i=0; i < 8; i++)
 			bbCorners[i] = new Vector3(0,0,0);
@@ -53,6 +57,10 @@ public class GameServer {
 		startx = 0;
 		starty = 0;
 		startz = 0;
+
+//		worldServer p = new worldServer();
+//		new Thread(p).start();
+
 
 		server.addListener(new Listener() {
 			public void received (Connection connection, Object object) {
@@ -162,7 +170,7 @@ public class GameServer {
 					player[received.id].falldeath = false;
 					player[received.id].initShield = false;
 					player[received.id].name = received.name;
-					
+
 					if(player[received.id].shields < 5){
 						long currTime = System.currentTimeMillis();
 						if((currTime-player[received.id].lasthit > 6000l && currTime-player[received.id].lastRegged > 2000l)){
@@ -174,7 +182,7 @@ public class GameServer {
 							player[received.id].lastRegged = currTime;
 						}
 					}
-					
+
 					if(player[received.id].posY < FALL_DEATH_LIMIT)
 					{
 						player[received.id].deaths += 1;
@@ -182,7 +190,7 @@ public class GameServer {
 						player[received.id].shields = 5;
 						player[received.id].falldeath = true;
 					}
-					
+
 					server.sendToAllTCP(toSend);
 				}
 				else if (object instanceof BlockUpdate){
@@ -264,7 +272,25 @@ public class GameServer {
 		}
 		return false;
 	}
-	
+//
+//	class worldServer implements Runnable {
+//		Client lobbyconnection = new Client();
+//
+//
+//		public void run() {
+//			lobbyconnection.start();
+//			Packet.register(lobbyconnection);
+//
+//			try {
+//				lobbyconnection.connect(5000, "localhost", 50000, 50002);
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//
+//		}
+//	}
+
 	public static void main (String[] args) throws IOException {
 		try
 		{
@@ -273,6 +299,7 @@ public class GameServer {
 		}
 		catch(Exception e)
 		{
+			System.out.println(e.getMessage());
 			System.out.println("Server fucked up.");
 		}	
 	}
