@@ -73,7 +73,9 @@ public class GameInterface {
 		initShield[4] = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/initshield/shield4.png")));
 		bloodSprite = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/other/bloodsplatt.png")));
 		bloodSprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		currInitShield = initShield[0];
 		currInitShield.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		currInitShield.setPosition(0, 0);
 		healthsprites = new Sprite[10];
 		healthsprites[0] = healthbar.createSprite("1");
 		healthsprites[1] = healthbar.createSprite("2");
@@ -295,9 +297,6 @@ public class GameInterface {
 			for(int a = 0; a < initShield.length; a++){
 				if(shieldTimer < a*100){
 					currInitShield = initShield[a];
-				}
-				else{
-					currInitShield = initShield[0];
 				}
 			}
 		}

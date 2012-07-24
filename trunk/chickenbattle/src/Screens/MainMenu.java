@@ -21,7 +21,7 @@ public class MainMenu extends Screen {
 		main = m;
 		batch = new SpriteBatch();
 		background = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/bg.png")));
-		crosshair = new Sprite(new Texture(Gdx.files.internal("data/crosshairsmaller.png")));
+		crosshair = new Sprite(new Texture(Gdx.files.internal("data/weapons/crosshairsmaller.png")));
 		exit = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/exit.png")));
 		mp = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/multiplayer.png")));
 		sp = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/singleplayer.png")));
