@@ -129,10 +129,11 @@ public class Weapon {
 			cooldown = 500;
 		} else if (weaponID == emp) {
 			maxBullets = 1;
-			currentBullets = 1;
+			currentBullets = 2;
 			magBullets = 1;
 			magSize = 1;
 			cooldown = 500;
+			empTimer = 0;
 		}
 	}
 	public void render(SpriteBatch sb) {
@@ -211,7 +212,7 @@ public class Weapon {
 		}
 		if(empAnim > 0){
 			for(int i = 0; i < empSpr.length;i++){
-				if(empAnim > i*200){
+				if(empAnim > i*100){
 					wpn = empSpr[i];
 				}
 			}
@@ -236,9 +237,9 @@ public class Weapon {
 	public boolean shootEMP(boolean mute){
 		if(!reloading && !empCooldown){
 			if (magBullets > 0) {
-				empTimer = 60000;
+				empTimer = 8000;
 				magBullets--;
-				empAnim = 2000;
+				empAnim = 1000;
 				if(!mute){
 					SoundManager.playWeaponSound(weaponID);
 				}
