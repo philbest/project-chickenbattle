@@ -450,4 +450,18 @@ public class AnimationPart {
 		fa.add(0.5f);
 		fa.add(0.5f);
 	}
+	public void rebuild() {
+		FloatArray fa = new FloatArray();
+		addTopFace(fa,0,0,0,w,h,d);
+		addBotFace(fa,0,0,0,w,h,d);
+		addLeftFace(fa,0,0,0,w,h,d);
+		addRightFace(fa,0,0,0,w,h,d);
+		addFrontFace(fa,0,0,0,w,h,d);
+		addBackFace(fa,0,0,0,w,h,d);
+		if (fa.size > 0) {
+			partMesh.setVertices(fa.items);
+		}
+		partMesh.calculateBoundingBox(box);
+		updateModelMatrix();
+	}
 }
