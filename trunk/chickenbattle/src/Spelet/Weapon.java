@@ -3,6 +3,7 @@ package Spelet;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -30,8 +31,10 @@ public class Weapon {
 	public int cooldown;
 	public int currentCooldown, shootAnim, reloadTimer, empTimer, empAnim;
 	public long lastShot;
+	public BitmapFont font;
 	public Weapon(int w) {
 		weaponID = w;
+		font = new BitmapFont(Gdx.files.internal("data/font.fnt"), Gdx.files.internal("data/font.png"), false);
 		gunSpr = new Sprite[3];
 		gunSpr[0] = new Sprite(new Texture(Gdx.files.internal("data/weapons/gun.png")));
 		gunSpr[1] = new Sprite(new Texture(Gdx.files.internal("data/weapons/gun1.png")));
@@ -141,8 +144,12 @@ public class Weapon {
 		wpn.draw(sb);
 		crosshair.setPosition(Gdx.graphics.getWidth()/2-crosshair.getWidth()/2,Gdx.graphics.getHeight()/2-crosshair.getHeight()/2);
 		crosshair.draw(sb);
+		if(empCooldown){
+			font.draw(sb, Integer.toString((empTimer/1000)), Gdx.graphics.getWidth()-100, 20);
+		}
 	}
 	public void update() {
+		System.out.println(Integer.toString((empTimer/1000)));
 		float delta = Gdx.graphics.getDeltaTime()*1000;
 
 		currentCooldown -= delta;
