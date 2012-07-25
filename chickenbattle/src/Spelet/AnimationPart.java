@@ -24,6 +24,7 @@ public class AnimationPart {
 	public float w, h, d;
 	public float rotationX;
 	public float rotationZ;
+	Matrix4 temp = new Matrix4();
 	public AnimationPart(String str) {
 		String[] strings = str.split(" ");
 		// x,y,z,w,h,d,rotX,rotZ
@@ -108,11 +109,9 @@ public class AnimationPart {
 		return false;
 	}
 	public void render(Application app, Player player) {
-		Matrix4 temp = new Matrix4();
-		
-		temp.setToTranslation(player.posX, player.posY,player.posZ);
+		//temp.setToTranslation(player.posX, player.posY,player.posZ);
 		app.renderer.modelViewMatrix.set(app.cam.view);
-		app.renderer.modelViewMatrix.mul(temp);
+		//app.renderer.modelViewMatrix.mul(temp);
 		app.renderer.modelViewMatrix.mul(modelMatrix);
 		app.renderer.charShader.setUniformMatrix("u_modelViewMatrix", app.renderer.modelViewMatrix);
 		
