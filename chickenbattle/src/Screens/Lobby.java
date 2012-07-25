@@ -84,9 +84,7 @@ public class Lobby extends Screen{
 	}
 
 	public boolean keyDown(int arg0) {
-
 		if(Gdx.input.isKeyPressed(Input.Keys.P)){
-			System.out.println("KUKEDVARD");
 			main.client.getServers();
 			serverlist = main.client.serverlist;
 			for(int i=0; i < serverlist.size; i++)

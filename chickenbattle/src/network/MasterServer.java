@@ -29,9 +29,14 @@ public class MasterServer {
 			public void received (Connection connection, Object object) {
 				if (object instanceof AddServer){
 					AddServer rec = (AddServer) object;
+					rec.ip = connection.getRemoteAddressTCP().getHostName();
+					if(rec.ip.equals("127.0.0.1") ||rec.ip.equals("localhost") ){
+						rec.ip = "192.168.0.101";
+					}
+					
 					servers.add(rec);
 					connectionIDs.put(connection, connectionIDs.size());
-					System.out.println("MasterServer added a server!" + connection.getRemoteAddressTCP() );
+					System.out.println("MasterServer added a server!" + rec.ip );
 				}
 				else if(object instanceof UpdateServer){
 
