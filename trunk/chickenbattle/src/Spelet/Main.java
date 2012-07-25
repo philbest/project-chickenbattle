@@ -1,6 +1,8 @@
 package Spelet;
 import java.util.HashMap;
 
+import network.GameClient;
+
 import Screens.Application;
 import Screens.Lobby;
 import Screens.MainMenu;
@@ -17,7 +19,9 @@ public class Main implements ApplicationListener{
 	public static final int MAINMENU = 0;
 	public static final int GAME = 1;
 	public static final int LOBBY = 2;
+	public String name;
 	public Application app;
+	public GameClient client;
 	public Main (){
 	
 	}

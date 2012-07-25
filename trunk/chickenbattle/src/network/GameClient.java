@@ -19,7 +19,6 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
-
 public class GameClient{
 	Client client;
 	Player[] players;
@@ -37,14 +36,14 @@ public class GameClient{
 	public int ping;
 	public String name;
 
-	public GameClient(String xs){
+	public GameClient(String ip, String name){
 		client = new Client();
 		client.start();
 		players = new Player[10];
 		update = new Update();
 		bupdate = new BlockUpdate();
 		hit = false;
-		this.name = xs;
+		this.name = name;
 		bbCorners = new Vector3[8];
 		for(int i=0; i < 8; i++)
 			bbCorners[i] = new Vector3(0,0,0);
@@ -57,9 +56,9 @@ public class GameClient{
 		try {
 			//client.connect(5000, "129.16.21.56", 54555, 54778);
 
-			//client.connect(5000, "192.168.0.100", 54555, 54778);
+//			client.connect(5000, "192.168.0.100", 54555, 54778);
 			//client.connect(5000, "129.16.177.67", 54555, 54778);
-			client.connect(5000, "localhost", 54555, 54778);
+			client.connect(5000, ip, 54555, 54778);
 			//client.connect(5000, "129.16.20.141", 54555, 54778);
 			//client.connect(5000, "192.168.0.100", 54555, 54778);
 
@@ -94,9 +93,14 @@ public class GameClient{
 				else if (object instanceof Update) {
 					Update response = (Update)object;
 					if(players[response.id] != null){
-						players[response.id].posX = response.x;
-						players[response.id].posY = response.y;			
-						players[response.id].posZ = response.z;	
+						players[response.id].posX = response.px;
+						players[response.id].posY = response.py;			
+						players[response.id].posZ = response.pz;
+						
+						players[response.id].dirX = response.dx;
+						players[response.id].dirY = response.dy;			
+						players[response.id].dirZ = response.dz;
+						
 						players[response.id].hp = response.hp;
 						players[response.id].shields = response.shields;
 						players[response.id].kills = response.kills;	
@@ -197,9 +201,13 @@ public class GameClient{
 
 	public void sendMessage(Player x, Vector3[] ch){
 		update.id = id;
-		update.x = x.posX;
-		update.y = x.posY;
-		update.z = x.posZ;
+		update.px = x.posX;
+		update.py = x.posY;
+		update.pz = x.posZ;
+		
+		update.dx = x.dirX;
+		update.dy = x.dirY;
+		update.dz = x.dirZ;
 
 		update.x1 = ch[0].x;
 		update.y1 = ch[0].y;

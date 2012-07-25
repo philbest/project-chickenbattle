@@ -29,7 +29,7 @@ public class MasterServer {
 				if (object instanceof AddServer){
 					AddServer rec = (AddServer) object;
 					servers.add(rec);
-					connectionIDs.put(connection, connectionIDs.size()-1);
+					connectionIDs.put(connection, connectionIDs.size());
 					System.out.println("MasterServer added a server!" + connection.getRemoteAddressTCP() );
 				}
 				else if(object instanceof UpdateServer){
