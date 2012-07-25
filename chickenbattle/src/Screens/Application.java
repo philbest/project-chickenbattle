@@ -146,7 +146,6 @@ public class Application extends Screen implements InputProcessor{
 					client.sendMessage(players[client.id],ch.box.getCorners());
 					send = false;
 				}
-				client.changeName(ch.charName, client.id);
 				gi.updateInitShield(players[client.id].initShield);
 			}
 			chunkstoupdate.clear();
