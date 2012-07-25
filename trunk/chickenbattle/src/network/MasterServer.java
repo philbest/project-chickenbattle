@@ -30,6 +30,7 @@ public class MasterServer {
 					AddServer rec = (AddServer) object;
 					servers.add(rec);
 					connectionIDs.put(connection, connectionIDs.size()-1);
+					System.out.println("MasterServer added a server!" + connection.getRemoteAddressTCP() );
 				}
 				else if(object instanceof UpdateServer){
 
@@ -51,12 +52,9 @@ public class MasterServer {
 	public static void main (String[] args) throws IOException {
 		try
 		{
-			new GameServer();
-			System.out.println("Game server is online!");
-			while(true){
-
-//				System.out.println("there is "+ getServers() +" online");
-			}}
+			MasterServer serv = new MasterServer();
+			System.out.println("MasterServer is online!" );
+		}
 		catch(Exception e)
 		{
 			System.out.println("Server fucked up.");

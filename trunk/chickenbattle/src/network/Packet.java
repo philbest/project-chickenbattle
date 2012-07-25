@@ -18,6 +18,8 @@ public class Packet {
 		kryo.register(BlockUpdate.class);
 		kryo.register(Bullet.class);
 		kryo.register(Hit.class);
+		kryo.register(AddServer.class);
+		kryo.register(UpdateServer.class);
 	}
 
 	static public class Update {
