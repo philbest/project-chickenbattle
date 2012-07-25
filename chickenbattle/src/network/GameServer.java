@@ -1,6 +1,7 @@
 package network;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.HashMap;
 
 import network.Packet.AddPlayer;
@@ -34,6 +35,8 @@ public class GameServer {
 	Vector3 point;
 	Vector3 direction;
 	int startx,starty,startz;
+	InetAddress ownIP;
+	
 	int ids;
 	boolean hit;
 	public static final float FALL_DEATH_LIMIT = -50f;
@@ -43,7 +46,7 @@ public class GameServer {
 
 		player = new Player[10];
 		connections = new Connection[10];
-
+		ownIP = InetAddress.getLocalHost();
 		bbCorners = new Vector3[8];
 		for(int i=0; i < 8; i++)
 			bbCorners[i] = new Vector3(0,0,0);
@@ -65,7 +68,7 @@ public class GameServer {
 		lobbyconnection.connect(5000, "localhost", 50000, 50002);
 
 		AddServer addS = new AddServer();
-		addS.ip = "localhost";
+		addS.ip = ownIP.getHostAddress();
 		addS.motd ="Welcome to [Drunk] gaming with pistols";
 		addS.online =0;
 		addS.playercap = player.length;
