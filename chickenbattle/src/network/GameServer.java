@@ -240,33 +240,41 @@ public class GameServer {
 						for(int i=0; i < player.length; i++){				
 							if(player[i] != null && i != b.id){
 								if(player[i].box.contains(point)){
-
 									hittoSend.id = i;
-									if(player[i].shields > 0){
-										player[i].shields =player[i].shields-1;
-										if(player[i].shields == 0){
-											player[i].initShield = true;
-										}
+									if(b.emp){
+										player[i].shields = 0;
+										player[i].initShield = true;
 										player[i].lasthit = System.currentTimeMillis();
-										System.out.println(player[i].name +" shield: " + player[i].shields);
+										System.out.println(player[i].name + " got hit by EMP by " + player[b.id].name);
 									}
 									else{
-										player[i].hp =player[i].hp-1;
-										player[i].lasthit = System.currentTimeMillis();
-										System.out.println(player[i].name + " got hit: " + player[i].hp);
-									}
+										if(player[i].shields > 0){
+											player[i].shields =player[i].shields-1;
+											if(player[i].shields == 0){
+												player[i].initShield = true;
+											}
+											player[i].lasthit = System.currentTimeMillis();
+											System.out.println(player[i].name +" shield: " + player[i].shields);
+										}
+										else{
+											player[i].hp =player[i].hp-1;
+											player[i].lasthit = System.currentTimeMillis();
+											System.out.println(player[i].name + " got hit: " + player[i].hp);
+										}
 
-									if(player[i].hp == 0){
-										player[i].killed = true;
-										player[b.id].killer = true;
-										player[b.id].kills += 1;
-										System.out.println(player[b.id].name + " has now " + player[b.id].kills + " kills!");
-										player[i].deaths += 1;
-										player[i].hp = 10;
-										player[i].shields = 5;
+										if(player[i].hp == 0){
+											player[i].killed = true;
+											player[b.id].killer = true;
+											player[b.id].kills += 1;
+											System.out.println(player[b.id].name + " has now " + player[b.id].kills + " kills!");
+											player[i].deaths += 1;
+											player[i].hp = 10;
+											player[i].shields = 5;
+										}
 									}
 									hit = true;
 									server.sendToAllTCP(hittoSend);
+
 								}
 							}
 						}

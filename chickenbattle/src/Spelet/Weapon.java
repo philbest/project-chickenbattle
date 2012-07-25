@@ -1,4 +1,6 @@
 package Spelet;
+
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -10,21 +12,23 @@ public class Weapon {
 	public static final int gun = 0;
 	public static final int ak = 1;
 	public static final int block = 2;
+	public static final int emp = 3;
 	public Sprite wpn;
 	public Sprite[] gunSpr;
 	public Sprite[] akSpr;
 	public Sprite[] blockSpr;
 	public Sprite[] gunReload;
 	public Sprite[] akReload;
+	public Sprite[] empSpr;
 	public Sprite crosshair;
 	int offset;
-	public boolean shootbool = false, reloading = false;
+	public boolean shootbool = false, reloading = false, empCooldown = false;
 	public int maxBullets;
 	public int currentBullets;
 	public int magBullets;
 	public int magSize;
 	public int cooldown;
-	public int currentCooldown, shootAnim, reloadTimer;
+	public int currentCooldown, shootAnim, reloadTimer, empTimer, empAnim;
 	public long lastShot;
 	public Weapon(int w) {
 		weaponID = w;
@@ -57,6 +61,17 @@ public class Weapon {
 		akReload[5] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akreload4.png")));
 		akReload[6] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akreload5.png")));
 		akReload[7] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akreload6.png")));
+		empSpr = new Sprite[10];
+		empSpr[0] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emp.png")));
+		empSpr[1] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emp1.png")));
+		empSpr[2] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emp2.png")));
+		empSpr[3] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emp3.png")));
+		empSpr[4] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emp4.png")));
+		empSpr[5] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emp5.png")));
+		empSpr[6] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emp6.png")));
+		empSpr[7] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emp7.png")));
+		empSpr[8] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emp8.png")));
+		empSpr[9] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emp9.png")));
 
 		if (weaponID == gun) {
 			crosshair = new Sprite(new Texture(Gdx.files.internal("data/weapons/crosshairsmaller.png")));
@@ -83,6 +98,15 @@ public class Weapon {
 			magSize = 30;
 			cooldown = 500;
 		}
+		else if (weaponID == emp) {
+			crosshair = new Sprite(new Texture(Gdx.files.internal("data/weapons/crosshairsmaller.png")));
+			wpn = empSpr[0];
+			maxBullets = 1;
+			currentBullets = 1;
+			magBullets = 1;
+			magSize = 1;
+			cooldown = 1000;
+		}
 	}
 	public void restart() {
 		if (weaponID == gun) {
@@ -103,6 +127,12 @@ public class Weapon {
 			magBullets = 30;
 			magSize = 30;
 			cooldown = 500;
+		} else if (weaponID == emp) {
+			maxBullets = 1;
+			currentBullets = 1;
+			magBullets = 1;
+			magSize = 1;
+			cooldown = 500;
 		}
 	}
 	public void render(SpriteBatch sb) {
@@ -117,7 +147,9 @@ public class Weapon {
 		currentCooldown -= delta;
 		shootAnim -= delta;
 		reloadTimer -= delta;
-
+		empTimer -= delta;
+		empAnim -= delta;
+			
 		if(currentCooldown<0)
 			currentCooldown = 0;
 
@@ -134,7 +166,12 @@ public class Weapon {
 		else{
 			reloading = false;
 		}
-
+		if(empTimer > 0){
+			empCooldown = true;
+		}
+		else{
+			empCooldown = false;
+		}
 		if(shootbool && weaponID == gun){
 			for(int i = 0; i < gunSpr.length; i++){
 				if(shootAnim > i*100){
@@ -147,7 +184,7 @@ public class Weapon {
 				if(reloadTimer > i*100){
 					wpn = gunReload[i];
 				}
-				
+
 			}
 		}
 		if(reloading && weaponID == ak){
@@ -155,7 +192,7 @@ public class Weapon {
 				if(reloadTimer > i*60){
 					wpn = akReload[i];
 				}
-				
+
 			}
 		}
 		if(shootbool && weaponID == ak){
@@ -169,6 +206,13 @@ public class Weapon {
 			for(int i = 0; i < blockSpr.length; i++){
 				if(shootAnim > i*100){
 					wpn = blockSpr[i];
+				}
+			}
+		}
+		if(empAnim > 0){
+			for(int i = 0; i < empSpr.length;i++){
+				if(empAnim > i*200){
+					wpn = empSpr[i];
 				}
 			}
 		}
@@ -188,6 +232,23 @@ public class Weapon {
 		}
 		return false;
 	}
+
+	public boolean shootEMP(boolean mute){
+		if(!reloading && !empCooldown){
+			if (magBullets > 0) {
+				empTimer = 60000;
+				magBullets--;
+				empAnim = 2000;
+				if(!mute){
+					SoundManager.playWeaponSound(weaponID);
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
+
 	public void reload() {
 		if (magBullets < magSize) {
 			if (magBullets+currentBullets>=magSize) {

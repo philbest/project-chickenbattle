@@ -61,6 +61,7 @@ public class Character {
 		inventory.add(new Weapon(Weapon.gun));
 		inventory.add(new Weapon(Weapon.ak));
 		inventory.add(new Weapon(Weapon.block));
+		inventory.add(new Weapon(Weapon.emp));
 		weapon = inventory.get(0).weaponID;
 		position = new Vector3();
 		box = new BoundingBox();
