@@ -216,7 +216,7 @@ public class Renderer {
 					charShader.setUniformf("material_shininess", 0.5f);
 					charShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
 					StaticAnimations.walk.render(app, app.players[i]);
-					//this.renderBoundingBox(app,app.players[i].box);
+					this.renderBoundingBox(app,app.players[i].box);
 					charShader.end();
 				}
 		}
