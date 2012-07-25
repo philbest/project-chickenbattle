@@ -124,6 +124,7 @@ public class Application extends Screen implements InputProcessor{
 		}
 
 		if(multiplayer){
+			clientid = client.id;
 			players = client.getPlayers();
 			if(players[client.id] != null){	
 				players[client.id].posX = ch.position.x; 
