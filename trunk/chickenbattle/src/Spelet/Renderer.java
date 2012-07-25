@@ -203,22 +203,24 @@ public class Renderer {
 	}
 
 	public void renderMultiplayer(Application app) {
-		charShader.begin();
-		charShader.setUniform4fv("scene_light", app.light.color, 0, 4);
-		charShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
+
+		System.out.println(app.clientid);
 		for(int i = 0; i< app.players.length; i++){
 			if(app.clientid != i)
 				if(app.players[i] != null){
+					charShader.begin();
+					charShader.setUniform4fv("scene_light", app.light.color, 0, 4);
+					charShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
 					charShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
 					charShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
 					charShader.setUniformf("material_shininess", 0.5f);
 					charShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
 					app.ch.walk.render(app, app.players[i]);
 					this.renderBoundingBox(app,app.players[i].box);
-
+					charShader.end();
 				}
 		}
-		charShader.end();
+
 	}
 	public void renderMapChunks(Application app) {
 

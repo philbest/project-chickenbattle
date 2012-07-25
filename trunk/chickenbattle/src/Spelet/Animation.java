@@ -67,9 +67,9 @@ public class Animation {
 				}
 			}
 			AnimationPart a = parts.get(i);
-			a.x = keyframes.get(currentKeyFrame).positions[i].x+(keyframes.get(currentKeyFrame+1).positions[i].x-keyframes.get(currentKeyFrame).positions[i].x)*animStep/maxSteps;
-			a.y = keyframes.get(currentKeyFrame).positions[i].y+(keyframes.get(currentKeyFrame+1).positions[i].y-keyframes.get(currentKeyFrame).positions[i].y)*animStep/maxSteps;
-			a.z = keyframes.get(currentKeyFrame).positions[i].z+(keyframes.get(currentKeyFrame+1).positions[i].z-keyframes.get(currentKeyFrame).positions[i].z)*animStep/maxSteps;
+			a.x = keyframes.get(currentKeyFrame).positions[i].x+(keyframes.get(currentKeyFrame+1).positions[i].x-keyframes.get(currentKeyFrame).positions[i].x)*animStep/maxSteps+player.posX;
+			a.y = keyframes.get(currentKeyFrame).positions[i].y+(keyframes.get(currentKeyFrame+1).positions[i].y-keyframes.get(currentKeyFrame).positions[i].y)*animStep/maxSteps+player.posY;
+			a.z = keyframes.get(currentKeyFrame).positions[i].z+(keyframes.get(currentKeyFrame+1).positions[i].z-keyframes.get(currentKeyFrame).positions[i].z)*animStep/maxSteps+player.posZ;
 			a.rotationX = keyframes.get(currentKeyFrame).rotationX[i] + (keyframes.get(currentKeyFrame+1).rotationX[i]-keyframes.get(currentKeyFrame).rotationX[i])*animStep/maxSteps;
 			a.rotationZ = keyframes.get(currentKeyFrame).rotationZ[i] + (keyframes.get(currentKeyFrame+1).rotationZ[i]-keyframes.get(currentKeyFrame).rotationZ[i])*animStep/maxSteps;
 			a.updateModelMatrix();
