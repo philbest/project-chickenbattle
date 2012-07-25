@@ -151,7 +151,6 @@ public class Renderer {
 
 		renderSkySphere(app);
 		renderMapChunks(app);
-		//		renderLights(app);
 		if(app.multiplayer){
 			renderMultiplayer(app);
 		}

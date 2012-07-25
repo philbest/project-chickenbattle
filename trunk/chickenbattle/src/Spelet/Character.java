@@ -43,8 +43,8 @@ public class Character {
 	public boolean bloodsplatt, killer, killed;
 	Mesh model;
 	public Character(String name) {
-		String s1 = Gdx.files.external("walk.cpart").readString();
-		String s2 = Gdx.files.external("walk.ckey").readString();
+		String s1 = Gdx.files.internal("data/walk.cpart").readString();
+		String s2 = Gdx.files.internal("data/walk.ckey").readString();
 		walk = new Animation(s1,s2);
 		health = 10;
 		shields = 5;
