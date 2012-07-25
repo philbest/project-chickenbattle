@@ -37,7 +37,9 @@ public class MasterServer {
 
 				}
 				else if( object instanceof GetServers){
+					
 					for(int i = 0; i < servers.size; i++){
+						System.out.println("server requests");
 						connection.sendTCP(servers.get(i));
 					}
 				}

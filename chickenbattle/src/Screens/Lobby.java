@@ -84,7 +84,14 @@ public class Lobby extends Screen{
 	}
 
 	public boolean keyDown(int arg0) {
-		// TODO Auto-generated method stub
+
+		if(Gdx.input.isKeyPressed(Input.Keys.P)){
+			System.out.println("KUKEDVARD");
+			main.client.getServers();
+			serverlist = main.client.serverlist;
+			for(int i=0; i < serverlist.size; i++)
+				System.out.println(serverlist.get(i).ip);
+		}
 		return false;
 	}
 
@@ -105,6 +112,7 @@ public class Lobby extends Screen{
 			}
 
 		}
+	
 		return false;
 	}
 
@@ -148,7 +156,7 @@ public class Lobby extends Screen{
 
 		return false;
 	}
-	
+
 	@Override
 	public boolean touchDragged(int arg0, int arg1, int arg2) {
 		mouseMoved(arg0,arg1);
@@ -173,7 +181,7 @@ public class Lobby extends Screen{
 		if (join.getBoundingRectangle().contains(xpos,ypos)) {
 			join.setColor(1f,0f,0f,1);
 		}
-		
+
 	}
 
 	@Override
@@ -207,7 +215,7 @@ public class Lobby extends Screen{
 		}
 		fontname.setColor(Color.BLACK);
 		if(!write){
-		fontname.draw(sb, playerName, 50+name.getWidth()/2-20, 515);
+			fontname.draw(sb, playerName, 50+name.getWidth()/2-20, 515);
 		}
 		else{
 			fontname.draw(sb, tempName, 50+name.getWidth()/2-20, 515);
@@ -215,10 +223,6 @@ public class Lobby extends Screen{
 		crosshair.setPosition(xpos-crosshair.getWidth()/2,ypos-crosshair.getHeight()/2);
 		crosshair.draw(sb);
 		sb.end();
-		main.client.getServers();
-		serverlist = main.client.serverlist;
-		for(int i=0; i < serverlist.size; i++)
-			System.out.println(serverlist.get(i).ip);
 	}
 	public void refresh() {
 
@@ -230,13 +234,13 @@ public class Lobby extends Screen{
 		Gdx.input.setInputProcessor(this);
 		main.client = new GameClient(main.name,"localhost");
 		main.client.Connect(Sserver,50000, 50002);
-		
+
 		oldX = Gdx.graphics.getWidth()/2;
 		oldY = Gdx.graphics.getHeight()/2;
 		ypos = oldY;
 		xpos = oldX;
-		
-		
+
+
 
 	}
 
