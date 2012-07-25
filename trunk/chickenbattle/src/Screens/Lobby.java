@@ -31,6 +31,7 @@ public class Lobby extends Screen{
 	public Sprite background;
 	public Sprite join, exit, crosshair;
 	public Sprite name;
+	public Sprite serverbg;
 	public SpriteBatch sb;
 	public BitmapFont font, fontname;
 	public Player[] players;
@@ -43,11 +44,15 @@ public class Lobby extends Screen{
 	int oldY;
 	int xpos;
 	int ypos;
+	float dy;
 	boolean write;
 	float textWidth, textHeight;
 	public Main main;
 	int numPlayers;
+	int selectedServer;
 	public Lobby(Main m) {
+		selectedServer = 0;
+		dy = 0;
 		main = m;
 		font = new BitmapFont();
 		fontname = new BitmapFont();
@@ -56,6 +61,7 @@ public class Lobby extends Screen{
 		crosshair = new Sprite(new Texture(Gdx.files.internal("data/weapons/crosshairsmaller.png")));
 		mainbg = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/bg.png")));
 		background = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/lobbybg.png")));
+		serverbg = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/serverbg.png")));
 		join = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/join.png")));
 		exit = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/exit.png")));
 		name = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/name.png")));
@@ -119,16 +125,26 @@ public class Lobby extends Screen{
 	public boolean touchDown(int arg0, int arg1, int arg2, int arg3) {
 		if (exit.getBoundingRectangle().contains(xpos,ypos)) {
 			System.exit(0);
-		}
-		if (join.getBoundingRectangle().contains(xpos,ypos)) {
+		} else if (serverlist != null && join.getBoundingRectangle().contains(xpos,ypos)) {
 			main.client.Disconnect();
 			System.out.println("connecting to " + MasterServerIP);
-			main.client.Connect(MasterServerIP,54555, 54778);
+			main.client.Connect(serverlist.get(selectedServer).ip,54555, 54778);
 			main.client.AddPlayer(playerName);
 			main.setScreen(Main.GAME);
-		}
-		if (name.getBoundingRectangle().contains(xpos,ypos)){
+		} else if (name.getBoundingRectangle().contains(xpos,ypos)){
 			write = true;
+		} else {
+			if (serverlist != null) {
+				int i = 0;
+				for (AddServer as : serverlist) {
+					serverbg.setPosition(background.getX(),background.getHeight()+background.getY()-serverbg.getHeight()*(i+1));
+					if (serverbg.getBoundingRectangle().contains(xpos, ypos)) {
+						selectedServer = i;
+						break;
+					}
+					i++;
+				}
+			}
 		}
 
 
@@ -181,6 +197,20 @@ public class Lobby extends Screen{
 		}
 		else{
 			fontname.draw(sb, tempName, 50+name.getWidth()/2-20, 515);
+		}
+
+		int i = 0;
+		if (serverlist != null) {
+			for (AddServer as : serverlist) {
+				serverbg.setPosition(background.getX(),background.getHeight()+background.getY()-serverbg.getHeight()*(i+1));
+				if (selectedServer == i)
+					serverbg.draw(sb);
+				else
+					serverbg.draw(sb,0.7f);
+				font.draw(sb, "IP:" + as.ip + " with " + as.online +"/"+as.playercap  , serverbg.getX()+50, serverbg.getY()+80);
+				font.draw(sb, "MOTD:" + as.motd , serverbg.getX()+50, serverbg.getY()+60);
+				i++;
+			}
 		}
 		crosshair.setPosition(xpos-crosshair.getWidth()/2,ypos-crosshair.getHeight()/2);
 		crosshair.draw(sb);
