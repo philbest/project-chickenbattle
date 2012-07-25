@@ -38,7 +38,7 @@ public class Lobby extends Screen{
 	public Array<AddServer> serverlist;
 	public String playerName;
 	public String tempName;
-	public String Sserver;
+	public String MasterServerIP;
 	int oldX;
 	int oldY;
 	int xpos;
@@ -59,21 +59,10 @@ public class Lobby extends Screen{
 		join = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/join.png")));
 		exit = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/exit.png")));
 		name = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/name.png")));
-		try{
-			players = ((Application)main.screens.get(Main.GAME)).client.getPlayers();
-		}
-		catch(NullPointerException e){
-			e.getStackTrace();
-			System.out.println("No players online!");
-		}
-		init();
-		playerName = "Player"+numPlayers;
+		MasterServerIP = "192.168.0.101";
+		playerName = "anon";
 		tempName = "";
-		Sserver = "192.168.0.101";
 		write = false;
-	}
-
-	public void init(){
 	}
 
 	public boolean keyDown(int arg0) {
@@ -101,9 +90,7 @@ public class Lobby extends Screen{
 			else{
 				tempName += arg0;
 			}
-
 		}
-	
 		return false;
 	}
 
@@ -135,9 +122,9 @@ public class Lobby extends Screen{
 		}
 		if (join.getBoundingRectangle().contains(xpos,ypos)) {
 			main.client.Disconnect();
-			System.out.println("connecting to " + Sserver);
-			main.client.Connect(Sserver,54555, 54778);
-			main.client.AddPlayer("GUstav");
+			System.out.println("connecting to " + MasterServerIP);
+			main.client.Connect(MasterServerIP,54555, 54778);
+			main.client.AddPlayer(playerName);
 			main.setScreen(Main.GAME);
 		}
 		if (name.getBoundingRectangle().contains(xpos,ypos)){
@@ -188,22 +175,6 @@ public class Lobby extends Screen{
 
 		join.setPosition(50, 400);
 		join.draw(sb);
-		if(players[0] != null){
-			for(int i =0; i < players.length; i++){	
-				Player x = players[i];
-				if(x != null){
-					playerscore = x.name +" kills : " +x.kills + " deaths" + x.deaths;
-					textWidth = font.getBounds(playerscore).width;
-					textHeight = font.getBounds(playerscore).height;
-					font.draw(sb, playerscore, Gdx.graphics.getWidth()/2 - textWidth/2, 400 - (i*20) + textHeight / 2);
-				}
-			}
-		}
-		else{
-			String text = "No players online. Be the first to join!";
-			textWidth = font.getBounds(text).width;
-			font.draw(sb, text, Gdx.graphics.getWidth()/2 - textWidth/2, 460);
-		}
 		fontname.setColor(Color.BLACK);
 		if(!write){
 			fontname.draw(sb, playerName, 50+name.getWidth()/2-20, 515);
@@ -224,7 +195,7 @@ public class Lobby extends Screen{
 		Gdx.input.setCursorPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 		Gdx.input.setInputProcessor(this);
 		main.client = new GameClient();
-		main.client.Connect(Sserver,50000, 50002);
+		main.client.Connect(MasterServerIP,50000, 50002);
 
 		oldX = Gdx.graphics.getWidth()/2;
 		oldY = Gdx.graphics.getHeight()/2;

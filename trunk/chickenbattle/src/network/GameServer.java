@@ -104,6 +104,7 @@ public class GameServer {
 							}
 						}
 						player[ids] = new Player(received.name);
+						player[ids].name = received.name;
 						connections[ids] = connection; 
 						connectionIDs.put(connection, ids);
 
@@ -198,7 +199,6 @@ public class GameServer {
 					player[received.id].killed = false;
 					player[received.id].falldeath = false;
 					player[received.id].initShield = false;
-					player[received.id].name = received.name;
 
 					if(player[received.id].shields < 5){
 						long currTime = System.currentTimeMillis();

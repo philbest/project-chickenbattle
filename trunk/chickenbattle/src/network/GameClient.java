@@ -65,6 +65,7 @@ public class GameClient{
 					AddPlayer response = (AddPlayer)object;
 					Player newPlayer = new Player(response.name);
 					newPlayer.id = response.id;
+					newPlayer.name = response.name;
 					newPlayer.posX = response.startx;
 					newPlayer.posY = response.starty;
 					newPlayer.posZ = response.startz;
@@ -173,9 +174,9 @@ public class GameClient{
 		client.close();
 	}
 	
-	public void changeName(String xs, int id){
-		players[id].setName(xs);
-	}
+//	public void changeName(String xs, int id){
+//		players[id].setName(xs);
+//	}
 
 	public Array<BlockUpdate> getChunks(){	
 		servedchunks.clear();
