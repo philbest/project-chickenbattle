@@ -45,16 +45,17 @@ public class GameInterface {
 	public Sprite[] initShield;
 	public Sprite initShield0, initShield1, initShield2, initShield3, initShield4;
 	public Sprite currentItem, bloodSprite;
-	public BitmapFont font;
+	public BitmapFont font, drawBulletsLeft;
 	public boolean swapWeapon, blood, frag, falldeath, shieldregen;
 	public String killerName, killedName;
 	public int currentCooldown, switchRender, bloodTimer, fragTimer, fallTimer, shieldTimer;
 	public int renderBullets;
-	public int magsLeft;
+	public int bulletsLeft;
 	private Random rand = new Random();
 
 	public GameInterface() {
-		font = new BitmapFont();
+		font = new BitmapFont(Gdx.files.internal("data/font.fnt"), Gdx.files.internal("data/font.png"), false);
+		drawBulletsLeft = new BitmapFont(Gdx.files.internal("data/font.fnt"), Gdx.files.internal("data/font.png"), false);
 		healthbar = new TextureAtlas(Gdx.files.internal("data/gameinterface/health/pack"));
 		shieldbar = new TextureAtlas(Gdx.files.internal("data/gameinterface/shield/pack"));
 		bulletanim0 = new TextureAtlas(Gdx.files.internal("data/gameinterface/bullets/b1/pack"));
@@ -180,11 +181,13 @@ public class GameInterface {
 		if(blood){
 			bloodSprite.draw(sb);
 		}
-		currentItem.setPosition(Gdx.graphics.getWidth()/2-items.getWidth()/2, 0);
+		currentItem.setPosition(Gdx.graphics.getWidth()/2-items.getWidth()/2+60, 0);
 		currentItem.draw(sb);
-
+		
+		drawBulletsLeft.draw(sb, "/"+bulletsLeft, Gdx.graphics.getWidth()-680, 30);
 		for(int i = 0; i < renderBullets; i++){
-			bulletToDraw[i].setPosition(Gdx.graphics.getWidth()-170-(i*10), -50);
+			bulletToDraw[i].setSize(150, 150);
+			bulletToDraw[i].setPosition(Gdx.graphics.getWidth()-750-(i*6), -10);
 			if(i != (renderBullets-1)){
 			bulletToDraw[i].draw(sb, 0.75f);
 			}
@@ -197,21 +200,18 @@ public class GameInterface {
 		{
 			if(currentBullet[i] != idleBullet)
 			{
-				bulletToDraw[i].setPosition(Gdx.graphics.getWidth()-170-(i*10), -50);
+				bulletToDraw[i].setSize(150, 150);
+				bulletToDraw[i].setPosition(Gdx.graphics.getWidth()-750-(i*6), -20);
 				bulletToDraw[i].draw(sb, 1f);
 			}
 		}
-		for(int i = 0; i < magsLeft; i++){
-			uspMag.setPosition(Gdx.graphics.getWidth()-770-(i*60), -10);
-			uspMag.draw(sb, 0.75f);
-		}
-		
+
 		
 		if(frag){
-			font.draw(sb, killerName + " has fragged " + killedName, Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight());
+			font.draw(sb, killerName + "	 has fragged		" + killedName, Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight()-30);
 		}
 		else if(falldeath){
-			font.draw(sb, killedName+" has fallen to his death!", Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight());
+			font.draw(sb, killedName+"   has   fallen   to   his   death!", Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight()-30);
 		}
 		if(shieldregen){
 			currInitShield.draw(sb, 0.6f);
@@ -220,17 +220,17 @@ public class GameInterface {
 
 	public void updateKiller(Player killer){
 		killerName = killer.name;
-		fragTimer = 2000;
+		fragTimer = 5000;
 	}
 
 	public void updateKilled(Player killed){
 		killedName = killed.name;
-		fragTimer = 2000;
+		fragTimer = 5000;
 	}
 	
 	public void updateFallDeath(Player dead){
 		killedName = dead.name;
-		fallTimer = 2000;
+		fallTimer = 5000;
 	}
 
 	public void updateHealth(int hp){
@@ -250,6 +250,10 @@ public class GameInterface {
 		if(bool){
 			bloodTimer = 200;
 		}
+	}
+	
+	public void updateMags(int i){
+		bulletsLeft = i;
 	}
 
 	public void updateWeapon(int weapon){
@@ -271,10 +275,6 @@ public class GameInterface {
 
 	public void updateShells(int i){
 		renderBullets = i;
-	}
-	
-	public void updateMags(int mags){
-		magsLeft = mags;
 	}
 	
 	public void animateShell(int index)

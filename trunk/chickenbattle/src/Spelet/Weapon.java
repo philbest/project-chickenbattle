@@ -14,15 +14,17 @@ public class Weapon {
 	public Sprite[] gunSpr;
 	public Sprite[] akSpr;
 	public Sprite[] blockSpr;
+	public Sprite[] gunReload;
+	public Sprite[] akReload;
 	public Sprite crosshair;
 	int offset;
-	public boolean shootbool = false;
+	public boolean shootbool = false, reloading = false;
 	public int maxBullets;
 	public int currentBullets;
 	public int magBullets;
 	public int magSize;
 	public int cooldown;
-	public int currentCooldown, shootAnim;
+	public int currentCooldown, shootAnim, reloadTimer;
 	public long lastShot;
 	public Weapon(int w) {
 		weaponID = w;
@@ -40,6 +42,22 @@ public class Weapon {
 		blockSpr[0] = new Sprite(new Texture(Gdx.files.internal("data/weapons/block.png")));
 		blockSpr[1] = new Sprite(new Texture(Gdx.files.internal("data/weapons/block1.png")));
 		blockSpr[2] = new Sprite(new Texture(Gdx.files.internal("data/weapons/block2.png")));
+		gunReload = new Sprite[5];
+		gunReload[0] = gunSpr[0];
+		gunReload[1] = new Sprite(new Texture(Gdx.files.internal("data/weapons/gunreload.png")));
+		gunReload[2] = new Sprite(new Texture(Gdx.files.internal("data/weapons/gunreload1.png")));
+		gunReload[3] = new Sprite(new Texture(Gdx.files.internal("data/weapons/gunreload2.png")));
+		gunReload[4] = new Sprite(new Texture(Gdx.files.internal("data/weapons/gunreload3.png")));
+		akReload = new Sprite[8];
+		akReload[0] = akSpr[0];
+		akReload[1] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akreload.png")));
+		akReload[2] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akreload1.png")));
+		akReload[3] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akreload2.png")));
+		akReload[4] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akreload3.png")));
+		akReload[5] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akreload4.png")));
+		akReload[6] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akreload5.png")));
+		akReload[7] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akreload6.png")));
+
 		if (weaponID == gun) {
 			crosshair = new Sprite(new Texture(Gdx.files.internal("data/weapons/crosshairsmaller.png")));
 			wpn = gunSpr[0];
@@ -98,6 +116,7 @@ public class Weapon {
 
 		currentCooldown -= delta;
 		shootAnim -= delta;
+		reloadTimer -= delta;
 
 		if(currentCooldown<0)
 			currentCooldown = 0;
@@ -109,11 +128,34 @@ public class Weapon {
 			shootbool = false;
 		}
 
+		if(reloadTimer > 0){
+			reloading = true;
+		}
+		else{
+			reloading = false;
+		}
+
 		if(shootbool && weaponID == gun){
 			for(int i = 0; i < gunSpr.length; i++){
 				if(shootAnim > i*100){
 					wpn = gunSpr[i];
 				}
+			}
+		}
+		if(reloading && weaponID == gun){
+			for(int i = 0; i < gunReload.length; i++){
+				if(reloadTimer > i*100){
+					wpn = gunReload[i];
+				}
+				
+			}
+		}
+		if(reloading && weaponID == ak){
+			for(int i = 0; i < akReload.length; i++){
+				if(reloadTimer > i*60){
+					wpn = akReload[i];
+				}
+				
 			}
 		}
 		if(shootbool && weaponID == ak){
@@ -133,20 +175,23 @@ public class Weapon {
 
 	}
 	public boolean shoot(boolean mute) {
-		if (magBullets > 0 && currentCooldown <= 0) {
-			magBullets--;
-			currentCooldown = cooldown;
-			shootAnim = 300;
-			if(!mute){
-				SoundManager.playWeaponSound(weaponID);
+		if(!reloading){
+			if (magBullets > 0 && currentCooldown <= 0) {
+				magBullets--;
+				currentCooldown = cooldown;
+				shootAnim = 300;
+				if(!mute){
+					SoundManager.playWeaponSound(weaponID);
+				}
+				return true;
 			}
-			return true;
 		}
 		return false;
 	}
 	public void reload() {
 		if (magBullets < magSize) {
 			if (magBullets+currentBullets>=magSize) {
+				reloadTimer = 500;
 				currentBullets-=magSize-magBullets;
 				magBullets = magSize;
 			} else {
