@@ -7,6 +7,7 @@ import Screens.Application;
 import Screens.Lobby;
 import Screens.MainMenu;
 import Screens.Screen;
+import Screens.Skills;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -19,6 +20,7 @@ public class Main implements ApplicationListener{
 	public static final int MAINMENU = 0;
 	public static final int GAME = 1;
 	public static final int LOBBY = 2;
+	public static final int SKILLS = 3;
 	public String name;
 	public Application app;
 	public GameClient client;
@@ -38,6 +40,7 @@ public class Main implements ApplicationListener{
 		screens.put(MAINMENU, new MainMenu(this));
 		screens.put(LOBBY, new Lobby(this));
 		screens.put(GAME, new Application(this));
+		screens.put(SKILLS, new Skills(this));
 		activeScreen = screens.get(MAINMENU);
 		activeScreen.enter();
 		Gdx.graphics.setVSync(true);
