@@ -4,7 +4,9 @@ import network.Player;
 import Screens.Application;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Array;
 
 public class Animation {
@@ -30,7 +32,7 @@ public class Animation {
 		System.out.println(str2);
 		rows = str2.split("Frame:");
 		for(int i = 1; i < rows.length; i++) {
-			
+
 			keyframes.add(new KeyFrame(rows[i], parts.size));
 		}
 		maxSteps = 30;
@@ -52,7 +54,7 @@ public class Animation {
 		parts.add(new AnimationPart(0,2.7f,0,0.5f,0.5f,0.5f));
 		// Head
 		parts.add(new AnimationPart(0,3,0,2,1,2));
-		
+
 		maxSteps = 30;
 	}
 	public void render(Application app, Player player) {
