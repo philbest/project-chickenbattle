@@ -197,8 +197,9 @@ public class GameClient{
 		client.sendTCP(bupdate);
 	}
 
-	public void sendBullet(Vector3 origin, Vector3 dir, int id){
+	public void sendBullet(Vector3 origin, Vector3 dir, int id, boolean emp){
 		bullet.id = id;
+		bullet.emp = emp;
 		bullet.ox =origin.x;
 		bullet.oy =origin.y;
 		bullet.oz =origin.z;
@@ -209,6 +210,7 @@ public class GameClient{
 
 		client.sendTCP(bullet);
 	}
+	
 
 	public void sendMessage(Player x, Vector3[] ch){
 		update.id = id;

@@ -169,17 +169,21 @@ public class Application extends Screen implements InputProcessor{
 	public boolean keyDown(int arg0) {
 		if (Input.Keys.NUM_1 == arg0) {
 			ch.weapon = ch.inventory.get(0).weaponID;
-				gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
+			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 			gi.swapWeapon();
 		} else if (Input.Keys.NUM_2 == arg0) {
 			ch.weapon = ch.inventory.get(1).weaponID;
-				gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
+			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 			gi.swapWeapon();
 		} else if (Input.Keys.NUM_3 == arg0) {
 			ch.weapon = ch.inventory.get(2).weaponID;
-				gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
+			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 			gi.swapWeapon();
-		}else if (Input.Keys.NUM_9 == arg0){
+		} else if (Input.Keys.NUM_4 == arg0) {
+			ch.weapon = ch.inventory.get(3).weaponID;
+			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
+			gi.swapWeapon();
+		} else if (Input.Keys.NUM_9 == arg0){
 			ch.setPos(30,60,50);
 		}
 		else if (Input.Keys.TAB == arg0){
@@ -228,7 +232,7 @@ public class Application extends Screen implements InputProcessor{
 				currentweapon=ch.inventory.size-1;
 			ch.weapon = ch.inventory.get(currentweapon).weaponID;
 		}
-			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
+		gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 		gi.swapWeapon();
 		return false;
 	}
@@ -237,11 +241,29 @@ public class Application extends Screen implements InputProcessor{
 		if(arg3 == Input.Buttons.RIGHT ){
 			zoom = true;
 		}
-		else{		
+		else if(ch.inventory.get(ch.weapon).weaponID == 3){		
+			if(ch.inventory.get(ch.weapon).shootEMP(mute)){
+				System.out.println("hello");
+				gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
+				gi.animateShell(ch.inventory.get(ch.weapon).magBullets);
+				Vector3 point = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).origin);
+				Vector3 direction = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).direction);
+				from.set(point);
+				to.set(from);
+				direction.mul(100);
+				to.add(direction);
+				direction.nor();
+				direction.mul(0.5f);
+				if(multiplayer){		
+					client.sendBullet(point,direction, clientid, true);
+				}
+
+			}
+		}
+		else{
 			if (ch.inventory.get(ch.weapon).shoot(mute)) {
-					gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
-					gi.animateShell(ch.inventory.get(ch.weapon).magBullets);
-				//gi.updateShells(ch.inventory.get(ch.weapon).magBullets-1, MathUtils.random(5)+1);
+				gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
+				gi.animateShell(ch.inventory.get(ch.weapon).magBullets);
 				float range = 0;
 				Vector3 point = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).origin);
 				Vector3 direction = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).direction);
@@ -259,7 +281,7 @@ public class Application extends Screen implements InputProcessor{
 				recoil();
 
 				if(multiplayer){		
-					client.sendBullet(point,direction, client.id);
+					client.sendBullet(point,direction, clientid, false);
 				}
 				while (!hit && range < 200) {
 					range += direction.len();
@@ -318,6 +340,7 @@ public class Application extends Screen implements InputProcessor{
 						}
 					}
 				}
+
 			}
 		}
 		return false;
@@ -379,14 +402,14 @@ public class Application extends Screen implements InputProcessor{
 	}
 	@Override
 	public void enter() {
-		
+
 		ch.inventory.get(ch.weapon).currentCooldown = 200;
-		
+
 		if(multiplayer){
 			client = main.client;
 			players = new Player[10];
-		}
-		Gdx.input.setInputProcessor(this);
 
+		Gdx.input.setInputProcessor(this);
+		}
 	}
 }

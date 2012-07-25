@@ -40,9 +40,10 @@ public class GameInterface {
 	public Sprite[] shieldsprites;
 	public Sprite[] weaponsprites;
 	public Sprite[][] bulletAnims;
+	public Sprite[] switchingWeapons;
 	public Sprite currentWeapon;
 	public Sprite uspMag;
-	public Sprite items, item1, item2, item3;
+	public Sprite items, item1, item2, item3, item4;
 	public Sprite[] initShield;
 	public Sprite initShield0, initShield1, initShield2, initShield3, initShield4;
 	public Sprite currentItem, bloodSprite;
@@ -66,9 +67,10 @@ public class GameInterface {
 		bulletanim4 = new TextureAtlas(Gdx.files.internal("data/gameinterface/bullets/b5/pack"));
 		weapons = new TextureAtlas(Gdx.files.internal("data/gameinterface/weapons/pack"));
 		items = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/items/items.png")));
-		item1 = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/items/1.png")));
-		item2 = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/items/2.png")));
-		item3 = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/items/3.png")));
+		item1 = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/items/1a.png")));
+		item2 = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/items/2a.png")));
+		item3 = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/items/3a.png")));
+		item4 = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/items/4a.png")));
 		uspMag = new Sprite(new Texture(Gdx.files.internal("data/weapons/uspmag.png")));
 		initShield = new Sprite[5];
 		initShield[0] = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/initshield/shield0.png")));
@@ -93,10 +95,11 @@ public class GameInterface {
 		healthsprites[8] = healthbar.createSprite("9");
 		healthsprites[9] = healthbar.createSprite("10");
 		currentHealth = healthsprites[9];
-		weaponsprites = new Sprite[3];
+		weaponsprites = new Sprite[4];
 		weaponsprites[0] = weapons.createSprite("usp");
 		weaponsprites[1] = weapons.createSprite("ak");
 		weaponsprites[2] = weapons.createSprite("block");
+		weaponsprites[3] = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/weapons/emp.png")));
 		shieldsprites = new Sprite[6];
 		shieldsprites[0] = shieldbar.createSprite("0");
 		shieldsprites[1] = shieldbar.createSprite("1");
@@ -278,6 +281,9 @@ public class GameInterface {
 		}
 		else if(weapon == 2){
 			currentItem = item3;
+		}
+		else if(weapon == 3){
+			currentItem = item4;
 		}
 	}
 
