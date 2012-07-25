@@ -217,6 +217,8 @@ public class Lobby extends Screen{
 		oldY = Gdx.graphics.getHeight()/2;
 		ypos = oldY;
 		xpos = oldX;
+		
+		
 
 	}
 

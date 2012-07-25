@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import network.Packet.AddPlayer;
+import network.Packet.AddServer;
 import network.Packet.Added;
 import network.Packet.BlockUpdate;
 import network.Packet.Bullet;
@@ -58,9 +59,26 @@ public class GameServer {
 		starty = 0;
 		startz = 0;
 
-//		worldServer p = new worldServer();
-//		new Thread(p).start();
+		Client lobbyconnection = new Client();
+		lobbyconnection.start();
+		Packet.register(lobbyconnection);
+		lobbyconnection.connect(5000, "localhost", 50000, 50002);
 
+		AddServer addS = new AddServer();
+		addS.ip = "localhost";
+		addS.motd ="Welcome to [Drunk] gaming with pistols";
+		addS.online =0;
+		addS.playercap = player.length;
+
+		lobbyconnection.sendTCP(addS);
+
+		lobbyconnection.addListener(new Listener() {
+			public void received (Connection connection, Object object) {
+				if (object instanceof AddServer){
+
+				}
+			}
+		});
 
 		server.addListener(new Listener() {
 			public void received (Connection connection, Object object) {
@@ -245,10 +263,6 @@ public class GameServer {
 				}
 			}
 
-
-
-
-
 			public void disconnected (Connection c) {
 				if(connectionIDs.get(c)!= null){
 					Disconnected dc = new Disconnected();	
@@ -272,25 +286,6 @@ public class GameServer {
 		}
 		return false;
 	}
-//
-//	class worldServer implements Runnable {
-//		Client lobbyconnection = new Client();
-//
-//
-//		public void run() {
-//			lobbyconnection.start();
-//			Packet.register(lobbyconnection);
-//
-//			try {
-//				lobbyconnection.connect(5000, "localhost", 50000, 50002);
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//
-//		}
-//	}
-
 	public static void main (String[] args) throws IOException {
 		try
 		{

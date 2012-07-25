@@ -11,8 +11,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 
 
-
-
 public class Main implements ApplicationListener{
 	public Screen activeScreen;
 	public HashMap<Integer, Screen> screens;
