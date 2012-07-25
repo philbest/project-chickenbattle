@@ -26,7 +26,7 @@ public class Animation {
 		rows = str2.split("Frame:");
 		for(int i = 1; i < rows.length; i++) {
 			
-			keyframes.add(new KeyFrame(rows[i], 5));
+			keyframes.add(new KeyFrame(rows[i], parts.size));
 		}
 		maxSteps = 30;
 	}
@@ -36,17 +36,17 @@ public class Animation {
 		parts = new Array<AnimationPart>();
 		keyframes = new Array<KeyFrame>();
 		// Leggs
-		parts.add(new AnimationPart(-1,0,0,0.5f,2,0.5f));
-		parts.add(new AnimationPart(1,0,0,0.5f,2,0.5f));
+		parts.add(new AnimationPart(-0.5f,0,0,0.25f,1,0.25f));
+		parts.add(new AnimationPart(0.5f,0,0,0.25f,1,0.25f));
 		// Arms
-		parts.add(new AnimationPart(-1.5f,2,0,0.5f,1.5f,0.5f));
-		parts.add(new AnimationPart(1.5f,2,0,0.5f,1.5f,0.5f));
+		parts.add(new AnimationPart(-0.75f,1,0,0.25f,0.75f,0.25f));
+		parts.add(new AnimationPart(0.75f,1,0,0.25f,0.75f,0.25f));
 		// Body
-		parts.add(new AnimationPart(0,2,0,2,2,1));
+		parts.add(new AnimationPart(0,1,0,1,1,0.5f));
 		// Neck
-		parts.add(new AnimationPart(0,2.7f,0,0.5f,0.5f,0.5f));
+		parts.add(new AnimationPart(0,1.7f,0,0.25f,0.25f,0.25f));
 		// Head
-		parts.add(new AnimationPart(0,3,0,2,1,2));
+		parts.add(new AnimationPart(0,1.5f,0,1,0.5f,1));
 		
 		maxSteps = 30;
 	}

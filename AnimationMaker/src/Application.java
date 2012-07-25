@@ -32,7 +32,7 @@ public class Application implements InputProcessor{
 	Sprite background;
 	Sprite saveFrame;
 	Sprite framebg;
-	Sprite play,stopplay, rotate;
+	Sprite play,stopplay, rotate, resize;
 	Sprite framebgup;
 	Sprite framebgdown;
 	SpriteBatch sb;
@@ -41,11 +41,14 @@ public class Application implements InputProcessor{
 	float framebgDY;
 	int clickedKeyFrame;
 	boolean rotating;
+	boolean scaling;
 	JFileChooser fc;
 	public Application() {
 		fc = new JFileChooser();
 		camY = 0;
 		rotating = false;
+		scaling = false;
+		
 		sb = new SpriteBatch();
 		background = new Sprite(new Texture(Gdx.files.internal("data/background.png")));
 		saveFrame = new Sprite(new Texture(Gdx.files.internal("data/saveFrame.png")));
@@ -53,6 +56,7 @@ public class Application implements InputProcessor{
 		play = new Sprite(new Texture(Gdx.files.internal("data/play.png")));
 		stopplay = new Sprite(new Texture(Gdx.files.internal("data/stopplay.png")));
 		rotate = new Sprite(new Texture(Gdx.files.internal("data/rotate.png")));
+		resize = new Sprite(new Texture(Gdx.files.internal("data/resize.png")));
 		framebgup = new Sprite(new Texture(Gdx.files.internal("data/framebgup.png")));
 		framebgdown = new Sprite(new Texture(Gdx.files.internal("data/framebgdown.png")));
 		font = new BitmapFont();
@@ -115,7 +119,11 @@ public class Application implements InputProcessor{
 			rotate.draw(sb,0.7f);
 		else
 			rotate.draw(sb);
-
+		resize.setPosition(background.getX(),background.getY()+rotate.getHeight());
+		if (scaling)
+			resize.draw(sb,0.7f);
+		else
+			resize.draw(sb);
 		for (int i = 0; i < animation.keyframes.size; i++) {
 			if (i == clickedKeyFrame)
 				font.setColor(1,0,0,1);
@@ -211,6 +219,10 @@ public class Application implements InputProcessor{
 					animation.playAnimation(this,true);
 			} else if (rotate.getBoundingRectangle().contains(x,y)) {
 				rotating = !rotating;
+				scaling = false;
+			} else if (resize.getBoundingRectangle().contains(x,y)) {
+				rotating = false;
+				scaling = !scaling;
 			} else if (framebg.getBoundingRectangle().contains(x,y)) {
 				if (framebgup.getBoundingRectangle().contains(x,y)) {
 					framebgDY += 30;
@@ -236,11 +248,11 @@ public class Application implements InputProcessor{
 		Vector3 point = new Vector3(cam.getPickRay(arg0,arg1).origin);
 		Vector3 direction = new Vector3(cam.getPickRay(arg0,arg1).direction);
 		direction.nor();
-		direction.mul(0.5f);
+		direction.mul(0.1f);
 		float range = 0;
 		boolean hit = false;
 		while (range < 50 && hit == false) {
-			range += 0.5f;
+			range += 0.1f;
 			point.add(direction);
 			if (animation.clicked(point.x,point.y,point.z)) {
 				hit = true;
@@ -271,6 +283,30 @@ public class Application implements InputProcessor{
 			} else if (rightAngle == 270) {
 				animation.selectedPart.rotationZ -= dx*10;
 				animation.selectedPart.updateModelMatrix();
+			}
+			draggedX = arg0;
+			draggedY = arg1;
+		} else if (scaling) {
+			float dx = draggedX-arg0;
+			float dy = draggedY-arg1;
+			dx /= 100;
+			dy /= 100;
+			if (rightAngle == 0) {
+				animation.selectedPart.d += dx/10;
+				animation.selectedPart.h += dy/10;
+				animation.selectedPart.rebuild();
+			} else if (rightAngle == 180) {
+				animation.selectedPart.d -= dx/10;
+				animation.selectedPart.h += dy/10;
+				animation.selectedPart.rebuild();
+			} else if (rightAngle == 90) {
+				animation.selectedPart.w-= dx/10;
+				animation.selectedPart.h += dy/10;
+				animation.selectedPart.rebuild();
+			} else if (rightAngle == 270) {
+				animation.selectedPart.w -= dx/10;
+				animation.selectedPart.h += dy/10;
+				animation.selectedPart.rebuild();
 			}
 			draggedX = arg0;
 			draggedY = arg1;
