@@ -108,7 +108,6 @@ public class Application extends Screen implements InputProcessor{
 		}
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
 			touchDown(draggedX, draggedY, 0, 0);
-		this.ping = client.ping;
 		movement.set(ch.position);
 		movement.add(0,2,0);
 		cam.position.set(movement);
