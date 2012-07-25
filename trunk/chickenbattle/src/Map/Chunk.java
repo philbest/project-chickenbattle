@@ -27,61 +27,74 @@ public class Chunk {
 		bounds = new BoundingBox();
 
 		float caves, center_falloff, plateau_falloff, density;
-		
+
 		for (int x2 = 0; x2 < Map.chunkSize; x2++) {
 			for (int z2 = 0; z2 < Map.chunkSize; z2++) {
 				for (int y2 = 0; y2 < Map.chunkSize; y2++) {
-
-					xf=(float)(x2+ (x*Map.chunkSize))/((float)Map.chunkSize*4);
-					yf=(float)(y2+ (y*Map.chunkSize))/((float)Map.chunkSize*1.5f);
-					zf=(float)(z2+ (z*Map.chunkSize))/((float)Map.chunkSize*4);
-
-					if(yf <= 0.70){
-						plateau_falloff = 1.0f;
-					}
-					else if(0.70f < yf && yf < 0.9){
-						plateau_falloff = 1.0f-(yf-0.7f)*10.0f;
-					}
-					else{
-						plateau_falloff = 0.0f;
-					}
-					center_falloff = 0.1f/(
-							(float)Math.pow((xf-0.5f)*1.5f,2)+
-							(float)Math.pow((yf)*0.8f, 2) +
-							(float)Math.pow((zf-0.5)*1.5f, 2)
-					);
-					caves = (float)Math.pow(simplex_noise(1, xf*5, yf*5, zf*5), 3);
-					density = (
-							simplex_noise(5, xf, yf*0.5f, zf) * center_falloff *plateau_falloff
-					);
-					density *= (float)Math.pow(
-							noise((xf+1)*3.0f, (yf+1)*3.0f, (zf+1)*3.0f)+0.4f, 1.8f
-					);
-					if(caves<1.5f){
-						density = 0;
-					}
-					if(density > 3.1f)
-//					if(y2 == 0)
-						map[x2][y2][z2] = new Voxel(Voxel.grass);
-					else
-						map[x2][y2][z2] = new Voxel(Voxel.nothing);
+					//
+					//					xf=(float)(x2+ (x*Map.chunkSize))/((float)Map.chunkSize*4);
+					//					yf=(float)(y2+ (y*Map.chunkSize))/((float)Map.chunkSize*1.5f);
+					//					zf=(float)(z2+ (z*Map.chunkSize))/((float)Map.chunkSize*4);
+					//
+					//					if(yf <= 0.70){
+					//						plateau_falloff = 1.0f;
+					//					}
+					//					else if(0.70f < yf && yf < 0.9){
+					//						plateau_falloff = 1.0f-(yf-0.7f)*10.0f;
+					//					}
+					//					else{
+					//						plateau_falloff = 0.0f;
+					//					}
+					//					center_falloff = 0.1f/(
+					//							(float)Math.pow((xf-0.5f)*1.5f,2)+
+					//							(float)Math.pow((yf)*0.8f, 2) +
+					//							(float)Math.pow((zf-0.5)*1.5f, 2)
+					//					);
+					//					caves = (float)Math.pow(simplex_noise(1, xf*5, yf*5, zf*5), 3);
+					//					density = (
+					//							simplex_noise(5, xf, yf*0.5f, zf) * center_falloff *plateau_falloff
+					//					);
+					//					density *= (float)Math.pow(
+					//							noise((xf+1)*3.0f, (yf+1)*3.0f, (zf+1)*3.0f)+0.4f, 1.8f
+					//					);
+					//					if(caves<1.5f){
+					//						density = 0;
+					//					}
+					//					if(density > 3.1f)
+					////					if(y2 == 0)
+					//						map[x2][y2][z2] = new Voxel(Voxel.grass);
+					//					else
+					map[x2][y2][z2] = new Voxel(Voxel.nothing);
 				}
 			}
 		}
-//		addAcircle(Map.chunkSize/2, Map.chunkSize/2, 15);
+		addAcircle(Map.chunkSize/2, Map.chunkSize/2, 15);
+		addAsquare(0, 0, 31);
 	}
 
 	public void addAcircle(int xCenter, int yCenter, int radius)
 	{
 		int x, y, r2;
-		for(int z = 30; z >= 0; z-- ){
+		for(int z = 10; z >= 0; z-- ){
 			r2 = radius * radius;
 			for (x = -radius; x <= radius; x++) {
 				y = (int) (Math.sqrt(r2 - x*x) + 0.5);
-				map[xCenter+x][5][yCenter+ y] = new Voxel(Voxel.grass);
-				map[xCenter+x][5][yCenter-y] = new Voxel(Voxel.grass);
+				map[xCenter+x][z][yCenter+ y] = new Voxel(Voxel.grass);
+				map[xCenter+x][z][yCenter-y] = new Voxel(Voxel.grass);
 			}
 			radius--;
+		}
+	}
+
+	public void addAsquare(int xstart, int ystart, int length)
+	{
+		int x, y, r2;
+		for(int z = 1; z >= 0; z-- ){
+			for (x = xstart; x <= length; x++) {
+				for (y = ystart; y <= length; y++) {
+					map[x][z][y] = new Voxel(Voxel.grass);
+				}
+			}
 		}
 	}
 
