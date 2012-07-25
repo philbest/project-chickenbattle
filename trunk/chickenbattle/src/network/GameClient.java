@@ -34,9 +34,7 @@ public class GameClient{
 	Bullet bullet;
 	BlockUpdate bupdate;
 	public int id;
-	public boolean hit;
 	public boolean dead;
-	public int ping;
 	public String name;
 
 	public GameClient(String ip, String name){
@@ -45,7 +43,6 @@ public class GameClient{
 		players = new Player[10];
 		update = new Update();
 		bupdate = new BlockUpdate();
-		hit = false;
 		this.name = name;
 		bbCorners = new Vector3[8];
 		for(int i=0; i < 8; i++)
@@ -96,7 +93,6 @@ public class GameClient{
 						players[response.id].lasthit = response.lasthit;
 						players[response.id].lastRegged = response.lastRegged;
 						players[response.id].initShield = response.initShield;
-						//players[response.id].name = name;
 						players[response.id].falldeath = response.falldeath;
 						if(players[id].falldeath)
 							dead = true;
@@ -109,10 +105,8 @@ public class GameClient{
 						bbCorners[5].set(response.x6, response.y6, response.z6);
 						bbCorners[6].set(response.x7, response.y7, response.z7);
 						bbCorners[7].set(response.x8, response.y8, response.z8);					
-						
-						
+										
 						players[response.id].setBox(bbCorners);				
-						ping = connection.getReturnTripTime();
 					}
 				}
 
@@ -201,7 +195,6 @@ public class GameClient{
 		bupdate.size = size;
 		bupdate.modi = modi;
 		client.sendTCP(bupdate);
-
 	}
 
 	public void sendBullet(Vector3 origin, Vector3 dir, int id){
