@@ -143,6 +143,8 @@ public class GameClient{
 				else if(object instanceof AddServer){
 					AddServer response = (AddServer)object;
 					serverlist.add(response);
+					System.out.println(response.ip);
+					System.out.println("filling serverlist");
 				}
 			}
 		});		
@@ -153,6 +155,8 @@ public class GameClient{
 	}
 	
 	public void getServers(){
+		serverlist.clear();
+	
 		GetServers request = new GetServers();
 		client.sendTCP(request);
 	}
