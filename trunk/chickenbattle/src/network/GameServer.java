@@ -68,7 +68,6 @@ public class GameServer {
 		lobbyconnection.connect(5000, "localhost", 50000, 50002);
 
 		AddServer addS = new AddServer();
-		addS.ip = ownIP.getHostAddress();
 		addS.motd ="Welcome to [Drunk] gaming with pistols";
 		addS.online =0;
 		addS.playercap = player.length;
