@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
 import network.Packet.AddPlayer;
+import network.Packet.AddServer;
 import network.Packet.Added;
 import network.Packet.BlockUpdate;
 import network.Packet.Bullet;
 import network.Packet.Disconnected;
+import network.Packet.GetServers;
 import network.Packet.Hit;
 import network.Packet.Reject;
 import network.Packet.Update;
@@ -24,6 +26,7 @@ public class GameClient{
 	Player[] players;
 	Array<BlockUpdate> chunkstoupdate;
 	Array<BlockUpdate> servedchunks;
+	public Array<AddServer> serverlist;
 	Semaphore listsafe;
 	Vector3[] bbCorners;
 	
@@ -51,26 +54,9 @@ public class GameClient{
 		listsafe = new Semaphore(1);
 		chunkstoupdate = new Array<BlockUpdate>();
 		servedchunks = new Array<BlockUpdate>();
+		serverlist = new Array<AddServer>();
 
 		Packet.register(client);
-		try {
-			//client.connect(5000, "129.16.21.56", 54555, 54778);
-
-//			client.connect(5000, "192.168.0.100", 54555, 54778);
-			//client.connect(5000, "129.16.177.67", 54555, 54778);
-			client.connect(5000, ip, 54555, 54778);
-			//client.connect(5000, "129.16.20.141", 54555, 54778);
-			//client.connect(5000, "192.168.0.100", 54555, 54778);
-
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		AddPlayer player = new AddPlayer();
-		player.name = name;
-		client.sendTCP(player);
 
 		client.addListener(new Listener() {
 			public void received (Connection connection, Object object) {
@@ -154,12 +140,40 @@ public class GameClient{
 						}
 					}
 				}
+				else if(object instanceof AddServer){
+					AddServer response = (AddServer)object;
+					serverlist.add(response);
+				}
 			}
 		});		
 	}
 	
 	public Player[] getPlayers(){
 		return players;
+	}
+	
+	public void getServers(){
+		GetServers request = new GetServers();
+		client.sendTCP(request);
+	}
+	
+	public void Connect(String ip, int tcpport, int udpport){
+		try {
+			client.connect(5000, ip, tcpport, udpport);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void AddPlayer(String name){
+		AddPlayer player = new AddPlayer();
+		player.name = name;
+		client.sendTCP(player);
+	}
+	public void Disconnect(){
+		if(client.isConnected())
+		client.close();
 	}
 	
 	public void changeName(String xs, int id){
