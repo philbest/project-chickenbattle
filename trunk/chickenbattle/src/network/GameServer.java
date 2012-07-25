@@ -107,7 +107,7 @@ public class GameServer {
 
 						AddPlayer newPlayer = new AddPlayer();
 						newPlayer.id = ids;
-						newPlayer.name = received.name;
+						newPlayer.name = received.name;	
 						newPlayer.startx = startx;
 						newPlayer.starty = starty;
 						newPlayer.startz = startz;

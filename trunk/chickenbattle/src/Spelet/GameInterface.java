@@ -40,6 +40,7 @@ public class GameInterface {
 	public Sprite[] weaponsprites;
 	public Sprite[][] bulletAnims;
 	public Sprite currentWeapon;
+	public Sprite uspMag;
 	public Sprite items, item1, item2, item3;
 	public Sprite[] initShield;
 	public Sprite initShield0, initShield1, initShield2, initShield3, initShield4;
@@ -49,6 +50,7 @@ public class GameInterface {
 	public String killerName, killedName;
 	public int currentCooldown, switchRender, bloodTimer, fragTimer, fallTimer, shieldTimer;
 	public int renderBullets;
+	public int magsLeft;
 	private Random rand = new Random();
 
 	public GameInterface() {
@@ -65,6 +67,7 @@ public class GameInterface {
 		item1 = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/items/1.png")));
 		item2 = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/items/2.png")));
 		item3 = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/items/3.png")));
+		uspMag = new Sprite(new Texture(Gdx.files.internal("data/weapons/uspmag.png")));
 		initShield = new Sprite[5];
 		initShield[0] = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/initshield/shield0.png")));
 		initShield[1] = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/initshield/shield1.png")));
@@ -198,6 +201,11 @@ public class GameInterface {
 				bulletToDraw[i].draw(sb, 1f);
 			}
 		}
+		for(int i = 0; i < magsLeft; i++){
+			uspMag.setPosition(Gdx.graphics.getWidth()-770-(i*60), -10);
+			uspMag.draw(sb, 0.75f);
+		}
+		
 		
 		if(frag){
 			font.draw(sb, killerName + " has fragged " + killedName, Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight());
@@ -263,6 +271,10 @@ public class GameInterface {
 
 	public void updateShells(int i){
 		renderBullets = i;
+	}
+	
+	public void updateMags(int mags){
+		magsLeft = mags;
 	}
 	
 	public void animateShell(int index)

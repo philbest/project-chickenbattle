@@ -123,6 +123,13 @@ public class Weapon {
 				}
 			}
 		}
+		if(shootbool && weaponID == block){
+			for(int i = 0; i < blockSpr.length; i++){
+				if(shootAnim > i*100){
+					wpn = blockSpr[i];
+				}
+			}
+		}
 
 	}
 	public boolean shoot(boolean mute) {
