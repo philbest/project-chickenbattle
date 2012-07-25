@@ -16,17 +16,23 @@ public class AnimationPart {
 	public float x;
 	public float y;
 	public float z;
-	public AnimationPart() {
-		
-	}
-	public AnimationPart(int x, int y, int z, int w, int h, int d) {
-		box = new BoundingBox();
-		modelMatrix = new Matrix4();
+	public float w, h, d;
+	public float rotationX;
+	public float rotationZ;
+	public AnimationPart(String str) {
+		String[] strings = str.split(" ");
+		// x,y,z,w,h,d,rotX,rotZ
+		x = Float.parseFloat(strings[0]);
+		y = Float.parseFloat(strings[1]);
+		z = Float.parseFloat(strings[2]);
+		w = Float.parseFloat(strings[3]);
+		h = Float.parseFloat(strings[4]);
+		d = Float.parseFloat(strings[5]);
+		rotationX = Float.parseFloat(strings[6]);
+		rotationZ = Float.parseFloat(strings[7]);
 		FloatArray fa = new FloatArray();
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		modelMatrix.setToTranslation(x,y,z);
+		modelMatrix = new Matrix4();
+		box = new BoundingBox();
 		addTopFace(fa,0,0,0,w,h,d);
 		addBotFace(fa,0,0,0,w,h,d);
 		addLeftFace(fa,0,0,0,w,h,d);
@@ -42,18 +48,56 @@ public class AnimationPart {
 		}
 		setTexture(new Texture(Gdx.files.internal("data/grassmap.png")));
 		partMesh.calculateBoundingBox(box);
-		box.mul(modelMatrix);
+		updateModelMatrix();
+	}
+	public AnimationPart(float x, float y, float z, float w, float h, float d) {
+		box = new BoundingBox();
+		modelMatrix = new Matrix4();
+		FloatArray fa = new FloatArray();
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.w = w;
+		this.h = h;
+		this.d = d;
+		addTopFace(fa,0,0,0,w,h,d);
+		addBotFace(fa,0,0,0,w,h,d);
+		addLeftFace(fa,0,0,0,w,h,d);
+		addRightFace(fa,0,0,0,w,h,d);
+		addFrontFace(fa,0,0,0,w,h,d);
+		addBackFace(fa,0,0,0,w,h,d);
+		if (fa.size > 0) {
+			partMesh = new Mesh(true, fa.size, 0,
+					VertexAttributes.position, 
+					VertexAttributes.normal,
+					VertexAttributes.textureCoords);
+			partMesh.setVertices(fa.items);
+		}
+		setTexture(new Texture(Gdx.files.internal("data/grassmap.png")));
+		partMesh.calculateBoundingBox(box);
+		updateModelMatrix();
+	}
+	public String toString() {
+		String ret = "";
+		// x,y,z,w,h,d,rotX,rotZ
+		ret = x + " " + y + " " + z + " " +  w + " " + h + " " + d  + " " + rotationX  + " " + rotationZ;		
+		return ret;
 	}
 	public void updateModelMatrix() {
 		modelMatrix.setToTranslation(x,y,z);
+		modelMatrix.rotate(1,0,0,rotationX);
+		modelMatrix.rotate(0,0,1,rotationZ);
 		partMesh.calculateBoundingBox(box);
-		box.mul(modelMatrix);
 	}
 	public void setTexture(Texture t) {
 		texture = t;
 	}
 	public boolean contains(Vector3 vec) {
-		if (box.contains(vec)) {
+		Vector3 temp = new Vector3(vec);
+		Matrix4 tempMat = new Matrix4(modelMatrix);
+		tempMat.inv();
+		temp.mul(tempMat);
+		if (box.contains(temp)) {
 			return true;
 		}
 		return false;
