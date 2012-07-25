@@ -11,6 +11,7 @@ import Spelet.GameInterface;
 import Spelet.LightSource;
 import Spelet.Main;
 import Spelet.Renderer;
+import Spelet.StaticAnimations;
 import Spelet.Weapon;
 import Spelet.Character;
 
