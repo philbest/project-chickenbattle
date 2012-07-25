@@ -57,7 +57,7 @@ public class Application extends Screen implements InputProcessor{
 		scoreboard = false;
 		
 		ch = new Character(m.name);
-		ch.setPos(50,60,50);
+		ch.setPos(7,15,7);
 		players = new Player[10];
 		oldPos = new Vector3();
 		comparevec = new Vector3();
@@ -75,7 +75,7 @@ public class Application extends Screen implements InputProcessor{
 		cam.near = 0.1f;
 		cam.update();
 		renderer = new Renderer();
-		gi = new GameInterface();
+		gi = new GameInterface(this);
 		gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 		multiplayer = true;
 		

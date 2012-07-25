@@ -80,6 +80,10 @@ public class Packet {
 		public int playercap;
 		public int online;
 	}
+	static public class Message{
+		public long created;
+		public String message;
+	}
 
 	static public class GetServers{
 	}

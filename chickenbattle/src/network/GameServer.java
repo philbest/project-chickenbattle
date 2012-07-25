@@ -36,7 +36,7 @@ public class GameServer {
 	Vector3 direction;
 	int startx,starty,startz;
 	InetAddress ownIP;
-	
+
 	int ids;
 	boolean hit;
 	public static final float FALL_DEATH_LIMIT = -50f;
@@ -127,11 +127,11 @@ public class GameServer {
 					toSend.px = received.px;
 					toSend.py = received.py;	
 					toSend.pz = received.pz;
-					
+
 					toSend.dx = received.dx;
 					toSend.dy = received.dy;	
 					toSend.dz = received.dz;
-					
+
 					toSend.kills = player[received.id].kills;
 					toSend.deaths = player[received.id].deaths;
 					toSend.hp = player[received.id].hp;
@@ -147,7 +147,7 @@ public class GameServer {
 					player[received.id].posX = received.px;
 					player[received.id].posY = received.py;
 					player[received.id].posZ = received.pz;
-					
+
 					player[received.id].dirX = received.dx;
 					player[received.id].dirY = received.dy;
 					player[received.id].dirZ = received.dz;
@@ -263,18 +263,17 @@ public class GameServer {
 										}
 
 										if(player[i].hp == 0){
-											player[i].killed = true;
-											player[b.id].killer = true;
 											player[b.id].kills += 1;
 											System.out.println(player[b.id].name + " has now " + player[b.id].kills + " kills!");
 											player[i].deaths += 1;
 											player[i].hp = 10;
 											player[i].shields = 5;
-										}
-									}
-									hit = true;
-									server.sendToAllTCP(hittoSend);
 
+										}
+										hit = true;
+										server.sendToAllTCP(hittoSend);
+
+									}
 								}
 							}
 						}

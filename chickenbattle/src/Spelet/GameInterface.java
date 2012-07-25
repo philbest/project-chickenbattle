@@ -4,6 +4,8 @@ import java.util.Random;
 
 import network.Player;
 
+import Screens.Application;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -53,9 +55,11 @@ public class GameInterface {
 	public int currentCooldown, switchRender, bloodTimer, fragTimer, fallTimer, shieldTimer;
 	public int renderBullets;
 	public int bulletsLeft;
+	Application app;
 	private Random rand = new Random();
 
-	public GameInterface() {
+	public GameInterface(Application app) {
+		this.app = app;
 		font = new BitmapFont(Gdx.files.internal("data/font.fnt"), Gdx.files.internal("data/font.png"), false);
 		drawBulletsLeft = new BitmapFont(Gdx.files.internal("data/font.fnt"), Gdx.files.internal("data/font.png"), false);
 		healthbar = new TextureAtlas(Gdx.files.internal("data/gameinterface/health/pack"));
