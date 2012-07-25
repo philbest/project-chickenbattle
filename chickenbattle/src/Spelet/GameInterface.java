@@ -5,6 +5,7 @@ import java.util.Random;
 import network.Player;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -208,10 +209,21 @@ public class GameInterface {
 
 		
 		if(frag){
-			font.draw(sb, killerName + "	 has fragged		" + killedName, Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight()-30);
+			font.setColor(Color.RED);
+			font.draw(sb, killerName, Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight()-30);
+			float temp = font.getBounds(killerName).width;
+			font.setColor(Color.WHITE);
+			font.draw(sb,"     has     fragged     ", Gdx.graphics.getWidth()/50+temp, Gdx.graphics.getHeight()-font.getXHeight()-30);
+			font.setColor(Color.BLUE);
+			temp = font.getBounds(killedName+"     has     fragged     ").width;
+			font.draw(sb, killedName, Gdx.graphics.getWidth()/50+temp, Gdx.graphics.getHeight()-font.getXHeight()-30);
 		}
 		else if(falldeath){
-			font.draw(sb, killedName+"   has   fallen   to   his   death!", Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight()-30);
+			font.setColor(Color.RED);
+			font.draw(sb, killedName, Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight()-30);
+			float temp = font.getBounds(killedName).width;
+			font.setColor(Color.WHITE);
+			font.draw(sb, "     has     fallen      to      his      death!", Gdx.graphics.getWidth()/50+temp, Gdx.graphics.getHeight()-font.getXHeight()-30);
 		}
 		if(shieldregen){
 			currInitShield.draw(sb, 0.6f);
