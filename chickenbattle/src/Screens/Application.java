@@ -97,7 +97,7 @@ public class Application extends Screen implements InputProcessor{
 		ch.updateName(((Lobby)main.screens.get(Main.LOBBY)).playerName);
 		ch.inventory.get(ch.weapon).update();
 		gi.updateWeapon(ch.weapon);
-		gi.updateMags(ch.inventory.get(ch.weapon).currentBullets/ch.inventory.get(ch.weapon).magSize);
+		gi.updateMags(ch.inventory.get(ch.weapon).currentBullets+ch.inventory.get(ch.weapon).magBullets);
 		if(multiplayer && client.dead){
 			client.dead = false;
 			ch.resurrect();
