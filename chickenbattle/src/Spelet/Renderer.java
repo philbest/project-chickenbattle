@@ -51,6 +51,7 @@ public class Renderer {
 	Texture blood;
 
 	ShaderProgram simpleShader;
+	ShaderProgram charShader;
 	ShaderProgram particleShader;
 	ShaderProgram skysphereShader;
 	String playerscore;
@@ -86,7 +87,7 @@ public class Renderer {
 	}
 	public Renderer() {
 		initiateShadows();
-		
+
 		score = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/lobbybg.png")));
 
 		sb = new SpriteBatch();
@@ -104,6 +105,13 @@ public class Renderer {
 		simpleShader = new ShaderProgram(Gdx.files.internal(
 		"data/shaders/simple.vert").readString(), Gdx.files.internal(
 		"data/shaders/simple.frag").readString());
+		if (!simpleShader.isCompiled())
+			throw new GdxRuntimeException("Couldn't compile simple shader: "
+					+ simpleShader.getLog());
+		
+		charShader = new ShaderProgram(Gdx.files.internal(
+		"data/shaders/simpleChar.vert").readString(), Gdx.files.internal(
+		"data/shaders/simpleChar.frag").readString());
 		if (!simpleShader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile simple shader: "
 					+ simpleShader.getLog());
@@ -143,12 +151,11 @@ public class Renderer {
 
 		renderSkySphere(app);
 		renderMapChunks(app);
-//		renderLights(app);
+		//		renderLights(app);
 		if(app.multiplayer){
 			renderMultiplayer(app);
 		}
 		renderVector(app.from,app.to,app);
-//		renderCharacter(app);
 		for (int i = 0; i < app.map.chunks.size;i++) {
 			if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0) {
 				this.renderBoundingBox(app,app.map.chunks.get(i).bounds);
@@ -158,7 +165,7 @@ public class Renderer {
 		sb.begin();
 		app.ch.inventory.get(app.ch.weapon).render(sb);
 		app.gi.render(sb);
-		
+
 		if(app.scoreboard){
 			score.setPosition(300, 100);
 			score.draw(sb,0.80f);
@@ -195,69 +202,24 @@ public class Renderer {
 		skysphere.render(skysphereShader, GL20.GL_TRIANGLES);
 		skysphereShader.end();
 	}
-//	public void renderCharacter(Application app) {
-//		lightTexture.bind(0);
-//		charShader.begin();
-//		charShader.setUniformi("s_texture", 0);
-//		modelViewProjectionMatrix.set(app.cam.combined);
-//		modelViewProjectionMatrix.mul(app.ch.modelMatrix);
-//		modelViewProjectionMatrix.scale(20f,20f,20f);
-//		charShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
-//		animTime += Gdx.graphics.getDeltaTime();
-//		if (animTime >= anim.totalDuration) {
-//			animTime -= ((int)(animTime/anim.totalDuration))*anim.totalDuration;
-//		}
-//		charModel.setAnimation(anim.name, animTime, false);
-//		charModel.render(charShader);
-//
-//		charShader.end();
-//	}
 
 	public void renderMultiplayer(Application app) {
+		charShader.begin();
+		charShader.setUniform4fv("scene_light", app.light.color, 0, 4);
+		charShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
 		for(int i = 0; i< app.players.length; i++){
 			if(app.clientid != i)
 				if(app.players[i] != null){
-					if(TimeUtils.millis() - app.players[i].lasthit <= 2000)
-						blood.bind(0);
-					else
-						skysphereTexture.bind(0);
-
-					simpleShader.begin();
-					simpleShader.setUniform4fv("scene_light", app.light.color, 0, 4);
-					simpleShader.setUniformf("scene_ambient_light", 0.2f,0.2f,0.2f, 1.0f);
-					simpleShader.setUniformi("s_texture", 0);
-					cubeModel.setToTranslation(app.players[i].posX,app.players[i].posY,app.players[i].posZ);
-
-					modelViewProjectionMatrix.set(app.cam.combined);
-					modelViewProjectionMatrix.mul(cubeModel);
-					modelViewMatrix.set(app.cam.view);
-					modelViewMatrix.mul(cubeModel);
-					normalMatrix.set(modelViewMatrix);
-					simpleShader.setUniformMatrix("normalMatrix", normalMatrix);
-					simpleShader.setUniformMatrix("u_modelViewMatrix", modelViewMatrix);
-					simpleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
-					simpleShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
-					simpleShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
-					simpleShader.setUniformf("material_shininess", 0.5f);
-
-					app.players[i].animTimer += Gdx.graphics.getDeltaTime()*10;
-					if (app.players[i].animTimer >= app.ch.animState.totalDuration) {
-						app.players[i].animTimer -= ((int)(app.players[i].animTimer/app.ch.animState.totalDuration))*app.ch.animState.totalDuration;
-					}
-
-					app.ch.charState.setAnimation(app.ch.animState.name, app.players[i].animTimer, false);
-					//System.out.println(app.ch.charState);
-					app.ch.charState.render(simpleShader);
-					simpleShader.end();
-
-//					BoundingBox box = new BoundingBox();
-//					app.ch.charModel.subMeshes[0].getBoundingBox(box);
-//					box.mul(cubeModel);
-////					app.players[i].box.mul(cubeModel);
+					charShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
+					charShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
+					charShader.setUniformf("material_shininess", 0.5f);
+					charShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
+					app.ch.walk.render(app, app.players[i]);
 					this.renderBoundingBox(app,app.players[i].box);
-					
+
 				}
 		}
+		charShader.end();
 	}
 	public void renderMapChunks(Application app) {
 
@@ -453,17 +415,17 @@ public class Renderer {
 		vectorTest.dispose();
 	}
 
-//	public void renderLights(Application app) {
-//		lightTexture.bind(0);
-//		simpleShader.begin();
-//		simpleShader.setUniformi("s_texture", 0);
-//		cubeModel.setToTranslation(app.light.posX,app.light.posY,app.light.posZ);
-//		modelViewProjectionMatrix.set(app.cam.combined);
-//		modelViewProjectionMatrix.mul(cubeModel);
-//		simpleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
-//		app.cube.cubeMesh.render(simpleShader, GL20.GL_TRIANGLES);
-//		simpleShader.end();
-//	}
+	//	public void renderLights(Application app) {
+	//		lightTexture.bind(0);
+	//		simpleShader.begin();
+	//		simpleShader.setUniformi("s_texture", 0);
+	//		cubeModel.setToTranslation(app.light.posX,app.light.posY,app.light.posZ);
+	//		modelViewProjectionMatrix.set(app.cam.combined);
+	//		modelViewProjectionMatrix.mul(cubeModel);
+	//		simpleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
+	//		app.cube.cubeMesh.render(simpleShader, GL20.GL_TRIANGLES);
+	//		simpleShader.end();
+	//	}
 
 	public void renderVector(Vector3 from,Vector3 to, Application app) {
 		Mesh vectorTest = new Mesh(true,2,0,new VertexAttribute(Usage.Position, 3,"a_position"));

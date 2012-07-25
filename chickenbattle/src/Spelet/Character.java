@@ -26,7 +26,6 @@ public class Character {
 	public Vector3 position;
 	public BoundingBox meshbox;
 	public BoundingBox box;
-	public Mesh model;
 	public Matrix4 modelMatrix;
 	public int weapon;
 	public Array<Weapon> inventory;
@@ -35,32 +34,18 @@ public class Character {
 	public String charName;
 	float forceUp;
 	boolean hookshotting;
-	public KeyframedModel charModel;
-	public KeyframedModel charState;
-	public KeyframedModel charChill;
-	public KeyframedModel charDuck;
-	public KeyframedModel charWalk;
-	public KeyframedModel charDuckup;
-	public KeyframedModel charJump;
-	public KeyframedModel charLand;
-	public KeyframedModel charStrafeLeft;
-	public KeyframedModel charStrafeRight;
-	public KeyframedAnimation animState;
-	public KeyframedAnimation animChill;
-	public KeyframedAnimation animDuck;
-	public KeyframedAnimation animWalk;
-	public KeyframedAnimation animDuckup;
-	public KeyframedAnimation animJump;
-	public KeyframedAnimation animLand;
-	public KeyframedAnimation animStrafeLeft;
-	public KeyframedAnimation animStrafeRight;
+	public Animation currentAnim;
+	public Animation walk;
 	public String state;
 	public Texture modelTexture = null;
 	public int health;
 	public int shields;
 	public boolean bloodsplatt, killer, killed;
-
+	Mesh model;
 	public Character(String name) {
+		String s1 = Gdx.files.external("walk.cpart").readString();
+		String s2 = Gdx.files.external("walk.ckey").readString();
+		walk = new Animation(s1,s2);
 		health = 10;
 		shields = 5;
 		bloodsplatt = false;
@@ -81,45 +66,9 @@ public class Character {
 		box = new BoundingBox();
 		meshbox = new BoundingBox();
 		modelMatrix = new Matrix4();
-		charChill = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_chill.md2"));
-		charDuck = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_duck.md2"));
-		charDuckup = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_duckup.md2"));
-		charWalk = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_walk.md2"));
-		charJump = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_jump.md2"));
-		charLand = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_land.md2"));
-		charStrafeLeft = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_strafeleft.md2"));
-		charStrafeRight = ModelLoaderRegistry.loadKeyframedModel(Gdx.files.internal("data/md2/chicken_straferight.md2"));
-		charState = charChill;
+		model = walk.parts.get(0).partMesh;
 		modelTexture = new Texture(Gdx.files.internal("data/md2/tmap.png"), Format.RGB565, true);
-		charChill.setMaterial(new Material("a_texCoord0", new TextureAttribute(modelTexture, 0, "s_texture")));
-		charDuck.setMaterial(new Material("a_texCoord0", new TextureAttribute(modelTexture, 0, "s_texture")));
-		charWalk.setMaterial(new Material("a_texCoord0", new TextureAttribute(modelTexture, 0, "s_texture")));
-		charDuckup.setMaterial(new Material("a_texCoord0", new TextureAttribute(modelTexture, 0, "s_texture")));
-		charJump.setMaterial(new Material("a_texCoord0", new TextureAttribute(modelTexture, 0, "s_texture")));
-		charLand.setMaterial(new Material("a_texCoord0", new TextureAttribute(modelTexture, 0, "s_texture")));
-		charStrafeLeft.setMaterial(new Material("a_texCoord0", new TextureAttribute(modelTexture, 0, "s_texture")));
-		charStrafeRight.setMaterial(new Material("a_texCoord0", new TextureAttribute(modelTexture, 0, "s_texture")));
-		animChill = (KeyframedAnimation)charChill.getAnimations()[0];
-		animDuck = (KeyframedAnimation)charDuck.getAnimations()[0];
-		animDuckup = (KeyframedAnimation)charDuckup.getAnimations()[0];
-		animWalk = (KeyframedAnimation)charWalk.getAnimations()[0];
-		animJump = (KeyframedAnimation)charJump.getAnimations()[0];
-		animLand = (KeyframedAnimation)charLand.getAnimations()[0];
-		animStrafeLeft = (KeyframedAnimation)charStrafeLeft.getAnimations()[0];
-		animStrafeRight = (KeyframedAnimation)charStrafeRight.getAnimations()[0];
-		animState = animChill;
 		
-		System.out.println("NORMALS?" + hasNormals());
-		model = charState.subMeshes[0].mesh;
-	}
-	private boolean hasNormals () {
-		for (KeyframedSubMesh mesh : charState.subMeshes) {
-			if (mesh.mesh.getVertexAttribute(Usage.Normal) == null) return false;
-		}
-		return true;
-	}
-	public void updateModel() {
-		model = charState.subMeshes[0].mesh;
 	}
 	
 	public void updateKill(boolean k1, boolean k2){
@@ -131,14 +80,6 @@ public class Character {
 		charName = xs;
 	}
 
-	public void setActiveState(KeyframedModel cs, KeyframedAnimation as){
-		if(charState != cs && as != animState){
-			System.out.println("hello");
-			charState = cs;
-			animState = as;
-			updateModel();
-		}
-	}
 	public void setPos(float x, float y, float z) {
 
 		position.set(x,y,z);
@@ -340,7 +281,6 @@ public class Character {
 				}
 
 			} else {
-				setActiveState(charWalk, animWalk);
 				oldPos.set(position);
 				movement.set(0,Gdx.graphics.getDeltaTime()*10*forceUp,0);
 				forceUp -= 2.5f*Gdx.graphics.getDeltaTime();
