@@ -24,7 +24,6 @@ import com.badlogic.gdx.utils.Array;
 
 public class Character {
 	public Vector3 position;
-	public BoundingBox meshbox;
 	public BoundingBox box;
 	public Matrix4 modelMatrix;
 	public int weapon;
@@ -35,7 +34,6 @@ public class Character {
 	float forceUp;
 	boolean hookshotting;
 	public Animation currentAnim;
-	public Animation walk;
 	public String state;
 	public Texture modelTexture = null;
 	public int health;
@@ -43,9 +41,7 @@ public class Character {
 	public boolean bloodsplatt, killer, killed;
 	Mesh model;
 	public Character(String name) {
-		String s1 = Gdx.files.internal("data/walk.cpart").readString();
-		String s2 = Gdx.files.internal("data/walk.ckey").readString();
-		walk = new Animation(s1,s2);
+
 		health = 10;
 		shields = 5;
 		bloodsplatt = false;
@@ -65,9 +61,8 @@ public class Character {
 		weapon = inventory.get(0).weaponID;
 		position = new Vector3();
 		box = new BoundingBox();
-		meshbox = new BoundingBox();
 		modelMatrix = new Matrix4();
-		model = walk.parts.get(0).partMesh;
+		model = StaticAnimations.walk.parts.get(4).partMesh;
 		modelTexture = new Texture(Gdx.files.internal("data/md2/tmap.png"), Format.RGB565, true);
 		
 	}
@@ -86,20 +81,19 @@ public class Character {
 		position.set(x,y,z);
 		modelMatrix = new Matrix4();
 		modelMatrix.setToTranslation(position);
-		model.calculateBoundingBox(meshbox);
-		box.set(meshbox);
+		box.set(StaticAnimations.walkBox);
 		box.mul(modelMatrix);
 	}
 	public void setPos(Vector3 pos) {
 		position.set(pos);
 		modelMatrix.setToTranslation(position);
-		box.set(meshbox);
+		box.set(StaticAnimations.walkBox);
 		box.mul(modelMatrix);
 	}
 	public void addMovement(Vector3 movement) {
 		position.add(movement);
 		modelMatrix.setToTranslation(position);
-		box.set(meshbox);
+		box.set(StaticAnimations.walkBox);
 		box.mul(modelMatrix);
 	}
 	

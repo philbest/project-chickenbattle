@@ -32,6 +32,7 @@ public class Main implements ApplicationListener{
 		 */
 		SoundManager.initiate();
 		VertexAttributes.initiate();
+		StaticAnimations.initiate();
 		StaticVariables.initiate();
 		screens = new HashMap<Integer, Screen>();
 		screens.put(MAINMENU, new MainMenu(this));
