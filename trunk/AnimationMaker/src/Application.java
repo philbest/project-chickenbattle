@@ -1,3 +1,6 @@
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
@@ -19,6 +22,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 public class Application implements InputProcessor{
 	PerspectiveCamera cam;
 	public float camRadius;
+	public float camY;
 	public Animation animation;
 	public ShaderProgram shader;
 	public Matrix4 modelViewProjectionMatrix;
@@ -28,7 +32,7 @@ public class Application implements InputProcessor{
 	Sprite background;
 	Sprite saveFrame;
 	Sprite framebg;
-	Sprite play;
+	Sprite play,stopplay, rotate;
 	Sprite framebgup;
 	Sprite framebgdown;
 	SpriteBatch sb;
@@ -36,36 +40,43 @@ public class Application implements InputProcessor{
 	boolean clickedUI;
 	float framebgDY;
 	int clickedKeyFrame;
+	boolean rotating;
+	JFileChooser fc;
 	public Application() {
+		fc = new JFileChooser();
+		camY = 0;
+		rotating = false;
 		sb = new SpriteBatch();
 		background = new Sprite(new Texture(Gdx.files.internal("data/background.png")));
 		saveFrame = new Sprite(new Texture(Gdx.files.internal("data/saveFrame.png")));
 		framebg = new Sprite(new Texture(Gdx.files.internal("data/framebg.png")));
 		play = new Sprite(new Texture(Gdx.files.internal("data/play.png")));
+		stopplay = new Sprite(new Texture(Gdx.files.internal("data/stopplay.png")));
+		rotate = new Sprite(new Texture(Gdx.files.internal("data/rotate.png")));
 		framebgup = new Sprite(new Texture(Gdx.files.internal("data/framebgup.png")));
 		framebgdown = new Sprite(new Texture(Gdx.files.internal("data/framebgdown.png")));
 		font = new BitmapFont();
 		modelViewProjectionMatrix = new Matrix4();
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camRadius = 5;
-		cam.position.set(0,0,camRadius);
+		rightAngle = 270;
+		cam.position.set((float)Math.cos(MathUtils.degreesToRadians*rightAngle)*camRadius,camY,(float)Math.sin(MathUtils.degreesToRadians*rightAngle)*camRadius);
 		cam.lookAt(0,0,0);
 		cam.update();
-		
+
 		animation = new Animation();
 		shader = new ShaderProgram(Gdx.files.internal("data/simple.vert").readString(),
 				Gdx.files.internal("data/simple.frag").readString());
 		if (!shader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile simple shader: "
 					+ shader.getLog());
-		rightAngle = 270;
 	}
 	public void setInput() {
 		Gdx.input.setInputProcessor(this);
 	}
 	public void changeRadius(float dr) {
 		camRadius += dr/2;
-		cam.position.set((float)Math.cos(MathUtils.degreesToRadians*rightAngle)*camRadius,0,(float)Math.sin(MathUtils.degreesToRadians*rightAngle)*camRadius);
+		cam.position.set((float)Math.cos(MathUtils.degreesToRadians*rightAngle)*camRadius,camY,(float)Math.sin(MathUtils.degreesToRadians*rightAngle)*camRadius);
 		cam.lookAt(0,0,0);
 	}
 	public void update(){
@@ -94,8 +105,17 @@ public class Application implements InputProcessor{
 		framebgdown.setPosition(Gdx.graphics.getWidth()-framebgup.getWidth()-10, framebg.getY()+10);
 		framebgdown.draw(sb);
 		play.setPosition(Gdx.graphics.getWidth()-saveFrame.getWidth(),background.getY()+saveFrame.getHeight());
-		play.draw(sb);
-		
+		stopplay.setPosition(Gdx.graphics.getWidth()-saveFrame.getWidth(),background.getY()+saveFrame.getHeight());
+		if (animation.playingAnimation)
+			stopplay.draw(sb);
+		else
+			play.draw(sb);
+		rotate.setPosition(background.getX(),background.getY());
+		if (rotating)
+			rotate.draw(sb,0.7f);
+		else
+			rotate.draw(sb);
+
 		for (int i = 0; i < animation.keyframes.size; i++) {
 			if (i == clickedKeyFrame)
 				font.setColor(1,0,0,1);
@@ -108,28 +128,52 @@ public class Application implements InputProcessor{
 
 	public void clickedLeft() {
 		rightAngle = ((rightAngle-90)+360)%360;
-		cam.position.set((float)Math.cos(MathUtils.degreesToRadians*rightAngle)*camRadius,0,(float)Math.sin(MathUtils.degreesToRadians*rightAngle)*camRadius);
+		cam.position.set((float)Math.cos(MathUtils.degreesToRadians*rightAngle)*camRadius,camY,(float)Math.sin(MathUtils.degreesToRadians*rightAngle)*camRadius);
 		cam.lookAt(0,0,0);
 	}
 	public void clickedRight() {
 		rightAngle = ((rightAngle+90)+360)%360;
-		cam.position.set((float)Math.cos(MathUtils.degreesToRadians*rightAngle)*camRadius,0,(float)Math.sin(MathUtils.degreesToRadians*rightAngle)*camRadius);
+		cam.position.set((float)Math.cos(MathUtils.degreesToRadians*rightAngle)*camRadius,camY,(float)Math.sin(MathUtils.degreesToRadians*rightAngle)*camRadius);
 		cam.lookAt(0,0,0);
 	}
 	public void clickedUp() {
-		// Insert code;
+		camY += 1;
+		cam.position.set((float)Math.cos(MathUtils.degreesToRadians*rightAngle)*camRadius,camY,(float)Math.sin(MathUtils.degreesToRadians*rightAngle)*camRadius);
 		cam.lookAt(0,0,0);
 	}
 	public void clickedDown() {
-		// Insert code;
+		camY -= 1;
+		cam.position.set((float)Math.cos(MathUtils.degreesToRadians*rightAngle)*camRadius,camY,(float)Math.sin(MathUtils.degreesToRadians*rightAngle)*camRadius);
 		cam.lookAt(0,0,0);
 	}
 	@Override
 	public boolean keyDown(int arg0) {
+		if (arg0 == Input.Keys.NUM_1) {
+			String cat = JOptionPane.showInputDialog("What file do you want to open?");
+			if (!Gdx.files.external(cat+".cpart").exists() || !Gdx.files.external(cat+".ckey").exists()) {
+				  JOptionPane.showConfirmDialog(null, "NO SUCH FILE TRY AGAIN");
+			} else {
+				String f1 = Gdx.files.external(cat+".cpart").readString();
+				String f2 = Gdx.files.external(cat+".ckey").readString();
+				animation = new Animation(f1,f2);
+			}
+		} else if (arg0 == Input.Keys.NUM_2) {
+			  String cat = JOptionPane.showInputDialog("FileName?");
+			  if (Gdx.files.external(cat+".cpart").exists() || Gdx.files.external(cat+".ckey").exists()) {
+				  JOptionPane.showConfirmDialog(null, "LOL EXISTS TRY AGAIN");
+			  } else {
+				  Gdx.files.external(cat+".cpart").writeString(animation.toString(), false);
+				  Gdx.files.external(cat+".ckey").writeString(animation.toString2(), false);
+			  }
+		}
 		if (arg0 == Input.Keys.LEFT) {
 			clickedLeft();
 		} else if (arg0 == Input.Keys.RIGHT) {
 			clickedRight();
+		} else if (arg0 == Input.Keys.UP) {
+			clickedUp();
+		} else if (arg0 == Input.Keys.DOWN) {
+			clickedDown();
 		}
 		return false;
 	}
@@ -161,7 +205,12 @@ public class Application implements InputProcessor{
 			if (saveFrame.getBoundingRectangle().contains(x,y)) {
 				animation.addKeyFrame();
 			} else if (play.getBoundingRectangle().contains(x,y)) {
-				animation.playAnimation(true);
+				if (animation.playingAnimation)
+					animation.stopAnimation(this);
+				else
+					animation.playAnimation(this,true);
+			} else if (rotate.getBoundingRectangle().contains(x,y)) {
+				rotating = !rotating;
 			} else if (framebg.getBoundingRectangle().contains(x,y)) {
 				if (framebgup.getBoundingRectangle().contains(x,y)) {
 					framebgDY += 30;
@@ -205,29 +254,51 @@ public class Application implements InputProcessor{
 	public boolean touchDragged(int arg0, int arg1, int arg2) {
 		if (clickedUI)
 			return false;
-		float dx = draggedX-arg0;
-		float dy = draggedY-arg1;
-		dx /= 100;
-		dy /= 100;
-		if (rightAngle == 0) {
-			animation.selectedPart.z += dx;
-			animation.selectedPart.y += dy;
-			animation.selectedPart.updateModelMatrix();
-		} else if (rightAngle == 180) {
-			animation.selectedPart.z -= dx;
-			animation.selectedPart.y += dy;
-			animation.selectedPart.updateModelMatrix();
-		} else if (rightAngle == 90) {
-			animation.selectedPart.x -= dx;
-			animation.selectedPart.y += dy;
-			animation.selectedPart.updateModelMatrix();
-		} else if (rightAngle == 270) {
-			animation.selectedPart.x += dx;
-			animation.selectedPart.y += dy;
-			animation.selectedPart.updateModelMatrix();
+		if (rotating) {
+			float dx = draggedX-arg0;
+			float dy = draggedY-arg1;
+			dx /= 100;
+			dy /= 100;
+			if (rightAngle == 0) {
+				animation.selectedPart.rotationX -= dx*10;
+				animation.selectedPart.updateModelMatrix();
+			} else if (rightAngle == 180) {
+				animation.selectedPart.rotationX += dx*10;
+				animation.selectedPart.updateModelMatrix();
+			} else if (rightAngle == 90) {
+				animation.selectedPart.rotationZ += dx*10;
+				animation.selectedPart.updateModelMatrix();
+			} else if (rightAngle == 270) {
+				animation.selectedPart.rotationZ -= dx*10;
+				animation.selectedPart.updateModelMatrix();
+			}
+			draggedX = arg0;
+			draggedY = arg1;
+		} else {
+			float dx = draggedX-arg0;
+			float dy = draggedY-arg1;
+			dx /= 100;
+			dy /= 100;
+			if (rightAngle == 0) {
+				animation.selectedPart.z += dx;
+				animation.selectedPart.y += dy;
+				animation.selectedPart.updateModelMatrix();
+			} else if (rightAngle == 180) {
+				animation.selectedPart.z -= dx;
+				animation.selectedPart.y += dy;
+				animation.selectedPart.updateModelMatrix();
+			} else if (rightAngle == 90) {
+				animation.selectedPart.x -= dx;
+				animation.selectedPart.y += dy;
+				animation.selectedPart.updateModelMatrix();
+			} else if (rightAngle == 270) {
+				animation.selectedPart.x += dx;
+				animation.selectedPart.y += dy;
+				animation.selectedPart.updateModelMatrix();
+			}
+			draggedX = arg0;
+			draggedY = arg1;
 		}
-		draggedX = arg0;
-		draggedY = arg1;
 		return false;
 	}
 	@Override
