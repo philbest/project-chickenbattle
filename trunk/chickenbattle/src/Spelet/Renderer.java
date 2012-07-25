@@ -204,7 +204,6 @@ public class Renderer {
 
 	public void renderMultiplayer(Application app) {
 
-		System.out.println(app.clientid);
 		for(int i = 0; i< app.players.length; i++){
 			if(app.clientid != i)
 				if(app.players[i] != null){

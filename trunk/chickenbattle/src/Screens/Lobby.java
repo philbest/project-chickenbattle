@@ -1,12 +1,5 @@
 package Screens;
 
-/**********
- * F�r inte servern att fungera och uppdatera clienter uppkopplade, 
- * d� gameclient initieras n�r application startar. Att starta
- * den vid lobbyn skapar en hel del logiska problem.
- * F�r hitta n�got s�tt att g� runt det.
- **********/
-
 
 
 import network.GameClient;

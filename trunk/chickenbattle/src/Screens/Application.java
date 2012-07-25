@@ -201,6 +201,9 @@ public class Application extends Screen implements InputProcessor{
 			ch.inventory.get(ch.weapon).reload();
 			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 		}
+		else if(Input.Keys.I == arg0){
+			main.setScreen(3);
+		}
 
 		return false;
 	}
@@ -243,7 +246,6 @@ public class Application extends Screen implements InputProcessor{
 		}
 		else if(ch.inventory.get(ch.weapon).weaponID == 3){		
 			if(ch.inventory.get(ch.weapon).shootEMP(mute)){
-				System.out.println("hello");
 				gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 				gi.animateShell(ch.inventory.get(ch.weapon).magBullets);
 				Vector3 point = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).origin);
