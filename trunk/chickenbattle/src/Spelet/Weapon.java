@@ -36,7 +36,7 @@ public class Weapon {
 		akSpr[2] = new Sprite(new Texture(Gdx.files.internal("data/weapons/ak2.png")));
 		akSpr[3] = new Sprite(new Texture(Gdx.files.internal("data/weapons/ak3.png")));
 		akSpr[4] = new Sprite(new Texture(Gdx.files.internal("data/weapons/ak4.png")));
-		blockSpr = new Sprite[2];
+		blockSpr = new Sprite[3];
 		blockSpr[0] = new Sprite(new Texture(Gdx.files.internal("data/weapons/block.png")));
 		blockSpr[1] = new Sprite(new Texture(Gdx.files.internal("data/weapons/block1.png")));
 		blockSpr[2] = new Sprite(new Texture(Gdx.files.internal("data/weapons/block2.png")));

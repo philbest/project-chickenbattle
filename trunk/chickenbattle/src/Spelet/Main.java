@@ -24,6 +24,10 @@ public class Main implements ApplicationListener{
 	
 	}
 	public void create() {
+		/*FYI, regarding the full screen windowed mode,  you can change System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");  then call Gdx.graphics.setDisplayMode  and it will update.
+			18<Brice> So it's very easy to implement an option for full screen windowed mode, without having to restart
+		 * 
+		 */
 		SoundManager.initiate();
 		VertexAttributes.initiate();
 		StaticVariables.initiate();
