@@ -69,18 +69,11 @@ public class Lobby extends Screen{
 		init();
 		playerName = "Player"+numPlayers;
 		tempName = "";
-		Sserver = "localhost";
+		Sserver = "192.168.0.101";
 		write = false;
 	}
 
 	public void init(){
-		numPlayers = 0;
-		try{
-			numPlayers = ((Application)main.screens.get(Main.GAME)).clientid+1;
-		}
-		catch(NullPointerException e){
-			e.getStackTrace();
-		}
 	}
 
 	public boolean keyDown(int arg0) {
@@ -230,7 +223,7 @@ public class Lobby extends Screen{
 	public void enter() {
 		Gdx.input.setCursorPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 		Gdx.input.setInputProcessor(this);
-		main.client = new GameClient(main.name,"localhost");
+		main.client = new GameClient();
 		main.client.Connect(Sserver,50000, 50002);
 
 		oldX = Gdx.graphics.getWidth()/2;

@@ -37,13 +37,12 @@ public class GameClient{
 	public boolean dead;
 	public String name;
 
-	public GameClient(String ip, String name){
+	public GameClient(){
 		client = new Client();
 		client.start();
 		players = new Player[10];
 		update = new Update();
 		bupdate = new BlockUpdate();
-		this.name = name;
 		bbCorners = new Vector3[8];
 		for(int i=0; i < 8; i++)
 			bbCorners[i] = new Vector3(0,0,0);
