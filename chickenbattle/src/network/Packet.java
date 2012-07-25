@@ -20,6 +20,7 @@ public class Packet {
 		kryo.register(Hit.class);
 		kryo.register(AddServer.class);
 		kryo.register(UpdateServer.class);
+		kryo.register(GetServers.class);
 	}
 
 	static public class Update {
@@ -79,4 +80,6 @@ public class Packet {
 		public int online;
 	}
 
+	static public class GetServers{
+	}
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import network.Packet.AddServer;
+import network.Packet.GetServers;
 
 import network.Packet.UpdateServer;
 
@@ -35,6 +36,13 @@ public class MasterServer {
 				else if(object instanceof UpdateServer){
 
 				}
+				else if( object instanceof GetServers){
+					for(int i = 0; i < servers.size; i++){
+						connection.sendTCP(servers.get(i));
+					}
+				}
+				
+				
 			}
 			public void disconnected (Connection c) {
 				if(connectionIDs.get(c)!= null){				

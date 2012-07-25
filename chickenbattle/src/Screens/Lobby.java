@@ -12,6 +12,7 @@ package Screens;
 import network.GameClient;
 import network.GameServer;
 import network.Player;
+import network.Packet.AddServer;
 import Spelet.Main;
 
 import com.badlogic.gdx.Gdx;
@@ -21,6 +22,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Array;
 
 public class Lobby extends Screen{
 
@@ -33,8 +35,10 @@ public class Lobby extends Screen{
 	public BitmapFont font, fontname;
 	public Player[] players;
 	public GameServer server;
+	public Array<AddServer> serverlist;
 	public String playerName;
 	public String tempName;
+	public String Sserver;
 	int oldX;
 	int oldY;
 	int xpos;
@@ -65,6 +69,7 @@ public class Lobby extends Screen{
 		init();
 		playerName = "Player"+numPlayers;
 		tempName = "";
+		Sserver = "localhost";
 		write = false;
 	}
 
@@ -130,7 +135,10 @@ public class Lobby extends Screen{
 			System.exit(0);
 		}
 		if (join.getBoundingRectangle().contains(xpos,ypos)) {
-			main.client = new GameClient(main.name,"localhost");
+			main.client.Disconnect();
+			System.out.println("connecting to " + Sserver);
+			main.client.Connect(Sserver,54555, 54778);
+			main.client.AddPlayer("GUstav");
 			main.setScreen(Main.GAME);
 		}
 		if (name.getBoundingRectangle().contains(xpos,ypos)){
@@ -207,6 +215,10 @@ public class Lobby extends Screen{
 		crosshair.setPosition(xpos-crosshair.getWidth()/2,ypos-crosshair.getHeight()/2);
 		crosshair.draw(sb);
 		sb.end();
+		main.client.getServers();
+		serverlist = main.client.serverlist;
+		for(int i=0; i < serverlist.size; i++)
+			System.out.println(serverlist.get(i).ip);
 	}
 	public void refresh() {
 
@@ -216,6 +228,9 @@ public class Lobby extends Screen{
 	public void enter() {
 		Gdx.input.setCursorPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 		Gdx.input.setInputProcessor(this);
+		main.client = new GameClient(main.name,"localhost");
+		main.client.Connect(Sserver,50000, 50002);
+		
 		oldX = Gdx.graphics.getWidth()/2;
 		oldY = Gdx.graphics.getHeight()/2;
 		ypos = oldY;
