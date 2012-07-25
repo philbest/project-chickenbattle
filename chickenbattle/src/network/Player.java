@@ -8,7 +8,7 @@ public class Player {
 	public String name;
 	public int id,hp,kills,deaths, shields;
 	public long lasthit;
-	public float posX, posY,posZ;  
+	public float posX, posY,posZ,dirX,dirY, dirZ;  
 	public BoundingBox box;
 	public float animTimer;
 	public long lastRegged;

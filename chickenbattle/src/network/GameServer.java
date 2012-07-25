@@ -121,9 +121,14 @@ public class GameServer {
 				else if (object instanceof Update) {
 					final Update received = (Update)object;
 					toSend.id = received.id;
-					toSend.x = received.x;
-					toSend.y = received.y;	
-					toSend.z = received.z;	
+					toSend.px = received.px;
+					toSend.py = received.py;	
+					toSend.pz = received.pz;
+					
+					toSend.dx = received.dx;
+					toSend.dy = received.dy;	
+					toSend.dz = received.dz;
+					
 					toSend.kills = player[received.id].kills;
 					toSend.deaths = player[received.id].deaths;
 					toSend.hp = player[received.id].hp;
@@ -136,9 +141,14 @@ public class GameServer {
 					toSend.falldeath = player[received.id].falldeath;
 					toSend.initShield = player[received.id].initShield;
 
-					player[received.id].posX = received.x;
-					player[received.id].posY = received.y;
-					player[received.id].posZ = received.z;
+					player[received.id].posX = received.px;
+					player[received.id].posY = received.py;
+					player[received.id].posZ = received.pz;
+					
+					player[received.id].dirX = received.dx;
+					player[received.id].dirY = received.dy;
+					player[received.id].dirZ = received.dz;
+
 
 					bbCorners[0].set(received.x1, received.y1, received.z1);
 					bbCorners[1].set(received.x2, received.y2, received.z2);
@@ -180,7 +190,6 @@ public class GameServer {
 					toSend.x8 = received.x8;
 					toSend.y8 = received.y8;
 					toSend.z8 = received.z8;
-
 
 					player[received.id].setBox(bbCorners);
 					player[received.id].killer = false;

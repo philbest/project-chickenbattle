@@ -9,6 +9,7 @@ package Screens;
 
 
 
+import network.GameClient;
 import network.GameServer;
 import network.Player;
 import Spelet.Main;
@@ -91,6 +92,7 @@ public class Lobby extends Screen{
 			else if(Gdx.input.isKeyPressed(Input.Keys.ENTER)){
 				write = false;
 				playerName = tempName;
+				main.name = playerName;
 				tempName = "";
 			}
 			else{
@@ -128,6 +130,7 @@ public class Lobby extends Screen{
 			System.exit(0);
 		}
 		if (join.getBoundingRectangle().contains(xpos,ypos)) {
+			main.client = new GameClient(main.name,"localhost");
 			main.setScreen(Main.GAME);
 		}
 		if (name.getBoundingRectangle().contains(xpos,ypos)){

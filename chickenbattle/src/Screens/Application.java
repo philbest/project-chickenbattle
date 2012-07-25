@@ -12,6 +12,7 @@ import Spelet.LightSource;
 import Spelet.Main;
 import Spelet.Renderer;
 import Spelet.Weapon;
+import Spelet.Character;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -35,7 +36,7 @@ public class Application extends Screen implements InputProcessor{
 	public Vector3 comparevec;
 	public Vector3 to;
 	public Vector3 oldPos;
-	public Spelet.Character ch;
+	public Character ch;
 	public Array<BlockUpdate> chunkstoupdate;
 	public Array<Chunk> chunkstorebuild;
 	public boolean zoom;
@@ -54,10 +55,10 @@ public class Application extends Screen implements InputProcessor{
 		main = m;
 		movement = new Vector3();
 		scoreboard = false;
-		ch = new Spelet.Character(((Lobby)main.screens.get(Main.LOBBY)).playerName);
+		
+		ch = new Character(m.name);
 		ch.setPos(50,60,50);
 		players = new Player[10];
-		client = new GameClient(ch.charName);
 		oldPos = new Vector3();
 		comparevec = new Vector3();
 		zoom=false;
@@ -77,6 +78,10 @@ public class Application extends Screen implements InputProcessor{
 		gi = new GameInterface();
 		gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 		multiplayer = true;
+		
+		if(multiplayer)
+			client = m.client;
+		
 		mute = true;
 	}
 
@@ -89,9 +94,6 @@ public class Application extends Screen implements InputProcessor{
 	public void update() {
 		Gdx.input.setCursorCatched(true);
 		ch.update(this);
-		if (multiplayer) {
-			clientid = client.id;
-		}
 		map.update();
 		gi.update();
 		ch.updateName(((Lobby)main.screens.get(Main.LOBBY)).playerName);
@@ -258,7 +260,7 @@ public class Application extends Screen implements InputProcessor{
 				recoil();
 
 				if(multiplayer){		
-					client.sendBullet(point,direction, clientid);
+					client.sendBullet(point,direction, client.id);
 				}
 				while (!hit && range < 200) {
 					range += direction.len();
@@ -382,10 +384,8 @@ public class Application extends Screen implements InputProcessor{
 		ch.inventory.get(ch.weapon).currentCooldown = 200;
 		
 		if(multiplayer){
-			/*
-			client = new GameClient();
+			client = main.client;
 			players = new Player[10];
-			*/
 		}
 		Gdx.input.setInputProcessor(this);
 
