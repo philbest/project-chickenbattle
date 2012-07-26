@@ -65,7 +65,8 @@ public class GameServer {
 		Client lobbyconnection = new Client();
 		lobbyconnection.start();
 		Packet.register(lobbyconnection);
-		lobbyconnection.connect(5000, "192.168.0.101", 50000, 50002);
+		//lobbyconnection.connect(5000, "192.168.0.101", 50000, 50002);
+		lobbyconnection.connect(5000, "192.168.0.100", 50000, 50002);
 
 		AddServer addS = new AddServer();
 		addS.motd ="Welcome to [Drunk] gaming with pistols";
