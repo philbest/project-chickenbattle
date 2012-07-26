@@ -4,6 +4,7 @@ import network.Player;
 import Screens.Application;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
@@ -20,7 +21,9 @@ public class Animation {
 	public float maxSteps;
 	public float timer;
 	public boolean repeatingAnimation;
+	public Matrix4 startPosMatrix;
 	public Animation(String str, String str2) {
+		startPosMatrix = new Matrix4();
 		playingAnimation = false;
 		temp = new Vector3();
 		parts = new Array<AnimationPart>();
@@ -69,12 +72,22 @@ public class Animation {
 				}
 			}
 			AnimationPart a = parts.get(i);
-			a.x = keyframes.get(currentKeyFrame).positions[i].x+(keyframes.get(currentKeyFrame+1).positions[i].x-keyframes.get(currentKeyFrame).positions[i].x)*animStep/maxSteps+player.posX;
-			a.y = keyframes.get(currentKeyFrame).positions[i].y+(keyframes.get(currentKeyFrame+1).positions[i].y-keyframes.get(currentKeyFrame).positions[i].y)*animStep/maxSteps+player.posY;
-			a.z = keyframes.get(currentKeyFrame).positions[i].z+(keyframes.get(currentKeyFrame+1).positions[i].z-keyframes.get(currentKeyFrame).positions[i].z)*animStep/maxSteps+player.posZ;
+			a.x = keyframes.get(currentKeyFrame).positions[i].x+(keyframes.get(currentKeyFrame+1).positions[i].x-keyframes.get(currentKeyFrame).positions[i].x)*animStep/maxSteps;
+			a.y = keyframes.get(currentKeyFrame).positions[i].y+(keyframes.get(currentKeyFrame+1).positions[i].y-keyframes.get(currentKeyFrame).positions[i].y)*animStep/maxSteps;
+			a.z = keyframes.get(currentKeyFrame).positions[i].z+(keyframes.get(currentKeyFrame+1).positions[i].z-keyframes.get(currentKeyFrame).positions[i].z)*animStep/maxSteps;
 			a.rotationX = keyframes.get(currentKeyFrame).rotationX[i] + (keyframes.get(currentKeyFrame+1).rotationX[i]-keyframes.get(currentKeyFrame).rotationX[i])*animStep/maxSteps;
 			a.rotationZ = keyframes.get(currentKeyFrame).rotationZ[i] + (keyframes.get(currentKeyFrame+1).rotationZ[i]-keyframes.get(currentKeyFrame).rotationZ[i])*animStep/maxSteps;
-			a.updateModelMatrix();
+			startPosMatrix.setToTranslation(player.posX,player.posY,player.posZ);
+			float angle;
+			// x = dirz;
+			// y = dirx;
+			//Vector3 temp = new Vector3(player.dirZ,player.dirX,0);
+			Vector3 temp = new Vector3(app.cam.direction.x,app.cam.direction.z,0);
+			temp.nor();
+			double radians = MathUtils.atan2(temp.x,temp.y);
+			startPosMatrix.rotate(0,1,0,(float)(MathUtils.radiansToDegrees*radians));
+			System.out.println((float)(MathUtils.radiansToDegrees*radians) + " deg on other player!");
+			a.updateModelMatrix(startPosMatrix);
 			a.render(app, player);
 			timer += Gdx.graphics.getDeltaTime()*1000;
 			if (timer > 50) {

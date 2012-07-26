@@ -96,6 +96,15 @@ public class AnimationPart {
 		partMesh.calculateBoundingBox(box);
 		box.mul(modelMatrix);
 	}
+	public void updateModelMatrix(Matrix4 directionMatrix) {
+		modelMatrix.set(directionMatrix);
+		modelMatrix.translate(x,y,z);
+		//modelMatrix.setToTranslation(x,y,z);
+		modelMatrix.rotate(1,0,0,rotationX);
+		modelMatrix.rotate(0,0,1,rotationZ);
+		partMesh.calculateBoundingBox(box);
+		box.mul(modelMatrix);
+	}
 	public void setTexture(Texture t) {
 		texture = t;
 	}

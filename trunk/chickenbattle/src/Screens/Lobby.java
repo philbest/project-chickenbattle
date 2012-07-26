@@ -58,7 +58,7 @@ public class Lobby extends Screen{
 		join = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/join.png")));
 		exit = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/exit.png")));
 		name = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/name.png")));
-		MasterServerIP = "192.168.0.101";
+		MasterServerIP = "192.168.0.100";
 		playerName = "anon";
 		tempName = "";
 		write = false;
