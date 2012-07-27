@@ -253,7 +253,12 @@ public class GameServer {
 										System.out.println(player[i].name + " got hit by EMP by " + player[b.id].name);
 									}
 									else{
-										if(player[i].shields > 0){
+										if(player[i].shields == 0 && b.sniper){
+											player[i].hp = player[i].hp-5;
+											player[i].lasthit = System.currentTimeMillis();
+											System.out.println(player[i].name + " got sniped by " + player[b.id].name);
+										}
+										else if(player[i].shields > 0){
 											player[i].shields =player[i].shields-1;
 											if(player[i].shields == 0){
 												player[i].initShield = true;
@@ -267,7 +272,7 @@ public class GameServer {
 											System.out.println(player[i].name + " got hit: " + player[i].hp);
 										}
 
-										if(player[i].hp == 0){
+										if(player[i].hp <= 0){
 											player[b.id].kills += 1;
 											
 											System.out.println(player[b.id].name + " has now " + player[b.id].kills + " kills!");
