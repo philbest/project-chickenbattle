@@ -19,17 +19,19 @@ public class AnimationPart {
 	public float w, h, d;
 	public float rotationX;
 	public float rotationZ;
+	public String name;
 	public AnimationPart(String str) {
 		String[] strings = str.split(" ");
 		// x,y,z,w,h,d,rotX,rotZ
-		x = Float.parseFloat(strings[0]);
-		y = Float.parseFloat(strings[1]);
-		z = Float.parseFloat(strings[2]);
-		w = Float.parseFloat(strings[3]);
-		h = Float.parseFloat(strings[4]);
-		d = Float.parseFloat(strings[5]);
-		rotationX = Float.parseFloat(strings[6]);
-		rotationZ = Float.parseFloat(strings[7]);
+		name = strings[0];
+		x = Float.parseFloat(strings[1]);
+		y = Float.parseFloat(strings[2]);
+		z = Float.parseFloat(strings[3]);
+		w = Float.parseFloat(strings[4]);
+		h = Float.parseFloat(strings[5]);
+		d = Float.parseFloat(strings[6]);
+		rotationX = Float.parseFloat(strings[7]);
+		rotationZ = Float.parseFloat(strings[8]);
 		FloatArray fa = new FloatArray();
 		modelMatrix = new Matrix4();
 		box = new BoundingBox();
@@ -78,9 +80,9 @@ public class AnimationPart {
 		updateModelMatrix();
 	}
 	public String toString() {
-		String ret = "";
+		String ret;
 		// x,y,z,w,h,d,rotX,rotZ
-		ret = x + " " + y + " " + z + " " +  w + " " + h + " " + d  + " " + rotationX  + " " + rotationZ;		
+		ret = name + " " + x + " " + y + " " + z + " " +  w + " " + h + " " + d  + " " + rotationX  + " " + rotationZ;		
 		return ret;
 	}
 	public void updateModelMatrix() {
