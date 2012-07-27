@@ -99,11 +99,12 @@ public class GameInterface {
 		healthsprites[8] = healthbar.createSprite("9");
 		healthsprites[9] = healthbar.createSprite("10");
 		currentHealth = healthsprites[9];
-		weaponsprites = new Sprite[4];
+		weaponsprites = new Sprite[5];
 		weaponsprites[0] = weapons.createSprite("usp");
 		weaponsprites[1] = weapons.createSprite("ak");
 		weaponsprites[2] = weapons.createSprite("block");
 		weaponsprites[3] = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/weapons/emp.png")));
+		weaponsprites[4] = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/weapons/sniper.png")));
 		shieldsprites = new Sprite[6];
 		shieldsprites[0] = shieldbar.createSprite("0");
 		shieldsprites[1] = shieldbar.createSprite("1");
@@ -183,14 +184,15 @@ public class GameInterface {
 		currentShield.draw(sb);
 		currentWeapon.setPosition(Gdx.graphics.getWidth()-currentWeapon.getWidth(), 0+currentWeapon.getHeight()*2);
 		bloodSprite.setPosition(0, 0);
+		currentItem.setPosition(Gdx.graphics.getWidth()/2-items.getWidth()/2+60, 0);
 		if(swapWeapon){
 			currentWeapon.draw(sb);
+			currentItem.draw(sb);
 		}
 		if(blood){
 			bloodSprite.draw(sb);
 		}
-		currentItem.setPosition(Gdx.graphics.getWidth()/2-items.getWidth()/2+60, 0);
-		currentItem.draw(sb);
+
 		
 		drawBulletsLeft.draw(sb, "/"+bulletsLeft, Gdx.graphics.getWidth()-680, 30);
 		for(int i = 0; i < renderBullets; i++){
@@ -289,10 +291,13 @@ public class GameInterface {
 		else if(weapon == 3){
 			currentItem = item4;
 		}
+		else{
+			currentItem = item1;
+		}
 	}
 
 	public void swapWeapon(){
-		switchRender = 1700;
+		switchRender = 2000;
 	}
 
 	public void updateShells(int i){

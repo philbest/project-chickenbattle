@@ -9,11 +9,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
 public class Weapon {
-	public int weaponID = 0;
+	public int weaponID = 1;
 	public static final int gun = 0;
 	public static final int ak = 1;
 	public static final int block = 2;
 	public static final int emp = 3;
+	public static final int sniper = 4;
 	public Sprite wpn;
 	public Sprite[] gunSpr;
 	public Sprite[] akSpr;
@@ -22,7 +23,10 @@ public class Weapon {
 	public Sprite[] akReload;
 	public Sprite[] empSpr;
 	public Sprite[] empRecharge;
+	public Sprite[] sniperSpr;
+	public Sprite[]sniperReload;
 	public Sprite crosshair;
+	public Sprite sniperZoom;
 	int offset;
 	public boolean shootbool = false, reloading = false, empCooldown = false;
 	public int maxBullets;
@@ -30,11 +34,13 @@ public class Weapon {
 	public int magBullets;
 	public int magSize;
 	public int cooldown;
+	public int reloadTimes;
 	public int currentCooldown, shootAnim, reloadTimer, empTimer, empAnim;
 	public long lastShot;
 	public BitmapFont font;
 	public Weapon(int w) {
 		weaponID = w;
+		sniperZoom = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperzoom.png")));
 		font = new BitmapFont(Gdx.files.internal("data/font.fnt"), Gdx.files.internal("data/font.png"), false);
 		gunSpr = new Sprite[3];
 		gunSpr[0] = new Sprite(new Texture(Gdx.files.internal("data/weapons/gun.png")));
@@ -83,7 +89,23 @@ public class Weapon {
 		empRecharge[3] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emprecharge2.png")));
 		empRecharge[4] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emprecharge3.png")));
 		empRecharge[5] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emprecharge4.png")));
-		
+		sniperReload = new Sprite[10];
+		sniperReload[0] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload.png")));
+		sniperReload[1] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload1.png")));
+		sniperReload[2] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload2.png")));
+		sniperReload[3] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload3.png")));
+		sniperReload[4] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload4.png")));
+		sniperReload[5] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload5.png")));
+		sniperReload[6] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload6.png")));
+		sniperReload[7] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload7.png")));
+		sniperReload[8] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload8.png")));
+		sniperReload[9] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload9.png")));
+		sniperSpr = new Sprite[4];
+		sniperSpr[0] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniper.png")));
+		sniperSpr[1] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniper1.png")));
+		sniperSpr[2] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniper2.png")));
+		sniperSpr[3] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniper3.png")));
+		reloadTimes = 0;
 		if (weaponID == gun) {
 			crosshair = new Sprite(new Texture(Gdx.files.internal("data/weapons/crosshairsmaller.png")));
 			wpn = gunSpr[0];
@@ -118,6 +140,16 @@ public class Weapon {
 			magSize = 1;
 			cooldown = 1000;
 		}
+		else if (weaponID == sniper) {
+			System.out.println("sniper");
+			crosshair = new Sprite(new Texture(Gdx.files.internal("data/weapons/crosshairsmaller.png")));
+			wpn = sniperSpr[0];
+			maxBullets = 16;
+			currentBullets = 12;
+			magBullets = 4;
+			magSize = 4;
+			cooldown = 1500;
+		}
 	}
 	public void restart() {
 		if (weaponID == gun) {
@@ -145,6 +177,13 @@ public class Weapon {
 			magSize = 1;
 			cooldown = 500;
 			empTimer = 0;
+		}
+		else if (weaponID == sniper) {
+			maxBullets = 16;
+			currentBullets = 12;
+			magBullets = 4;
+			magSize = 4;
+			cooldown = 1500;
 		}
 	}
 	public void render(SpriteBatch sb) {
@@ -196,12 +235,15 @@ public class Weapon {
 				}
 			}
 		}
-		if(reloading && weaponID == gun){
+		if(reloadTimes > 0 && weaponID == gun){
 			for(int i = 0; i < gunReload.length; i++){
 				if(reloadTimer > i*100){
 					wpn = gunReload[i];
 				}
-
+			}
+			if(!reloading){
+				reloadTimes--;
+				reloadTimer = 500;
 			}
 		}
 		if(reloading && weaponID == ak){
@@ -212,11 +254,26 @@ public class Weapon {
 
 			}
 		}
-		if(shootbool && weaponID == ak){
+		if(reloadTimes > 0 && weaponID == sniper){
+			for(int i = 0; i < sniperReload.length; i++){
+				if(reloadTimer > i*60){
+					wpn = sniperReload[i];
+				}
+			}
+			if(!reloading){
+				reloadTimes--;
+				reloadTimer = 500;
+			}
+		}
+		if(reloadTimes > 0 && weaponID == ak){
 			for(int i = 0; i < akSpr.length; i++){
 				if(shootAnim > i*60){
 					wpn = akSpr[i];
 				}
+			}
+			if(!reloading){
+				reloadTimes--;
+				reloadTimer = 500;
 			}
 		}
 		if(shootbool && weaponID == block){
@@ -226,6 +283,14 @@ public class Weapon {
 				}
 			}
 		}
+		if(shootbool && weaponID == sniper){
+			for(int i = 0; i < blockSpr.length; i++){
+				if(shootAnim > i*75){
+					wpn = sniperSpr[i];
+				}
+			}
+		}
+		
 		if(empAnim > 0){
 			for(int i = 0; i < empSpr.length;i++){
 				if(empAnim > i*100){
@@ -275,10 +340,21 @@ public class Weapon {
 
 	public void reload() {
 		if (magBullets < magSize) {
+
 			if (magBullets+currentBullets>=magSize) {
 				reloadTimer = 500;
+				if(weaponID == sniper){
+					reloadTimes = magSize-magBullets;
+				}
+				if(weaponID == gun){
+					reloadTimes = (magSize-magBullets)/3+1;
+				}
+				if(weaponID == ak){
+					reloadTimes = (magSize-magBullets)/10;
+				}
 				currentBullets-=magSize-magBullets;
 				magBullets = magSize;
+
 			} else {
 				magBullets += currentBullets;
 				currentBullets = 0;
