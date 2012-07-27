@@ -1,6 +1,7 @@
 package Screens;
 import network.GameClient;
 import network.Packet.BlockUpdate;
+import network.Packet.Message;
 import network.Player;
 import Screens.Lobby;
 
@@ -22,6 +23,7 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 
 
 public class Application extends Screen implements InputProcessor{
@@ -40,6 +42,7 @@ public class Application extends Screen implements InputProcessor{
 	public Character ch;
 	public Array<BlockUpdate> chunkstoupdate;
 	public Array<Chunk> chunkstorebuild;
+	public Array<Message> servermessages;
 	public boolean zoom;
 	Vector3 movement;
 	GameClient client;
@@ -56,7 +59,7 @@ public class Application extends Screen implements InputProcessor{
 		main = m;
 		movement = new Vector3();
 		scoreboard = false;
-		
+
 		ch = new Character(m.name);
 		ch.setPos(7,15,7);
 		players = new Player[10];
@@ -68,6 +71,7 @@ public class Application extends Screen implements InputProcessor{
 		light = new LightSource(200,500,16);
 		chunkstoupdate = new Array<BlockUpdate>();
 		chunkstorebuild = new Array<Chunk>();
+		servermessages = new Array<Message>();
 		map = new Map();
 		send = false;
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -79,10 +83,10 @@ public class Application extends Screen implements InputProcessor{
 		gi = new GameInterface(this);
 		gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 		multiplayer = true;
-		
+
 		if(multiplayer)
 			client = m.client;
-		
+
 		mute = true;
 	}
 
@@ -138,18 +142,28 @@ public class Application extends Screen implements InputProcessor{
 				ch.updateHealth(players[client.id].hp);
 				ch.updateShield(players[client.id].shields);
 				if(players[client.id].killer == true){
-					gi.updateKiller(players[client.id]);
+//					gi.updateKiller(players[client.id]);
 				}
 				if(players[client.id].killed == true){
-					gi.updateKilled(players[client.id]);
+					//					gi.updateKilled(players[client.id]);
 				}
 				if(players[client.id].falldeath){
-					gi.updateFallDeath(players[client.id]);
+					//					gi.updateFallDeath(players[client.id]);
 				}
 				if(send){
 					client.sendMessage(players[client.id],ch.box.getCorners());
 					send = false;
 				}
+				System.out.println(servermessages.size);
+				for(int i = servermessages.size-1; i >=0; i--){		
+					System.out.println(servermessages.get(i).message);
+					if(TimeUtils.millis() - servermessages.get(i).created >= 3000){
+						System.out.println("message removed");
+						servermessages.removeIndex(i);
+					}
+				}
+				servermessages.addAll(client.getMessages());
+
 				gi.updateInitShield(players[client.id].initShield);
 			}
 			chunkstoupdate.clear();
@@ -420,7 +434,7 @@ public class Application extends Screen implements InputProcessor{
 			client = main.client;
 			players = new Player[10];
 
-		Gdx.input.setInputProcessor(this);
+			Gdx.input.setInputProcessor(this);
 		}
 	}
 }

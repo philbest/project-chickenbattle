@@ -21,6 +21,7 @@ public class Packet {
 		kryo.register(AddServer.class);
 		kryo.register(UpdateServer.class);
 		kryo.register(GetServers.class);
+		kryo.register(Message.class);
 	}
 
 	static public class Update {
@@ -81,6 +82,7 @@ public class Packet {
 		public int online;
 	}
 	static public class Message{
+		public int type;
 		public long created;
 		public String message;
 	}
