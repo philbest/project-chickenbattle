@@ -82,7 +82,7 @@ public class Animation {
 			// x = dirz;
 			// y = dirx;
 			//Vector3 temp = new Vector3(player.dirZ,player.dirX,0);
-			Vector3 temp = new Vector3(app.cam.direction.x,app.cam.direction.z,0);
+			Vector3 temp = new Vector3(player.dirX,player.dirZ,0);
 			temp.nor();
 			double radians = MathUtils.atan2(temp.x,temp.y);
 			startPosMatrix.rotate(0,1,0,(float)(MathUtils.radiansToDegrees*radians));
