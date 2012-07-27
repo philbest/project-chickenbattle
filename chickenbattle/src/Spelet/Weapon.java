@@ -272,7 +272,7 @@ public class Weapon {
 				}
 			}
 			if(!reloading){
-				reloadTimes--;
+				reloadTimes--; 
 				reloadTimer = 500;
 			}
 		}

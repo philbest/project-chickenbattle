@@ -63,7 +63,7 @@ public class Packet {
 	static public class Bullet{
 		public int id;
 		public float ox,oy,oz,dx,dy,dz;
-		public boolean emp;
+		public boolean emp, sniper;
 	}
 
 	static public class Hit{

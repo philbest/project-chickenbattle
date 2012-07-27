@@ -142,7 +142,7 @@ public class Application extends Screen implements InputProcessor{
 				ch.updateHealth(players[client.id].hp);
 				ch.updateShield(players[client.id].shields);
 				if(players[client.id].killer == true){
-//					gi.updateKiller(players[client.id]);
+					//					gi.updateKiller(players[client.id]);
 				}
 				if(players[client.id].killed == true){
 					//					gi.updateKilled(players[client.id]);
@@ -154,7 +154,6 @@ public class Application extends Screen implements InputProcessor{
 					client.sendMessage(players[client.id],ch.box.getCorners());
 					send = false;
 				}
-				System.out.println(servermessages.size);
 				for(int i = servermessages.size-1; i >=0; i--){		
 					System.out.println(servermessages.get(i).message);
 					if(TimeUtils.millis() - servermessages.get(i).created >= 3000){
@@ -280,7 +279,7 @@ public class Application extends Screen implements InputProcessor{
 				direction.nor();
 				direction.mul(0.5f);
 				if(multiplayer){		
-					client.sendBullet(point,direction, clientid, true);
+					client.sendBullet(point,direction, clientid, true, false);
 				}
 
 			}
@@ -306,7 +305,12 @@ public class Application extends Screen implements InputProcessor{
 				recoil();
 
 				if(multiplayer){		
-					client.sendBullet(point,direction, clientid, false);
+					if(ch.inventory.get(ch.weapon).weaponID == 4){
+						client.sendBullet(point,direction, clientid, false, true);
+					}
+					else{
+						client.sendBullet(point,direction, clientid, false, false);
+					}
 				}
 				while (!hit && range < 200) {
 					range += direction.len();
