@@ -21,6 +21,7 @@ public class Weapon {
 	public Sprite[] gunReload;
 	public Sprite[] akReload;
 	public Sprite[] empSpr;
+	public Sprite[] empRecharge;
 	public Sprite crosshair;
 	int offset;
 	public boolean shootbool = false, reloading = false, empCooldown = false;
@@ -75,7 +76,14 @@ public class Weapon {
 		empSpr[7] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emp7.png")));
 		empSpr[8] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emp8.png")));
 		empSpr[9] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emp9.png")));
-
+		empRecharge = new Sprite[6];
+		empRecharge[0] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emp.png")));
+		empRecharge[1] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emprecharge.png")));
+		empRecharge[2] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emprecharge1.png")));
+		empRecharge[3] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emprecharge2.png")));
+		empRecharge[4] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emprecharge3.png")));
+		empRecharge[5] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emprecharge4.png")));
+		
 		if (weaponID == gun) {
 			crosshair = new Sprite(new Texture(Gdx.files.internal("data/weapons/crosshairsmaller.png")));
 			wpn = gunSpr[0];
@@ -144,12 +152,13 @@ public class Weapon {
 		wpn.draw(sb);
 		crosshair.setPosition(Gdx.graphics.getWidth()/2-crosshair.getWidth()/2,Gdx.graphics.getHeight()/2-crosshair.getHeight()/2);
 		crosshair.draw(sb);
-		if(empCooldown){
+		/*
+		if(empCooldown && weaponID == 3){
 			font.draw(sb, Integer.toString((empTimer/1000)), Gdx.graphics.getWidth()-100, 20);
 		}
+		*/
 	}
 	public void update() {
-		System.out.println(Integer.toString((empTimer/1000)));
 		float delta = Gdx.graphics.getDeltaTime()*1000;
 
 		currentCooldown -= delta;
@@ -221,6 +230,13 @@ public class Weapon {
 			for(int i = 0; i < empSpr.length;i++){
 				if(empAnim > i*100){
 					wpn = empSpr[i];
+				}
+			}
+		}
+		if(empTimer > 0 && empAnim < 0){
+			for(int i = 0; i < empRecharge.length;i++){
+				if(empTimer > i*100){
+					wpn = empRecharge[i];
 				}
 			}
 		}
