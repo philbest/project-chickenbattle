@@ -86,7 +86,6 @@ public class Animation {
 			temp.nor();
 			double radians = MathUtils.atan2(temp.x,temp.y);
 			startPosMatrix.rotate(0,1,0,(float)(MathUtils.radiansToDegrees*radians));
-			System.out.println((float)(MathUtils.radiansToDegrees*radians) + " deg on other player!");
 			a.updateModelMatrix(startPosMatrix);
 			a.render(app, player);
 			timer += Gdx.graphics.getDeltaTime()*1000;
