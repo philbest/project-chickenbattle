@@ -2,6 +2,7 @@ package Spelet;
 
 import java.util.Random;
 
+import network.Packet.Message;
 import network.Player;
 
 import Screens.Application;
@@ -215,25 +216,33 @@ public class GameInterface {
 				bulletToDraw[i].draw(sb, 1f);
 			}
 		}
-
+		for(int i = app.servermessages.size-1; i >= 0; i--){
+			Message proccessing = app.servermessages.get(i);
+			if(proccessing.type == StaticVariables.frag){
+				String[] killer = proccessing.message.split(","); 
+				font.setColor(Color.RED);
+				font.draw(sb, killer[0], Gdx.graphics.getWidth()/50, (Gdx.graphics.getHeight()-font.getXHeight()-30)- i*40);
+				float temp = font.getBounds(killer[0]).width;
+				font.setColor(Color.WHITE);
+				font.draw(sb,"     has     fragged     ", Gdx.graphics.getWidth()/50+temp, Gdx.graphics.getHeight()-font.getXHeight()-30);
+				font.setColor(Color.BLUE);
+				temp = font.getBounds(killer[1]+"     has     fragged     ").width;
+				font.draw(sb, killer[1], Gdx.graphics.getWidth()/50+temp, (Gdx.graphics.getHeight()-font.getXHeight()-30)- i*40);
+			}
+			else if(falldeath){
+				font.setColor(Color.RED);
+				font.draw(sb, killedName, Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight()-30);
+				float temp = font.getBounds(killedName).width;
+				font.setColor(Color.WHITE);
+				font.draw(sb, "     has     fallen      to      his      death!", Gdx.graphics.getWidth()/50+temp, Gdx.graphics.getHeight()-font.getXHeight()-30);
+			}
+			
+			
+		}
 		
-		if(frag){
-			font.setColor(Color.RED);
-			font.draw(sb, killerName, Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight()-30);
-			float temp = font.getBounds(killerName).width;
-			font.setColor(Color.WHITE);
-			font.draw(sb,"     has     fragged     ", Gdx.graphics.getWidth()/50+temp, Gdx.graphics.getHeight()-font.getXHeight()-30);
-			font.setColor(Color.BLUE);
-			temp = font.getBounds(killedName+"     has     fragged     ").width;
-			font.draw(sb, killedName, Gdx.graphics.getWidth()/50+temp, Gdx.graphics.getHeight()-font.getXHeight()-30);
-		}
-		else if(falldeath){
-			font.setColor(Color.RED);
-			font.draw(sb, killedName, Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight()-30);
-			float temp = font.getBounds(killedName).width;
-			font.setColor(Color.WHITE);
-			font.draw(sb, "     has     fallen      to      his      death!", Gdx.graphics.getWidth()/50+temp, Gdx.graphics.getHeight()-font.getXHeight()-30);
-		}
+		
+		
+		
 		if(shieldregen){
 			currInitShield.draw(sb, 0.6f);
 		}

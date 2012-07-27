@@ -11,6 +11,7 @@ import network.Packet.Bullet;
 import network.Packet.Disconnected;
 import network.Packet.GetServers;
 import network.Packet.Hit;
+import network.Packet.Message;
 import network.Packet.Reject;
 import network.Packet.Update;
 
@@ -26,10 +27,13 @@ public class GameClient{
 	Player[] players;
 	Array<BlockUpdate> chunkstoupdate;
 	Array<BlockUpdate> servedchunks;
+	
+	
 	public Array<AddServer> serverlist;
 	Semaphore listsafe;
 	Vector3[] bbCorners;
-	
+	Array<Message> servermessages;
+	Array<Message> servermessagestemp;
 	Update update;
 	Bullet bullet;
 	BlockUpdate bupdate;
@@ -51,6 +55,8 @@ public class GameClient{
 		chunkstoupdate = new Array<BlockUpdate>();
 		servedchunks = new Array<BlockUpdate>();
 		serverlist = new Array<AddServer>();
+		servermessages = new Array<Message>();
+		servermessagestemp = new Array<Message>();
 
 		Packet.register(client);
 
@@ -140,6 +146,12 @@ public class GameClient{
 					System.out.println(response.ip);
 					System.out.println("filling serverlist");
 				}
+				else if(object instanceof Message){
+					Message response = (Message)object;
+					listsafe.tryAcquire();
+					servermessages.add(response);
+					listsafe.release();
+				}
 			}
 		});		
 	}
@@ -148,9 +160,17 @@ public class GameClient{
 		return players;
 	}
 	
+	public Array<Message> getMessages(){	
+		listsafe.tryAcquire();
+		servermessagestemp.clear();
+		servermessagestemp.addAll(servermessages);
+		servermessages.clear();
+		listsafe.release();
+		return servermessagestemp;
+	}
+	
 	public void getServers(){
 		serverlist.clear();
-	
 		GetServers request = new GetServers();
 		client.sendTCP(request);
 	}

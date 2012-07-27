@@ -11,11 +11,15 @@ import network.Packet.BlockUpdate;
 import network.Packet.Bullet;
 import network.Packet.Disconnected;
 import network.Packet.Hit;
+import network.Packet.Message;
 import network.Packet.Reject;
 import network.Packet.Update;
 
+import Spelet.StaticVariables;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -24,6 +28,7 @@ import com.esotericsoftware.kryonet.Server;
 public class GameServer {
 	Server server;
 	Client lobbyconnection;
+	Message broadcast;
 	public Player[] player;
 	Vector3[] bbCorners;
 	HashMap<Connection,Integer> connectionIDs;
@@ -43,7 +48,7 @@ public class GameServer {
 
 	public GameServer () throws IOException {
 		server = new Server();
-
+		broadcast = new Message();
 		player = new Player[10];
 		connections = new Connection[10];
 		ownIP = InetAddress.getLocalHost();
@@ -264,11 +269,18 @@ public class GameServer {
 
 										if(player[i].hp == 0){
 											player[b.id].kills += 1;
+											
 											System.out.println(player[b.id].name + " has now " + player[b.id].kills + " kills!");
+											
+											
 											player[i].deaths += 1;
 											player[i].hp = 10;
 											player[i].shields = 5;
-
+											
+											broadcast.type = StaticVariables.frag;
+											broadcast.created = TimeUtils.millis();
+											broadcast.message = player[b.id].name + "," + player[i].name;
+											broadCast(broadcast);
 										}
 										hit = true;
 										server.sendToAllTCP(hittoSend);
@@ -291,8 +303,11 @@ public class GameServer {
 					server.sendToAllTCP(dc);
 				}
 			}
-
 		});
+	}
+	
+	public void broadCast(Message msg){
+		server.sendToAllTCP(msg);
 	}
 
 	public boolean fixId(){
