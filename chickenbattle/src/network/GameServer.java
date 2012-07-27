@@ -153,7 +153,6 @@ public class GameServer {
 					player[received.id].dirY = received.dy;
 					player[received.id].dirZ = received.dz;
 
-
 					bbCorners[0].set(received.x1, received.y1, received.z1);
 					bbCorners[1].set(received.x2, received.y2, received.z2);
 					bbCorners[2].set(received.x3, received.y3, received.z3);
