@@ -12,7 +12,7 @@ public class Animation {
 	public float animStep;
 	public float maxSteps;
 	public float timer;
-	public boolean repeatingAnimation;
+	public boolean repeatingAnimation;	
 	public Animation(String str, String str2) {
 		playingAnimation = false;
 		temp = new Vector3();
@@ -35,18 +35,18 @@ public class Animation {
 		temp = new Vector3();
 		parts = new Array<AnimationPart>();
 		keyframes = new Array<KeyFrame>();
-		// Leggs
-		parts.add(new AnimationPart(-0.5f,0,0,0.25f,1,0.25f));
-		parts.add(new AnimationPart(0.5f,0,0,0.25f,1,0.25f));
-		// Arms
-		parts.add(new AnimationPart(-0.75f,1,0,0.25f,0.75f,0.25f));
-		parts.add(new AnimationPart(0.75f,1,0,0.25f,0.75f,0.25f));
-		// Body
-		parts.add(new AnimationPart(0,1,0,1,1,0.5f));
-		// Neck
-		parts.add(new AnimationPart(0,1.7f,0,0.25f,0.25f,0.25f));
-		// Head
-		parts.add(new AnimationPart(0,1.5f,0,1,0.5f,1));
+//		// Leggs
+//		parts.add(new AnimationPart(-0.5f,0,0,0.25f,1,0.25f));
+//		parts.add(new AnimationPart(0.5f,0,0,0.25f,1,0.25f));
+//		// Arms
+//		parts.add(new AnimationPart(-0.75f,1,0,0.25f,0.75f,0.25f));
+//		parts.add(new AnimationPart(0.75f,1,0,0.25f,0.75f,0.25f));
+//		// Body
+//		parts.add(new AnimationPart(0,1,0,1,1,0.5f));
+//		// Neck
+//		parts.add(new AnimationPart(0,1.7f,0,0.25f,0.25f,0.25f));
+//		// Head
+//		parts.add(new AnimationPart(0,1.5f,0,1,0.5f,1));
 		
 		maxSteps = 30;
 	}
@@ -169,8 +169,5 @@ public class Animation {
 				ret+="\n";
 		}
 		return ret;
-	}
-	public void fromString(String str) {
-
 	}
 }
