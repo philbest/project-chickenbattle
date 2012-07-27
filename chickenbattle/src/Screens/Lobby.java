@@ -225,7 +225,8 @@ public class Lobby extends Screen{
 		ypos = oldY;
 		xpos = oldX;
 
-
+		main.client.getServers();
+		serverlist = main.client.serverlist;
 
 	}
 
