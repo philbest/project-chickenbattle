@@ -130,7 +130,10 @@ public class Application extends Screen implements InputProcessor{
 			if(players[client.id] != null){	
 				players[client.id].posX = ch.position.x; 
 				players[client.id].posY = ch.position.y; 
-				players[client.id].posZ = ch.position.z; 
+				players[client.id].posZ = ch.position.z;
+				players[client.id].dirX = cam.direction.x; 
+				players[client.id].dirY = cam.direction.y; 
+				players[client.id].dirZ = cam.direction.z;
 				players[client.id].box = ch.box;
 				ch.updateHealth(players[client.id].hp);
 				ch.updateShield(players[client.id].shields);
