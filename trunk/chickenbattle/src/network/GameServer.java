@@ -276,8 +276,7 @@ public class GameServer {
 											player[b.id].kills += 1;
 											
 											System.out.println(player[b.id].name + " has now " + player[b.id].kills + " kills!");
-											
-											
+																			
 											player[i].deaths += 1;
 											player[i].hp = 10;
 											player[i].shields = 5;

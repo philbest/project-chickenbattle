@@ -141,15 +141,7 @@ public class Application extends Screen implements InputProcessor{
 				players[client.id].box = ch.box;
 				ch.updateHealth(players[client.id].hp);
 				ch.updateShield(players[client.id].shields);
-				if(players[client.id].killer == true){
-					//					gi.updateKiller(players[client.id]);
-				}
-				if(players[client.id].killed == true){
-					//					gi.updateKilled(players[client.id]);
-				}
-				if(players[client.id].falldeath){
-					//					gi.updateFallDeath(players[client.id]);
-				}
+
 				if(send){
 					client.sendMessage(players[client.id],ch.box.getCorners());
 					send = false;
@@ -162,7 +154,6 @@ public class Application extends Screen implements InputProcessor{
 					}
 				}
 				servermessages.addAll(client.getMessages());
-
 				gi.updateInitShield(players[client.id].initShield);
 			}
 			chunkstoupdate.clear();
