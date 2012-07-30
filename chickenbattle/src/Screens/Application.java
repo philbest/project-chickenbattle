@@ -428,8 +428,7 @@ public class Application extends Screen implements InputProcessor{
 		if(multiplayer){
 			client = main.client;
 			players = new Player[10];
-
-			Gdx.input.setInputProcessor(this);
 		}
+		Gdx.input.setInputProcessor(this);
 	}
 }

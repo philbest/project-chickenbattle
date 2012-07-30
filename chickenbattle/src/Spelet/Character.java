@@ -8,14 +8,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g3d.loaders.ModelLoaderRegistry;
-import com.badlogic.gdx.graphics.g3d.materials.Material;
-import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
-import com.badlogic.gdx.graphics.g3d.model.keyframe.KeyframedAnimation;
-import com.badlogic.gdx.graphics.g3d.model.keyframe.KeyframedModel;
-import com.badlogic.gdx.graphics.g3d.model.keyframe.KeyframedSubMesh;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
@@ -63,9 +55,7 @@ public class Character {
 		position = new Vector3();
 		box = new BoundingBox();
 		modelMatrix = new Matrix4();
-		model = StaticAnimations.walk.parts.get(4).partMesh;
-		modelTexture = new Texture(Gdx.files.internal("data/md2/tmap.png"), Format.RGB565, true);
-		
+		model = StaticAnimations.walk.parts.get(4).partMesh;		
 	}
 	
 	public void updateKill(boolean k1, boolean k2){
