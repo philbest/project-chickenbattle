@@ -10,20 +10,20 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Weapon {
 	public int weaponID = 1;
-	
+
 	public static final int gun = 0;
 	public static final int ak = 1;
 	public static final int block = 2;
 	public static final int emp = 3;
 	public static final int sniper = 4;
-	
+
 	// Bullet types
 	public static final int bullet_gun = 1000;
 	public static final int bullet_ak = 1001;
 	public static final int bullet_block = 1002;
 	public static final int bullet_emp = 1003;
 	public static final int bullet_sniper = 1004;
-	
+
 	public Sprite wpn;
 	public Sprite[] gunSpr;
 	public Sprite[] akSpr;
@@ -33,11 +33,13 @@ public class Weapon {
 	public Sprite[] empSpr;
 	public Sprite[] empRecharge;
 	public Sprite[] sniperSpr;
-	public Sprite[]sniperReload;
+	public Sprite[] sniperReload;
+	public Sprite[] akCH, empCH;
 	public Sprite crosshair;
 	public Sprite sniperZoom;
 	int offset;
 	public boolean shootbool = false, reloading = false, empCooldown = false;
+	public boolean zoomS = false;
 	public int maxBullets;
 	public int currentBullets;
 	public int magBullets;
@@ -114,9 +116,16 @@ public class Weapon {
 		sniperSpr[1] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniper1.png")));
 		sniperSpr[2] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniper2.png")));
 		sniperSpr[3] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniper3.png")));
+		akCH = new Sprite[3];
+		akCH[0] = new Sprite(new Texture(Gdx.files.internal("data/crosshairs/akcrosshair.png")));
+		akCH[1] = new Sprite(new Texture(Gdx.files.internal("data/crosshairs/akcrosshair1.png")));
+		akCH[2] = new Sprite(new Texture(Gdx.files.internal("data/crosshairs/akcrosshair2.png")));
+		empCH = new Sprite[2];
+		empCH[0] = new Sprite(new Texture(Gdx.files.internal("data/crosshairs/empcrosshair.png")));
+		empCH[1] = new Sprite(new Texture(Gdx.files.internal("data/crosshairs/empcrosshair1.png")));
 		reloadTimes = 0;
 		if (weaponID == gun) {
-			crosshair = new Sprite(new Texture(Gdx.files.internal("data/weapons/crosshairsmaller.png")));
+			crosshair = new Sprite(new Texture(Gdx.files.internal("data/crosshairs/guncrosshair.png")));
 			wpn = gunSpr[0];
 			maxBullets = 28;
 			magSize = 8;
@@ -124,7 +133,7 @@ public class Weapon {
 			magBullets = 8;
 			cooldown = 500;
 		} else if (weaponID == ak) {
-			crosshair = new Sprite(new Texture(Gdx.files.internal("data/weapons/crosshairsmaller.png")));
+			crosshair = akCH[0];
 			wpn = akSpr[0];
 			maxBullets = 90;
 			currentBullets = 90;
@@ -132,7 +141,7 @@ public class Weapon {
 			magSize = 30;
 			cooldown = 100;
 		} else if (weaponID == block) {
-			crosshair = new Sprite(new Texture(Gdx.files.internal("data/weapons/crosshairsmaller.png")));
+			crosshair = new Sprite(new Texture(Gdx.files.internal("data/crosshairs/blockcrosshair.png")));
 			wpn = new Sprite(new Texture(Gdx.files.internal("data/weapons/block.png")));
 			maxBullets = 30;
 			currentBullets = 30;
@@ -141,7 +150,7 @@ public class Weapon {
 			cooldown = 500;
 		}
 		else if (weaponID == emp) {
-			crosshair = new Sprite(new Texture(Gdx.files.internal("data/weapons/crosshairsmaller.png")));
+			crosshair = empCH[0];
 			wpn = empSpr[0];
 			maxBullets = 1;
 			currentBullets = 1;
@@ -151,7 +160,7 @@ public class Weapon {
 		}
 		else if (weaponID == sniper) {
 			System.out.println("sniper");
-			crosshair = new Sprite(new Texture(Gdx.files.internal("data/weapons/crosshairsmaller.png")));
+			crosshair = new Sprite(new Texture(Gdx.files.internal("data/crosshairs/snipercrosshair.png")));
 			wpn = sniperSpr[0];
 			maxBullets = 16;
 			currentBullets = 12;
@@ -199,12 +208,19 @@ public class Weapon {
 		wpn.setPosition(Gdx.graphics.getWidth()-wpn.getWidth(), 0+offset);
 		wpn.draw(sb);
 		crosshair.setPosition(Gdx.graphics.getWidth()/2-crosshair.getWidth()/2,Gdx.graphics.getHeight()/2-crosshair.getHeight()/2);
-		crosshair.draw(sb);
+		if(weaponID != sniper){
+			crosshair.draw(sb);
+		}
+		if(zoomS){
+			sniperZoom.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+			sniperZoom.setPosition(0, 0);
+			sniperZoom.draw(sb);
+		}
 		/*
 		if(empCooldown && weaponID == 3){
 			font.draw(sb, Integer.toString((empTimer/1000)), Gdx.graphics.getWidth()-100, 20);
 		}
-		*/
+		 */
 	}
 	public void update() {
 		float delta = Gdx.graphics.getDeltaTime()*1000;
@@ -214,7 +230,7 @@ public class Weapon {
 		reloadTimer -= delta;
 		empTimer -= delta;
 		empAnim -= delta;
-			
+
 		if(currentCooldown<0)
 			currentCooldown = 0;
 
@@ -285,6 +301,24 @@ public class Weapon {
 				reloadTimer = 500;
 			}
 		}
+
+		if(reloadTimes > 0 && weaponID == emp){
+			crosshair = empCH[1];
+			for(int i = 0; i < empRecharge.length; i++){
+				if(reloadTimer > i*80){
+					wpn = empRecharge[i];
+					System.out.println(reloadTimes);
+				}
+			}
+			if(!reloading){
+				reloadTimes--; 
+				reloadTimer = 500;
+			}
+		}
+		else if(reloadTimes == 0 && weaponID == emp){
+			crosshair = empCH[0];
+		}
+
 		if(shootbool && weaponID == block){
 			for(int i = 0; i < blockSpr.length; i++){
 				if(shootAnim > i*100){
@@ -299,18 +333,11 @@ public class Weapon {
 				}
 			}
 		}
-		
+
 		if(empAnim > 0){
 			for(int i = 0; i < empSpr.length;i++){
 				if(empAnim > i*100){
 					wpn = empSpr[i];
-				}
-			}
-		}
-		if(empTimer > 0 && empAnim < 0){
-			for(int i = 0; i < empRecharge.length;i++){
-				if(empTimer > i*100){
-					wpn = empRecharge[i];
 				}
 			}
 		}
@@ -360,6 +387,9 @@ public class Weapon {
 				}
 				if(weaponID == ak){
 					reloadTimes = (magSize-magBullets)/10;
+				}
+				if(weaponID == emp){
+					reloadTimes = 16;
 				}
 				currentBullets-=magSize-magBullets;
 				magBullets = magSize;

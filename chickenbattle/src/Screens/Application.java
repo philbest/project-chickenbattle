@@ -54,6 +54,7 @@ public class Application extends Screen implements InputProcessor{
 	int mptimer;
 	Main main;
 	public int ping;
+	public long recoilTime, recoilAK;
 	public Application(Main m){
 		main = m;
 		movement = new Vector3();
@@ -105,6 +106,16 @@ public class Application extends Screen implements InputProcessor{
 		ch.inventory.get(ch.weapon).update();
 		gi.updateWeapon(ch.weapon);
 		gi.updateMags(ch.inventory.get(ch.weapon).currentBullets+ch.inventory.get(ch.weapon).magBullets);
+		recoilTime = System.currentTimeMillis();
+		if(recoilTime - recoilAK > 1000f && ch.inventory.get(ch.weapon).weaponID == 1){
+			ch.inventory.get(ch.weapon).crosshair = ch.inventory.get(ch.weapon).akCH[0];
+		}
+		else if(recoilTime - recoilAK > 500f  && ch.inventory.get(ch.weapon).weaponID == 1){
+			ch.inventory.get(ch.weapon).crosshair = ch.inventory.get(ch.weapon).akCH[1];
+		}
+		else if(recoilTime - recoilAK > 200f && ch.inventory.get(ch.weapon).weaponID == 1){
+			ch.inventory.get(ch.weapon).crosshair = ch.inventory.get(ch.weapon).akCH[2];
+		}
 		if(multiplayer && client.dead){
 			client.dead = false;
 			ch.resurrect();
@@ -270,7 +281,10 @@ public class Application extends Screen implements InputProcessor{
 	@Override
 	public boolean touchDown(int arg0, int arg1, int arg2, int arg3) {
 		if(arg3 == Input.Buttons.RIGHT ){
-			zoom = true;
+			if(ch.inventory.get(ch.weapon).weaponID == 4){
+				zoom = true;
+				ch.inventory.get(ch.weapon).zoomS = true;
+			}
 		}
 		else if(ch.inventory.get(ch.weapon).weaponID == 3){		
 			if(ch.inventory.get(ch.weapon).shootEMP(mute)){
@@ -399,6 +413,7 @@ public class Application extends Screen implements InputProcessor{
 	public boolean touchUp(int arg0, int arg1, int arg2, int arg3) {
 		if(arg3 == Input.Buttons.RIGHT ){
 			zoom = false;
+			ch.inventory.get(ch.weapon).zoomS = false;
 		}
 		return false;
 	}
@@ -428,18 +443,31 @@ public class Application extends Screen implements InputProcessor{
 	}
 	private void recoil(){
 		if(ch.weapon == Weapon.ak){
+			cam.direction.set(0,0,-6);
+			cam.up.set(0,6,0);
+			int temp = MathUtils.random(0, 10);
+			angleUP += temp;
+			angleLeft += MathUtils.random(-5, 5);
 			cam.direction.set(0,0,-1);
 			cam.up.set(0,1,0);
 			angleUP += MathUtils.random(0, 4);
-			angleLeft += MathUtils.random(-1, 1);
 			cam.rotate(angleUP, 1, 0, 0);
 			cam.rotate(angleLeft, 0, 1, 0);
 			cam.update();
+			recoilAK = System.currentTimeMillis();
 		}
 		else if(ch.weapon == Weapon.gun ){
 			cam.direction.set(0,0,-1);
 			cam.up.set(0,1,0);
 			angleUP += 2;
+			cam.rotate(angleUP, 1, 0, 0);
+			cam.rotate(angleLeft, 0, 1, 0);
+			cam.update();
+		}
+		else if(ch.weapon == Weapon.sniper){
+			cam.direction.set(0,0,-1);
+			cam.up.set(0,1,0);
+			angleUP += MathUtils.random(15, 35);
 			cam.rotate(angleUP, 1, 0, 0);
 			cam.rotate(angleLeft, 0, 1, 0);
 			cam.update();
