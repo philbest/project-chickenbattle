@@ -57,6 +57,7 @@ public class GameClient{
 		listsafe = new Semaphore(1);
 		chunkstoupdate = new Array<BlockUpdate>();
 		servedchunks = new Array<BlockUpdate>();
+		blockdamage = new Array<BlockDamage>();
 		serverlist = new Array<AddServer>();
 		servermessages = new Array<Message>();
 		servermessagestemp = new Array<Message>();
