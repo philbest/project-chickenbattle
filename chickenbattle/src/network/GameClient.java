@@ -16,6 +16,7 @@ import network.Packet.Message;
 import network.Packet.Reject;
 import network.Packet.Update;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -158,6 +159,7 @@ public class GameClient{
 					try {
 						listsafe.acquire();
 					} catch (InterruptedException ignored){}
+					Gdx.app.log("block dmgd ok", Integer.toString(damage.damage));
 					blockdamage.add(damage);
 					listsafe.release();
 				}

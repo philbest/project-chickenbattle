@@ -174,7 +174,6 @@ public class Application extends Screen implements InputProcessor{
 				chunkstorebuild.add(c);
 			}
 
-			chunkdamage.clear();
 			chunkdamage = client.getStructuralDamage();
 			
 			for(int i=0;i<chunkdamage.size;i++){
@@ -183,6 +182,9 @@ public class Application extends Screen implements InputProcessor{
 				
 				Voxel vox = c.map[bd.x-c.x*Map.chunkSize][bd.y-c.y*Map.chunkSize][bd.z-c.z*Map.chunkSize];
 				vox.durability += bd.damage;
+				
+				Gdx.app.log("block dura iz ", Integer.toString(vox.durability));
+				
 				if(vox.durability <= 0)
 				{
 					vox.id = Voxel.nothing;
@@ -191,6 +193,8 @@ public class Application extends Screen implements InputProcessor{
 				if(!chunkstorebuild.contains(c, true))
 					chunkstorebuild.add(c);
 			}
+			
+			chunkdamage.clear();
 			
 			for(int i=0; i<chunkstorebuild.size; i++){
 				chunkstorebuild.get(i).rebuildChunk();
