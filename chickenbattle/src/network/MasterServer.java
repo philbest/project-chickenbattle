@@ -29,7 +29,8 @@ public class MasterServer {
 			public void received (Connection connection, Object object) {
 				if (object instanceof AddServer){
 					AddServer rec = (AddServer) object;
-					rec.ip = connection.getRemoteAddressTCP().getHostName();
+					rec.ip = connection.getRemoteAddressTCP().getAddress().toString();
+					rec.ip = "129.16.21.56";
 					if(rec.ip.equals("127.0.0.1") ||rec.ip.equals("localhost") ){
 						rec.ip = "129.16.21.56";
 					}
@@ -44,7 +45,6 @@ public class MasterServer {
 				else if( object instanceof GetServers){
 					
 					for(int i = 0; i < servers.size; i++){
-						System.out.println("server requests");
 						connection.sendTCP(servers.get(i));
 					}
 				}

@@ -229,10 +229,11 @@ public class GameInterface {
 				temp = font.getBounds(killer[1]+"     has     fragged     ").width;
 				font.draw(sb, killer[1], Gdx.graphics.getWidth()/50+temp, (Gdx.graphics.getHeight()-font.getXHeight()-30)- i*40);
 			}
-			else if(falldeath){
+			else if(proccessing.type == StaticVariables.falldeath){
 				font.setColor(Color.RED);
-				font.draw(sb, killedName, Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight()-30);
-				float temp = font.getBounds(killedName).width;
+				String player = app.servermessages.get(i).message;
+				font.draw(sb, player, Gdx.graphics.getWidth()/50, Gdx.graphics.getHeight()-font.getXHeight()-30);
+				float temp = font.getBounds(player).width;
 				font.setColor(Color.WHITE);
 				font.draw(sb, "     has     fallen      to      his      death!", Gdx.graphics.getWidth()/50+temp, Gdx.graphics.getHeight()-font.getXHeight()-30);
 			}

@@ -109,7 +109,6 @@ public class Application extends Screen implements InputProcessor{
 			client.dead = false;
 			ch.resurrect();
 			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
-			System.out.println("Player has respawned!");
 		}
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
 			touchDown(draggedX, draggedY, 0, 0);
@@ -147,9 +146,7 @@ public class Application extends Screen implements InputProcessor{
 					send = false;
 				}
 				for(int i = servermessages.size-1; i >=0; i--){		
-					System.out.println(servermessages.get(i).message);
 					if(TimeUtils.millis() - servermessages.get(i).created >= 3000){
-						System.out.println("message removed");
 						servermessages.removeIndex(i);
 					}
 				}

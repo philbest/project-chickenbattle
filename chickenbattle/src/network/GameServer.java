@@ -223,6 +223,10 @@ public class GameServer {
 						player[received.id].hp = 10;
 						player[received.id].shields = 5;
 						player[received.id].falldeath = true;
+						
+						broadcast.type = StaticVariables.falldeath;
+						broadcast.message = player[received.id].name;
+						broadCast(broadcast);
 					}
 
 					server.sendToAllTCP(toSend);

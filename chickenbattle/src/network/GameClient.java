@@ -64,7 +64,6 @@ public class GameClient{
 				if(object instanceof Added){
 					Added response = (Added)object;
 					id = response.id;
-					System.out.println("i got id " + id);
 				}
 				else if ( object instanceof AddPlayer){
 					AddPlayer response = (AddPlayer)object;
@@ -75,7 +74,6 @@ public class GameClient{
 					newPlayer.posY = response.starty;
 					newPlayer.posZ = response.startz;
 					players[response.id] = newPlayer;
-					System.out.println("box " + players[response.id].name + " added.");
 
 				}
 				else if (object instanceof Update) {
@@ -116,11 +114,9 @@ public class GameClient{
 				}
 
 				else if (object instanceof Disconnected){
-					System.out.println("DCCC");
 					players[((Disconnected) object).id] = null;
 				}
 				else if (object instanceof Reject){
-					System.out.println("Rejected :(");
 					System.exit(0);
 				}
 				else if(object instanceof BlockUpdate){
