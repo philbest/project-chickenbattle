@@ -159,8 +159,6 @@ public class GameServer {
 					toSend.deaths = player[received.id].deaths;
 					toSend.hp = player[received.id].hp;
 					toSend.shields = player[received.id].shields;
-					toSend.killer = player[received.id].killer;
-					toSend.killed = player[received.id].killed;
 					toSend.name = player[received.id].name;
 					toSend.lasthit = player[received.id].lasthit;
 					toSend.lastRegged = player[received.id].lastRegged;
@@ -217,8 +215,6 @@ public class GameServer {
 					toSend.z8 = received.z8;
 
 					player[received.id].setBox(bbCorners);
-					player[received.id].killer = false;
-					player[received.id].killed = false;
 					player[received.id].falldeath = false;
 					player[received.id].initShield = false;
 
@@ -236,14 +232,18 @@ public class GameServer {
 
 					if(player[received.id].posY < FALL_DEATH_LIMIT)
 					{
-						player[received.id].deaths += 1;
-						player[received.id].hp = 10;
-						player[received.id].shields = 5;
-						player[received.id].falldeath = true;
 
-						broadcast.type = StaticVariables.falldeath;
-						broadcast.message = player[received.id].name;
-						broadCast(broadcast);
+						if(!player[received.id].falldeath){
+							player[received.id].deaths += 1;
+							player[received.id].hp = 10;
+							player[received.id].shields = 5;
+							player[received.id].falldeath = true;
+
+							player[received.id].posY = 50;
+							broadcast.type = StaticVariables.falldeath;
+							broadcast.message = player[received.id].name;
+							broadCast(broadcast);
+						}
 					}
 
 					server.sendToAllTCP(toSend);
@@ -263,53 +263,47 @@ public class GameServer {
 					while (!hit && range < 200) {
 						range += direction.len();
 						point.add(direction);
-						for(int i=0; i < player.length; i++){				
-							if(player[i] != null && i != b.id){
-								if(player[i].box.contains(point)){
+						for(int i=0; i < player.length; i++){
+							Player compare = player[i];
+							if(compare != null && i != b.id){
+								if(compare.box.contains(point)){
 									hittoSend.id = i;
 									if(b.type == Weapon.bullet_emp){
-										player[i].shields = 0;
-										player[i].initShield = true;
-										player[i].lasthit = System.currentTimeMillis();
-										System.out.println(player[i].name + " got hit by EMP by " + player[b.id].name);
+										compare.shields = 0;
+										compare.initShield = true;
+										compare.lasthit = System.currentTimeMillis();
 									}
 									else{
-										if(player[i].shields == 0 && b.type == Weapon.bullet_sniper){
-											player[i].hp = player[i].hp-5;
-											player[i].lasthit = System.currentTimeMillis();
-											System.out.println(player[i].name + " got sniped by " + player[b.id].name);
+										if(compare.shields == 0 && b.type == Weapon.bullet_sniper){
+											compare.hp = compare.hp-5;
+											compare.lasthit = System.currentTimeMillis();
 										}
-										else if(player[i].shields > 0){
-											player[i].shields =player[i].shields-1;
-											if(player[i].shields == 0){
-												player[i].initShield = true;
+										else if(compare.shields > 0){
+											compare.shields =compare.shields-1;
+											if(compare.shields == 0){
+												compare.initShield = true;
 											}
-											player[i].lasthit = System.currentTimeMillis();
-											System.out.println(player[i].name +" shield: " + player[i].shields);
+											compare.lasthit = System.currentTimeMillis();
 										}
 										else{
-											player[i].hp =player[i].hp-1;
-											player[i].lasthit = System.currentTimeMillis();
-											System.out.println(player[i].name + " got hit: " + player[i].hp);
+											compare.hp =compare.hp-1;
+											compare.lasthit = System.currentTimeMillis();
 										}
 
-										if(player[i].hp <= 0){
+										if(compare.hp <= 0){
 											player[b.id].kills += 1;
-
-											System.out.println(player[b.id].name + " has now " + player[b.id].kills + " kills!");
-
-											player[i].deaths += 1;
-											player[i].hp = 10;
-											player[i].shields = 5;
+											compare.deaths += 1;
+											compare.hp = 10;
+											compare.shields = 5;
 
 											broadcast.type = StaticVariables.frag;
 											broadcast.created = TimeUtils.millis();
-											broadcast.message = player[b.id].name + "," + player[i].name;
+											broadcast.message = player[b.id].name + "," + compare.name;
 											broadCast(broadcast);
 										}
+										player[i] = compare;
 										hit = true;
 										server.sendToAllTCP(hittoSend);
-
 									}
 								}
 							}
