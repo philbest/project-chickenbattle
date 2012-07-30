@@ -16,6 +16,7 @@ public class Packet {
 		kryo.register(Disconnected.class);
 		kryo.register(Reject.class);
 		kryo.register(BlockUpdate.class);
+		kryo.register(BlockDamage.class);
 		kryo.register(Bullet.class);
 		kryo.register(Hit.class);
 		kryo.register(AddServer.class);
@@ -58,6 +59,10 @@ public class Packet {
 
 	static public class BlockUpdate{
 		public int chunk,x,y,z,size,modi;
+	}
+	
+	static public class BlockDamage{
+		public int chunk,x,y,z,damage;
 	}
 
 	static public class Bullet{

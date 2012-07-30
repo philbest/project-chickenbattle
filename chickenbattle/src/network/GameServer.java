@@ -7,6 +7,7 @@ import java.util.HashMap;
 import network.Packet.AddPlayer;
 import network.Packet.AddServer;
 import network.Packet.Added;
+import network.Packet.BlockDamage;
 import network.Packet.BlockUpdate;
 import network.Packet.Bullet;
 import network.Packet.Disconnected;
@@ -15,11 +16,9 @@ import network.Packet.Message;
 import network.Packet.Reject;
 import network.Packet.Update;
 import network.Packet.UpdateServer;
-
 import Spelet.StaticVariables;
 import Spelet.Weapon;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.esotericsoftware.kryonet.Client;
@@ -38,6 +37,7 @@ public class GameServer {
 	Update toSend;
 	Update newN;
 	BlockUpdate btoSend;
+	BlockDamage bdtoSend;
 	UpdateServer updServer;
 	Hit hittoSend;
 	Vector3 point;
@@ -252,6 +252,11 @@ public class GameServer {
 					BlockUpdate received = (BlockUpdate)object;
 					btoSend = received;
 					server.sendToAllTCP(btoSend);		
+				}
+				else if(object instanceof BlockDamage){
+					BlockDamage received = (BlockDamage) object;
+					bdtoSend = received;
+					server.sendToAllTCP(bdtoSend);
 				}
 				else if(object instanceof Bullet){
 					hit = false;
