@@ -53,7 +53,7 @@ public class GameServer {
 	boolean hit;
 	public static final float FALL_DEATH_LIMIT = -50f;
 
-	public GameServer () throws IOException {
+	public GameServer (String m) throws IOException {
 		server = new Server();
 		broadcast = new Message();
 		player = new Player[10];
@@ -81,9 +81,9 @@ public class GameServer {
 		//lobbyconnection.connect(5000, "192.168.0.101", 50000, 50002);
 		lobbyconnection.connect(5000, "129.16.21.56", 50000, 50002);
 
-		motd ="Welcome to [Drunk] gaming with pistols";
-		online =0;
-		playercap = player.length;
+		this.motd =m;
+		this.online =0;
+		this.playercap = player.length;
 
 		AddServer addS = new AddServer();
 		addS.motd =motd;
@@ -360,7 +360,7 @@ public class GameServer {
 	public static void main (String[] args) throws IOException {
 		try
 		{
-			new GameServer();
+			new GameServer("Server hosted as standalone");
 			System.out.println("Game server is online!");
 		}
 		catch(Exception e)
