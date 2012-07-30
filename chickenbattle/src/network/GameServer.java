@@ -16,6 +16,7 @@ import network.Packet.Reject;
 import network.Packet.Update;
 
 import Spelet.StaticVariables;
+import Spelet.Weapon;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
@@ -250,14 +251,14 @@ public class GameServer {
 							if(player[i] != null && i != b.id){
 								if(player[i].box.contains(point)){
 									hittoSend.id = i;
-									if(b.emp){
+									if(b.type == Weapon.bullet_emp){
 										player[i].shields = 0;
 										player[i].initShield = true;
 										player[i].lasthit = System.currentTimeMillis();
 										System.out.println(player[i].name + " got hit by EMP by " + player[b.id].name);
 									}
 									else{
-										if(player[i].shields == 0 && b.sniper){
+										if(player[i].shields == 0 && b.type == Weapon.bullet_sniper){
 											player[i].hp = player[i].hp-5;
 											player[i].lasthit = System.currentTimeMillis();
 											System.out.println(player[i].name + " got sniped by " + player[b.id].name);

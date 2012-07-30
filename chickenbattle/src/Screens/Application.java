@@ -267,7 +267,7 @@ public class Application extends Screen implements InputProcessor{
 				direction.nor();
 				direction.mul(0.5f);
 				if(multiplayer){		
-					client.sendBullet(point,direction, clientid, true, false);
+					client.sendBullet(point,direction, clientid, Weapon.bullet_emp);
 				}
 
 			}
@@ -294,10 +294,10 @@ public class Application extends Screen implements InputProcessor{
 
 				if(multiplayer){		
 					if(ch.inventory.get(ch.weapon).weaponID == 4){
-						client.sendBullet(point,direction, clientid, false, true);
+						client.sendBullet(point,direction, clientid, Weapon.bullet_sniper);
 					}
 					else{
-						client.sendBullet(point,direction, clientid, false, false);
+						client.sendBullet(point,direction, clientid, Weapon.bullet_gun);
 					}
 				}
 				while (!hit && range < 200) {
