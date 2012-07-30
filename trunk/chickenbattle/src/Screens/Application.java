@@ -48,7 +48,7 @@ public class Application extends Screen implements InputProcessor{
 	public int clientid;
 	public Player[] players;
 	public GameInterface gi;
-	public boolean scoreboard, mute;
+	public boolean scoreboard;
 	int timer;
 	public boolean multiplayer;
 	int mptimer;
@@ -87,8 +87,6 @@ public class Application extends Screen implements InputProcessor{
 
 		if(multiplayer)
 			client = m.client;
-
-		mute = true;
 	}
 
 
@@ -181,7 +179,7 @@ public class Application extends Screen implements InputProcessor{
 				Chunk c = map.chunks.get(bd.chunk);
 				
 				Voxel vox = c.map[bd.x-c.x*Map.chunkSize][bd.y-c.y*Map.chunkSize][bd.z-c.z*Map.chunkSize];
-				vox.durability += bd.damage;
+				vox.durability -= bd.damage;
 				
 				Gdx.app.log("block dura iz ", Integer.toString(vox.durability));
 				
@@ -232,14 +230,6 @@ public class Application extends Screen implements InputProcessor{
 		else if (Input.Keys.TAB == arg0){
 			scoreboard = true;
 		}
-		else if (Input.Keys.M == arg0){
-			if(mute){
-				mute = false;
-			}
-			else{
-				mute = true;
-			}
-		}
 		else if (Input.Keys.R == arg0){
 			ch.inventory.get(ch.weapon).reload();
 			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
@@ -289,9 +279,8 @@ public class Application extends Screen implements InputProcessor{
 				zoom = true;
 				ch.inventory.get(ch.weapon).zoomS = true;
 			}
-		}
-		else if(ch.inventory.get(ch.weapon).weaponID == 3){		
-			if(ch.inventory.get(ch.weapon).shootEMP(mute)){
+		} else if(ch.inventory.get(ch.weapon).weaponID == 3){		
+			if(ch.inventory.get(ch.weapon).shootEMP()){
 				ch.inventory.get(ch.weapon).reload();
 				gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 				gi.animateShell(ch.inventory.get(ch.weapon).magBullets);
@@ -306,11 +295,9 @@ public class Application extends Screen implements InputProcessor{
 				if(multiplayer){		
 					client.sendBullet(point,direction, clientid, Weapon.bullet_emp);
 				}
-
 			}
-		}
-		else{
-			if (ch.inventory.get(ch.weapon).shoot(mute)) {
+		} else {
+			if (ch.inventory.get(ch.weapon).shoot()) {
 				gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 				gi.animateShell(ch.inventory.get(ch.weapon).magBullets);
 				float range = 0;
@@ -346,7 +333,7 @@ public class Application extends Screen implements InputProcessor{
 					if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {		
 						for (Chunk c : map.chunks) {
 							if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-								if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id == Voxel.grass) {
+								if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id != Voxel.nothing) {
 									hit = true;
 								}
 								break;
@@ -365,10 +352,8 @@ public class Application extends Screen implements InputProcessor{
 								Chunk c = map.chunks.get(i);
 								if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
 									if(multiplayer){
-										client.sendChunkUpdate(i, pointX, pointY, pointZ, Map.chunkSize, 1);
-										//								System.out.println("mprevmoce");
-									}
-									else{
+										client.sendChunkUpdate(i, pointX, pointY, pointZ, Map.chunkSize, Voxel.grass);
+									} else{
 										c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.grass;
 										c.rebuildChunk();
 										break;
@@ -383,18 +368,15 @@ public class Application extends Screen implements InputProcessor{
 								if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
 									//TODO Different bullets - different damage?
 									
-									int structuralDamage = -1;
+									int structuralDamage = c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].damageDone(ch.inventory.get(ch.weapon).bulletType);
 									
 									if(multiplayer){
 										client.damageChunk(i, pointX, pointY, pointZ, structuralDamage);
 									} else {
-										Voxel vox = c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize];
-										vox.durability += structuralDamage;
-										if(vox.durability <= 0)
-										{
+										c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].hit(ch.inventory.get(ch.weapon).bulletType);
+										if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].isDead())
 											c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.nothing;
-											c.rebuildChunk();
-										}
+										c.rebuildChunk();
 										break;
 									}
 								}
