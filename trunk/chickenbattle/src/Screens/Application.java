@@ -382,7 +382,7 @@ public class Application extends Screen implements InputProcessor{
 									int structuralDamage = -1;
 									
 									if(multiplayer){
-										client.sendChunkUpdate(i, pointX, pointY, pointZ, Map.chunkSize, structuralDamage);
+										client.damageChunk(i, pointX, pointY, pointZ, structuralDamage);
 									} else {
 										Voxel vox = c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize];
 										vox.durability += structuralDamage;
