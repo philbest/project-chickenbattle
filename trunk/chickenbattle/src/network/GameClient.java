@@ -99,9 +99,13 @@ public class GameClient{
 						players[response.id].lastRegged = response.lastRegged;
 						players[response.id].initShield = response.initShield;
 						players[response.id].falldeath = response.falldeath;
-						if(players[id].falldeath)
+						if(players[id].falldeath){
 							dead = true;
-
+						}
+						if(players[id].hp <= 0){
+							dead = true;
+						}
+						
 						bbCorners[0].set(response.x1, response.y1, response.z1);
 						bbCorners[1].set(response.x2, response.y2, response.z2);
 						bbCorners[2].set(response.x3, response.y3, response.z3);
@@ -133,11 +137,6 @@ public class GameClient{
 				else if(object instanceof Hit){
 					Hit response = (Hit)object;
 					players[response.id].lasthit = TimeUtils.millis();
-					if(response.id == id){
-						if(players[response.id].hp == 1){
-							dead = true;
-						}
-					}
 				}
 				else if(object instanceof AddServer){
 					AddServer response = (AddServer)object;
