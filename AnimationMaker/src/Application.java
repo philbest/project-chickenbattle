@@ -1,4 +1,4 @@
-import javax.swing.JFileChooser;
+
 import javax.swing.JOptionPane;
 
 import com.badlogic.gdx.Gdx;
@@ -400,15 +400,19 @@ public class Application implements InputProcessor{
 			dy /= 100;
 			if (rightAngle == 0) {
 				animation.selectedPart.rotationX -= dx*10;
+				animation.selectedPart.rotationZ += dy*10;
 				animation.selectedPart.updateModelMatrix();
 			} else if (rightAngle == 180) {
 				animation.selectedPart.rotationX += dx*10;
+				animation.selectedPart.rotationZ += dy*10;
 				animation.selectedPart.updateModelMatrix();
 			} else if (rightAngle == 90) {
 				animation.selectedPart.rotationZ += dx*10;
+				animation.selectedPart.rotationY -= dy*10;
 				animation.selectedPart.updateModelMatrix();
 			} else if (rightAngle == 270) {
-				animation.selectedPart.rotationZ -= dx*10;
+				animation.selectedPart.rotationZ -= dy*10;
+				animation.selectedPart.rotationY -= dx*10;
 				animation.selectedPart.updateModelMatrix();
 			}
 			draggedX = arg0;

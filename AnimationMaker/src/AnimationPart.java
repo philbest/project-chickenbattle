@@ -19,6 +19,7 @@ public class AnimationPart {
 	public float w, h, d;
 	public float rotationX;
 	public float rotationZ;
+	public float rotationY;
 	public String name;
 	public AnimationPart(String str) {
 		String[] strings = str.split(" ");
@@ -31,7 +32,9 @@ public class AnimationPart {
 		h = Float.parseFloat(strings[5]);
 		d = Float.parseFloat(strings[6]);
 		rotationX = Float.parseFloat(strings[7]);
-		rotationZ = Float.parseFloat(strings[8]);
+		rotationY = Float.parseFloat(strings[8]);
+		rotationZ = Float.parseFloat(strings[9]);
+		
 		FloatArray fa = new FloatArray();
 		modelMatrix = new Matrix4();
 		box = new BoundingBox();
@@ -82,13 +85,14 @@ public class AnimationPart {
 	public String toString() {
 		String ret;
 		// x,y,z,w,h,d,rotX,rotZ
-		ret = name + " " + x + " " + y + " " + z + " " +  w + " " + h + " " + d  + " " + rotationX  + " " + rotationZ;		
+		ret = name + " " + x + " " + y + " " + z + " " +  w + " " + h + " " + d  + " " + rotationX  + " " + rotationY + " " + rotationZ;		
 		return ret;
 	}
 	public void updateModelMatrix() {
 		modelMatrix.setToTranslation(x,y,z);
 		modelMatrix.rotate(1,0,0,rotationX);
 		modelMatrix.rotate(0,0,1,rotationZ);
+		modelMatrix.rotate(0,1,0,rotationY);
 		partMesh.calculateBoundingBox(box);
 	}
 	public void setTexture(Texture t) {
