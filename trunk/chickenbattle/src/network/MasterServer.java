@@ -31,7 +31,7 @@ public class MasterServer {
 					AddServer rec = (AddServer) object;
 					rec.ip = connection.getRemoteAddressTCP().getHostName();
 					if(rec.ip.equals("127.0.0.1") ||rec.ip.equals("localhost") ){
-						rec.ip = "192.168.0.101";
+						rec.ip = "129.16.21.56";
 					}
 					
 					servers.add(rec);

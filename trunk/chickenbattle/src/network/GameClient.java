@@ -27,8 +27,7 @@ public class GameClient{
 	Player[] players;
 	Array<BlockUpdate> chunkstoupdate;
 	Array<BlockUpdate> servedchunks;
-	
-	
+
 	public Array<AddServer> serverlist;
 	Semaphore listsafe;
 	Vector3[] bbCorners;
@@ -85,11 +84,11 @@ public class GameClient{
 						players[response.id].posX = response.px;
 						players[response.id].posY = response.py;			
 						players[response.id].posZ = response.pz;
-						
+
 						players[response.id].dirX = response.dx;
 						players[response.id].dirY = response.dy;			
 						players[response.id].dirZ = response.dz;
-						
+
 						players[response.id].hp = response.hp;
 						players[response.id].shields = response.shields;
 						players[response.id].kills = response.kills;	
@@ -102,7 +101,7 @@ public class GameClient{
 						players[response.id].falldeath = response.falldeath;
 						if(players[id].falldeath)
 							dead = true;
-						
+
 						bbCorners[0].set(response.x1, response.y1, response.z1);
 						bbCorners[1].set(response.x2, response.y2, response.z2);
 						bbCorners[2].set(response.x3, response.y3, response.z3);
@@ -111,7 +110,7 @@ public class GameClient{
 						bbCorners[5].set(response.x6, response.y6, response.z6);
 						bbCorners[6].set(response.x7, response.y7, response.z7);
 						bbCorners[7].set(response.x8, response.y8, response.z8);					
-										
+
 						players[response.id].setBox(bbCorners);				
 					}
 				}
@@ -130,7 +129,7 @@ public class GameClient{
 					chunkstoupdate.add(response);
 					listsafe.release();
 				}
-				
+
 				else if(object instanceof Hit){
 					Hit response = (Hit)object;
 					players[response.id].lasthit = TimeUtils.millis();
@@ -149,17 +148,18 @@ public class GameClient{
 				else if(object instanceof Message){
 					Message response = (Message)object;
 					listsafe.tryAcquire();
+					response.created = TimeUtils.millis();
 					servermessages.add(response);
 					listsafe.release();
 				}
 			}
 		});		
 	}
-	
+
 	public Player[] getPlayers(){
 		return players;
 	}
-	
+
 	public Array<Message> getMessages(){	
 		listsafe.tryAcquire();
 		servermessagestemp.clear();
@@ -168,22 +168,21 @@ public class GameClient{
 		listsafe.release();
 		return servermessagestemp;
 	}
-	
+
 	public void getServers(){
 		serverlist.clear();
 		GetServers request = new GetServers();
 		client.sendTCP(request);
 	}
-	
+
 	public void Connect(String ip, int tcpport, int udpport){
 		try {
 			client.connect(5000, ip, tcpport, udpport);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e.toString());
 		}
 	}
-	
+
 	public void AddPlayer(String name){
 		AddPlayer player = new AddPlayer();
 		player.name = name;
@@ -191,12 +190,8 @@ public class GameClient{
 	}
 	public void Disconnect(){
 		if(client.isConnected())
-		client.close();
+			client.close();
 	}
-	
-//	public void changeName(String xs, int id){
-//		players[id].setName(xs);
-//	}
 
 	public Array<BlockUpdate> getChunks(){	
 		servedchunks.clear();
@@ -221,6 +216,7 @@ public class GameClient{
 		bullet.id = id;
 		bullet.emp = emp;
 		bullet.sniper = sniper;
+
 		bullet.ox =origin.x;
 		bullet.oy =origin.y;
 		bullet.oz =origin.z;
@@ -231,18 +227,25 @@ public class GameClient{
 
 		client.sendTCP(bullet);
 	}
-	
+
+	public void Terminate(){
+		if(client.isConnected())
+			client.close();
+		client.stop();
+	}
+
 
 	public void sendMessage(Player x, Vector3[] ch){
 		update.id = id;
+//		Pos
 		update.px = x.posX;
 		update.py = x.posY;
 		update.pz = x.posZ;
-		
+//		Dir
 		update.dx = x.dirX;
 		update.dy = x.dirY;
 		update.dz = x.dirZ;
-
+//		Boundingbox
 		update.x1 = ch[0].x;
 		update.y1 = ch[0].y;
 		update.z1 = ch[0].z;

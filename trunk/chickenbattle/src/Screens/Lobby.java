@@ -58,7 +58,7 @@ public class Lobby extends Screen{
 		join = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/join.png")));
 		exit = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/exit.png")));
 		name = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/name.png")));
-		MasterServerIP = "192.168.0.100";
+		MasterServerIP = "129.16.21.56";
 		playerName = "anon";
 		tempName = "";
 		write = false;
@@ -117,7 +117,8 @@ public class Lobby extends Screen{
 	@Override
 	public boolean touchDown(int arg0, int arg1, int arg2, int arg3) {
 		if (exit.getBoundingRectangle().contains(xpos,ypos)) {
-			System.exit(0);
+			main.setScreen(Main.MAINMENU);
+				main.client.Terminate();			
 		} else if (serverlist != null && join.getBoundingRectangle().contains(xpos,ypos)) {
 			main.client.Disconnect();
 			System.out.println("connecting to " + MasterServerIP);
@@ -217,16 +218,17 @@ public class Lobby extends Screen{
 	public void enter() {
 		Gdx.input.setCursorPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 		Gdx.input.setInputProcessor(this);
+		
+	
 		main.client = new GameClient();
 		main.client.Connect(MasterServerIP,50000, 50002);
+		main.client.getServers();
+		serverlist = main.client.serverlist;
 
 		oldX = Gdx.graphics.getWidth()/2;
 		oldY = Gdx.graphics.getHeight()/2;
 		ypos = oldY;
 		xpos = oldX;
-
-		main.client.getServers();
-		serverlist = main.client.serverlist;
 
 	}
 
