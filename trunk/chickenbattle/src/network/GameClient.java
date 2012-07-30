@@ -91,8 +91,6 @@ public class GameClient{
 						players[response.id].shields = response.shields;
 						players[response.id].kills = response.kills;	
 						players[response.id].deaths = response.deaths;	
-						players[response.id].killer = response.killer;
-						players[response.id].killed = response.killed;
 						players[response.id].lasthit = response.lasthit;
 						players[response.id].lastRegged = response.lastRegged;
 						players[response.id].initShield = response.initShield;
