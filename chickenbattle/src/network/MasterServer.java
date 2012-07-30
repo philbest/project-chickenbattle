@@ -15,11 +15,10 @@ import com.esotericsoftware.kryonet.Server;
 
 public class MasterServer {
 	Server wserver;
-	Array<AddServer> servers;
-	HashMap<Connection,Integer> connectionIDs;
+	Array<ServerInfo> servers;
+
 	public MasterServer () throws IOException {
-		servers = new Array<AddServer>();	
-		connectionIDs = new HashMap<Connection,Integer>();
+		servers = new Array<ServerInfo>();	
 		wserver = new Server();
 		wserver.start();
 		Packet.register(wserver);
@@ -29,32 +28,46 @@ public class MasterServer {
 			public void received (Connection connection, Object object) {
 				if (object instanceof AddServer){
 					AddServer rec = (AddServer) object;
-					rec.ip = connection.getRemoteAddressTCP().getAddress().toString();
-					rec.ip = "129.16.21.56";
+					rec.ip = connection.getRemoteAddressTCP().getAddress().toString();	
+					rec.ip = rec.ip.split("/")[1];
+					System.out.println(rec.ip);
 					if(rec.ip.equals("127.0.0.1") ||rec.ip.equals("localhost") ){
 						rec.ip = "129.16.21.56";
 					}
-					
-					servers.add(rec);
-					connectionIDs.put(connection, connectionIDs.size());
+					ServerInfo toAdd = new ServerInfo();
+					toAdd.con = connection;
+					toAdd.ip = rec.ip;
+					toAdd.motd = rec.motd;
+					toAdd.online = rec.online;
+					toAdd.playercap = rec.playercap;		
+					servers.add(toAdd);
 					System.out.println("MasterServer added a server!" + rec.ip );
 				}
 				else if(object instanceof UpdateServer){
-
-				}
-				else if( object instanceof GetServers){
-					
-					for(int i = 0; i < servers.size; i++){
-						connection.sendTCP(servers.get(i));
+					UpdateServer rec = (UpdateServer) object;
+					for(int i =0; i < servers.size; i++){
+						if(servers.get(i).con == connection){
+							servers.get(i).Update(rec);
+						}
 					}
 				}
-				
-				
+				else if( object instanceof GetServers){
+					AddServer toSend = new AddServer();
+					for(int i = 0; i < servers.size; i++){
+						ServerInfo server = servers.get(i);
+						toSend.ip = server.ip;
+						toSend.motd = server.motd;
+						toSend.online = server.online;
+						toSend.playercap = server.playercap;
+						connection.sendTCP(toSend);
+					}
+				}
 			}
-			public void disconnected (Connection c) {
-				if(connectionIDs.get(c)!= null){				
-					servers.removeIndex(connectionIDs.get(c));
-					connectionIDs.remove(c);
+			public void disconnected (Connection connection) {
+				for(int i = servers.size-1; i >= 0; i--){
+					if(servers.get(i).con == connection){
+						servers.removeIndex(i);
+					}
 				}
 			}
 		});
@@ -64,6 +77,21 @@ public class MasterServer {
 		return servers.size;
 	}
 
+	public static class ServerInfo{
+		Connection con;
+		public String ip;
+		public String motd;
+		public int playercap;
+		public int online;
+		public ServerInfo(){		
+		}
+
+		public void Update(UpdateServer x){
+			this.motd = x.motd;
+			this.playercap = x.playercap;
+			this.online = x.online;
+		}
+	}
 	public static void main (String[] args) throws IOException {
 		try
 		{

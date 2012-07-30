@@ -1,6 +1,7 @@
 package network;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.concurrent.Semaphore;
 
 import network.Packet.AddPlayer;
@@ -56,7 +57,6 @@ public class GameClient{
 		serverlist = new Array<AddServer>();
 		servermessages = new Array<Message>();
 		servermessagestemp = new Array<Message>();
-
 		Packet.register(client);
 
 		client.addListener(new Listener() {
