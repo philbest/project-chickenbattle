@@ -1,12 +1,12 @@
 package network;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.concurrent.Semaphore;
 
 import network.Packet.AddPlayer;
 import network.Packet.AddServer;
 import network.Packet.Added;
+import network.Packet.BlockDamage;
 import network.Packet.BlockUpdate;
 import network.Packet.Bullet;
 import network.Packet.Disconnected;
@@ -27,6 +27,7 @@ public class GameClient{
 	Client client;
 	Player[] players;
 	Array<BlockUpdate> chunkstoupdate;
+	Array<BlockDamage> blockdamage;
 	Array<BlockUpdate> servedchunks;
 
 	public Array<AddServer> serverlist;
@@ -37,6 +38,7 @@ public class GameClient{
 	Update update;
 	Bullet bullet;
 	BlockUpdate bupdate;
+	BlockDamage bdamage;
 	public int id;
 	public boolean dead;
 	public String name;
@@ -51,6 +53,7 @@ public class GameClient{
 		for(int i=0; i < 8; i++)
 			bbCorners[i] = new Vector3(0,0,0);
 		bullet = new Bullet();
+		bdamage = new BlockDamage();
 		listsafe = new Semaphore(1);
 		chunkstoupdate = new Array<BlockUpdate>();
 		servedchunks = new Array<BlockUpdate>();
@@ -119,7 +122,9 @@ public class GameClient{
 				}
 				else if(object instanceof BlockUpdate){
 					BlockUpdate response = (BlockUpdate)object;
-					listsafe.tryAcquire();
+					try {
+						listsafe.acquire();
+					} catch (InterruptedException ignored){}
 					chunkstoupdate.add(response);
 					listsafe.release();
 				}
@@ -141,9 +146,19 @@ public class GameClient{
 				}
 				else if(object instanceof Message){
 					Message response = (Message)object;
-					listsafe.tryAcquire();
+					try {
+						listsafe.acquire();
+					} catch (InterruptedException ignored){}
 					response.created = TimeUtils.millis();
 					servermessages.add(response);
+					listsafe.release();
+				}
+				else if(object instanceof BlockDamage){
+					BlockDamage damage = (BlockDamage) object;
+					try {
+						listsafe.acquire();
+					} catch (InterruptedException ignored){}
+					blockdamage.add(damage);
 					listsafe.release();
 				}
 			}
@@ -155,7 +170,9 @@ public class GameClient{
 	}
 
 	public Array<Message> getMessages(){	
-		listsafe.tryAcquire();
+		try {
+			listsafe.acquire();
+		} catch (InterruptedException ignored){}
 		servermessagestemp.clear();
 		servermessagestemp.addAll(servermessages);
 		servermessages.clear();
@@ -163,6 +180,10 @@ public class GameClient{
 		return servermessagestemp;
 	}
 
+	public Array<BlockDamage> getStructuralDamage(){
+		return blockdamage;
+	}
+	
 	public void getServers(){
 		serverlist.clear();
 		GetServers request = new GetServers();
@@ -189,7 +210,9 @@ public class GameClient{
 
 	public Array<BlockUpdate> getChunks(){	
 		servedchunks.clear();
-		listsafe.tryAcquire();
+		try {
+			listsafe.acquire();
+		} catch (InterruptedException ignored){}
 		servedchunks.addAll(chunkstoupdate);
 		chunkstoupdate.clear();
 		listsafe.release();
@@ -204,6 +227,16 @@ public class GameClient{
 		bupdate.size = size;
 		bupdate.modi = modi;
 		client.sendTCP(bupdate);
+	}
+	
+	public void damageChunk(int chunk, int x, int y, int z, int damage)
+	{
+		bdamage.chunk = chunk;
+		bdamage.x = x;
+		bdamage.y = y;
+		bdamage.z = z;
+		bdamage.damage = damage;
+		client.sendTCP(bdamage);
 	}
 
 	public void sendBullet(Vector3 origin, Vector3 dir, int id, int type){

@@ -1,20 +1,18 @@
 package Screens;
 import network.GameClient;
+import network.Packet.BlockDamage;
 import network.Packet.BlockUpdate;
 import network.Packet.Message;
 import network.Player;
-import Screens.Lobby;
-
 import Map.Chunk;
 import Map.Map;
 import Map.Voxel;
+import Spelet.Character;
 import Spelet.GameInterface;
 import Spelet.LightSource;
 import Spelet.Main;
 import Spelet.Renderer;
-import Spelet.StaticAnimations;
 import Spelet.Weapon;
-import Spelet.Character;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -43,6 +41,7 @@ public class Application extends Screen implements InputProcessor{
 	public Array<BlockUpdate> chunkstoupdate;
 	public Array<Chunk> chunkstorebuild;
 	public Array<Message> servermessages;
+	public Array<BlockDamage> chunkdamage;
 	public boolean zoom;
 	Vector3 movement;
 	GameClient client;
@@ -72,6 +71,7 @@ public class Application extends Screen implements InputProcessor{
 		chunkstoupdate = new Array<BlockUpdate>();
 		chunkstorebuild = new Array<Chunk>();
 		servermessages = new Array<Message>();
+		chunkdamage = new Array<BlockDamage>();
 		map = new Map();
 		send = false;
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -156,12 +156,31 @@ public class Application extends Screen implements InputProcessor{
 			chunkstoupdate.clear();
 			chunkstorebuild.clear();
 			chunkstoupdate = client.getChunks();
+			
 			for(int i=0; i < chunkstoupdate.size; i++ ){
 				Chunk c = map.chunks.get(chunkstoupdate.get(i).chunk);
-				c.map[chunkstoupdate.get(i).x-c.x*chunkstoupdate.get(i).size][chunkstoupdate.get(i).y-c.y*chunkstoupdate.get(i).size][chunkstoupdate.get(i).z-c.z*chunkstoupdate.get(i).size].id = chunkstoupdate.get(i).modi;	
+				c.map[chunkstoupdate.get(i).x-c.x*chunkstoupdate.get(i).size][chunkstoupdate.get(i).y-c.y*chunkstoupdate.get(i).size][chunkstoupdate.get(i).z-c.z*chunkstoupdate.get(i).size].id = chunkstoupdate.get(i).modi;
 				chunkstorebuild.add(c);
 			}
 
+			chunkdamage.clear();
+			chunkdamage = client.getStructuralDamage();
+			
+			for(int i=0;i<chunkdamage.size;i++){
+				BlockDamage bd = chunkdamage.get(i);
+				Chunk c = map.chunks.get(bd.chunk);
+				
+				Voxel vox = c.map[bd.x-c.x*Map.chunkSize][bd.y-c.y*Map.chunkSize][bd.z-c.z*Map.chunkSize];
+				vox.durability += bd.damage;
+				if(vox.durability <= 0)
+				{
+					vox.id = Voxel.nothing;
+				}
+				
+				if(!chunkstorebuild.contains(c, true))
+					chunkstorebuild.add(c);
+			}
+			
 			for(int i=0; i<chunkstorebuild.size; i++){
 				chunkstorebuild.get(i).rebuildChunk();
 			}
@@ -344,11 +363,20 @@ public class Application extends Screen implements InputProcessor{
 							for (int i = 0; i < map.chunks.size; i++){
 								Chunk c = map.chunks.get(i);
 								if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
+									//TODO Different bullets - different damage?
+									
+									int structuralDamage = -1;
+									
 									if(multiplayer){
-										client.sendChunkUpdate(i, pointX, pointY, pointZ, Map.chunkSize, 0);
+										client.sendChunkUpdate(i, pointX, pointY, pointZ, Map.chunkSize, structuralDamage);
 									} else {
-										c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.nothing;
-										c.rebuildChunk();
+										Voxel vox = c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize];
+										vox.durability += structuralDamage;
+										if(vox.durability <= 0)
+										{
+											c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.nothing;
+											c.rebuildChunk();
+										}
 										break;
 									}
 								}
@@ -400,10 +428,10 @@ public class Application extends Screen implements InputProcessor{
 	}
 	private void recoil(){
 		if(ch.weapon == Weapon.ak){
-			cam.direction.set(0,0,-6);
-			cam.up.set(0,6,0);
-			angleUP += MathUtils.random(0, 10);
-			angleLeft += MathUtils.random(-5, 5);
+			cam.direction.set(0,0,-1);
+			cam.up.set(0,1,0);
+			angleUP += MathUtils.random(0, 4);
+			angleLeft += MathUtils.random(-1, 1);
 			cam.rotate(angleUP, 1, 0, 0);
 			cam.rotate(angleLeft, 0, 1, 0);
 			cam.update();
