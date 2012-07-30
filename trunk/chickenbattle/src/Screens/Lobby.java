@@ -2,6 +2,8 @@ package Screens;
 
 
 
+import java.io.IOException;
+
 import network.GameClient;
 import network.GameServer;
 import network.Player;
@@ -16,13 +18,14 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import com.esotericsoftware.kryonet.KryoNetException;
 
 public class Lobby extends Screen{
 
 	public Sprite mainbg;
 	public String playerscore;
 	public Sprite background;
-	public Sprite join, exit, crosshair;
+	public Sprite join, exit, crosshair,host;
 	public Sprite name;
 	public Sprite serverbg;
 	public SpriteBatch sb;
@@ -58,6 +61,7 @@ public class Lobby extends Screen{
 		join = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/join.png")));
 		exit = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/exit.png")));
 		name = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/name.png")));
+		host = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/host.png")));
 		MasterServerIP = "129.16.21.56";
 		playerName = "anon";
 		tempName = "";
@@ -118,16 +122,25 @@ public class Lobby extends Screen{
 	public boolean touchDown(int arg0, int arg1, int arg2, int arg3) {
 		if (exit.getBoundingRectangle().contains(xpos,ypos)) {
 			main.setScreen(Main.MAINMENU);
-				main.client.Terminate();			
+			main.client.Terminate();			
 		} else if (serverlist != null && join.getBoundingRectangle().contains(xpos,ypos)) {
 			main.client.Disconnect();
 			System.out.println("connecting to " + MasterServerIP);
 			main.client.Connect(serverlist.get(selectedServer).ip,54555, 54778);
 			main.client.AddPlayer(playerName);
 			main.setScreen(Main.GAME);
+
 		} else if (name.getBoundingRectangle().contains(xpos,ypos)){
 			write = true;
-		} else {
+		} else if(host.getBoundingRectangle().contains(xpos,ypos)) {
+		
+				try {
+					new GameServer("Hosted from lobby");
+				} catch (IOException e) {
+					System.out.println("Error hosting server");
+				}
+			
+		}else {
 			if (serverlist != null) {
 				int i = 0;
 				for (AddServer as : serverlist) {
@@ -165,6 +178,7 @@ public class Lobby extends Screen{
 		}
 		else {
 			exit.setColor(0f,0f,0f,1);
+			join.setColor(0f,0f,0f,1);
 		}
 		if (join.getBoundingRectangle().contains(xpos,ypos)) {
 			join.setColor(1f,0f,0f,1);
@@ -182,7 +196,8 @@ public class Lobby extends Screen{
 		exit.draw(sb);
 		name.setPosition(50, 500);
 		name.draw(sb);
-
+		host.setPosition(50, 300);
+		host.draw(sb);
 		join.setPosition(50, 400);
 		join.draw(sb);
 		fontname.setColor(Color.BLACK);
@@ -218,8 +233,7 @@ public class Lobby extends Screen{
 	public void enter() {
 		Gdx.input.setCursorPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 		Gdx.input.setInputProcessor(this);
-		
-	
+
 		main.client = new GameClient();
 		main.client.Connect(MasterServerIP,50000, 50002);
 		main.client.getServers();
