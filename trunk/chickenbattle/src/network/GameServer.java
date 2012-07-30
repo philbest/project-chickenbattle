@@ -14,6 +14,7 @@ import network.Packet.Hit;
 import network.Packet.Message;
 import network.Packet.Reject;
 import network.Packet.Update;
+import network.Packet.UpdateServer;
 
 import Spelet.StaticVariables;
 import Spelet.Weapon;
@@ -37,11 +38,16 @@ public class GameServer {
 	Update toSend;
 	Update newN;
 	BlockUpdate btoSend;
+	UpdateServer updServer;
 	Hit hittoSend;
 	Vector3 point;
 	Vector3 direction;
 	int startx,starty,startz;
 	InetAddress ownIP;
+
+	String motd;
+	int online;
+	int playercap;
 
 	int ids;
 	boolean hit;
@@ -61,6 +67,7 @@ public class GameServer {
 		toSend = new Update();
 		hittoSend = new Hit();
 		connectionIDs = new HashMap<Connection,Integer>();
+		updServer = new UpdateServer();
 		server.start();
 		Packet.register(server);
 		server.bind(54555, 54778);   
@@ -68,23 +75,26 @@ public class GameServer {
 		starty = 0;
 		startz = 0;
 
-		Client lobbyconnection = new Client();
+		lobbyconnection = new Client();
 		lobbyconnection.start();
 		Packet.register(lobbyconnection);
 		//lobbyconnection.connect(5000, "192.168.0.101", 50000, 50002);
 		lobbyconnection.connect(5000, "129.16.21.56", 50000, 50002);
 
+		motd ="Welcome to [Drunk] gaming with pistols";
+		online =0;
+		playercap = player.length;
+
 		AddServer addS = new AddServer();
-		addS.motd ="Welcome to [Drunk] gaming with pistols";
-		addS.online =0;
-		addS.playercap = player.length;
+		addS.motd =motd;
+		addS.online =online;
+		addS.playercap =playercap;
 
 		lobbyconnection.sendTCP(addS);
 
 		lobbyconnection.addListener(new Listener() {
 			public void received (Connection connection, Object object) {
-				if (object instanceof AddServer){
-
+				if (object instanceof UpdateServer){
 				}
 			}
 		});
@@ -121,6 +131,12 @@ public class GameServer {
 						newPlayer.startx = startx;
 						newPlayer.starty = starty;
 						newPlayer.startz = startz;
+
+						updServer.motd = motd;
+						updServer.playercap =playercap;
+						updServer.online = numPlayers();
+						lobbyconnection.sendTCP(updServer);
+
 						server.sendToAllTCP(newPlayer);
 					}
 					else{
@@ -224,7 +240,7 @@ public class GameServer {
 						player[received.id].hp = 10;
 						player[received.id].shields = 5;
 						player[received.id].falldeath = true;
-						
+
 						broadcast.type = StaticVariables.falldeath;
 						broadcast.message = player[received.id].name;
 						broadCast(broadcast);
@@ -279,13 +295,13 @@ public class GameServer {
 
 										if(player[i].hp <= 0){
 											player[b.id].kills += 1;
-											
+
 											System.out.println(player[b.id].name + " has now " + player[b.id].kills + " kills!");
-																			
+
 											player[i].deaths += 1;
 											player[i].hp = 10;
 											player[i].shields = 5;
-											
+
 											broadcast.type = StaticVariables.frag;
 											broadcast.created = TimeUtils.millis();
 											broadcast.message = player[b.id].name + "," + player[i].name;
@@ -310,11 +326,24 @@ public class GameServer {
 					player[dc.id] = null;
 					connections[dc.id] = null;
 					server.sendToAllTCP(dc);
+					updServer.motd = motd;
+					updServer.playercap =playercap;
+					updServer.online = numPlayers();
+					lobbyconnection.sendTCP(updServer);
 				}
 			}
 		});
 	}
-	
+
+	public int numPlayers(){
+		int c =0;
+		for(int i = 0; i < player.length; i++){
+			if(player[i] != null)
+				c++;
+		}
+		return c;
+	}
+
 	public void broadCast(Message msg){
 		server.sendToAllTCP(msg);
 	}
