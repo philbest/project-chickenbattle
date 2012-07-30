@@ -49,6 +49,7 @@ public class Weapon {
 	public int currentCooldown, shootAnim, reloadTimer, empTimer, empAnim;
 	public long lastShot;
 	public BitmapFont font;
+	public int bulletType;
 	public Weapon(int w) {
 		weaponID = w;
 		sniperZoom = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperzoom.png")));
@@ -132,6 +133,7 @@ public class Weapon {
 			currentBullets = 28;
 			magBullets = 8;
 			cooldown = 500;
+			bulletType = Weapon.bullet_gun;
 		} else if (weaponID == ak) {
 			crosshair = akCH[0];
 			wpn = akSpr[0];
@@ -140,6 +142,7 @@ public class Weapon {
 			magBullets = 30;
 			magSize = 30;
 			cooldown = 100;
+			bulletType = Weapon.bullet_ak;
 		} else if (weaponID == block) {
 			crosshair = new Sprite(new Texture(Gdx.files.internal("data/crosshairs/blockcrosshair.png")));
 			wpn = new Sprite(new Texture(Gdx.files.internal("data/weapons/block.png")));
@@ -148,6 +151,7 @@ public class Weapon {
 			magBullets = 30;
 			magSize = 30;
 			cooldown = 500;
+			bulletType = Weapon.bullet_block;
 		}
 		else if (weaponID == emp) {
 			crosshair = empCH[0];
@@ -157,6 +161,7 @@ public class Weapon {
 			magBullets = 1;
 			magSize = 1;
 			cooldown = 1000;
+			bulletType = Weapon.bullet_emp;
 		}
 		else if (weaponID == sniper) {
 			System.out.println("sniper");
@@ -167,6 +172,7 @@ public class Weapon {
 			magBullets = 4;
 			magSize = 4;
 			cooldown = 1500;
+			bulletType = Weapon.bullet_sniper;
 		}
 	}
 	public void restart() {
@@ -343,30 +349,26 @@ public class Weapon {
 		}
 
 	}
-	public boolean shoot(boolean mute) {
+	public boolean shoot() {
 		if(!reloading){
 			if (magBullets > 0 && currentCooldown <= 0) {
 				magBullets--;
 				currentCooldown = cooldown;
 				shootAnim = 300;
-				if(!mute){
-					SoundManager.playWeaponSound(weaponID);
-				}
+				SoundManager.playWeaponSound(weaponID);
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public boolean shootEMP(boolean mute){
+	public boolean shootEMP(){
 		if(!reloading && !empCooldown){
 			if (magBullets > 0) {
 				empTimer = 8000;
 				magBullets--;
 				empAnim = 1000;
-				if(!mute){
-					SoundManager.playWeaponSound(weaponID);
-				}
+				SoundManager.playWeaponSound(weaponID);
 				return true;
 			}
 		}

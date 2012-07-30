@@ -31,49 +31,47 @@ public class Chunk {
 		for (int x2 = 0; x2 < Map.chunkSize; x2++) {
 			for (int z2 = 0; z2 < Map.chunkSize; z2++) {
 				for (int y2 = 0; y2 < Map.chunkSize; y2++) {
-					//
-					//					xf=(float)(x2+ (x*Map.chunkSize))/((float)Map.chunkSize*4);
-					//					yf=(float)(y2+ (y*Map.chunkSize))/((float)Map.chunkSize*1.5f);
-					//					zf=(float)(z2+ (z*Map.chunkSize))/((float)Map.chunkSize*4);
-					//
-					//					if(yf <= 0.70){
-					//						plateau_falloff = 1.0f;
-					//					}
-					//					else if(0.70f < yf && yf < 0.9){
-					//						plateau_falloff = 1.0f-(yf-0.7f)*10.0f;
-					//					}
-					//					else{
-					//						plateau_falloff = 0.0f;
-					//					}
-					//					center_falloff = 0.1f/(
-					//							(float)Math.pow((xf-0.5f)*1.5f,2)+
-					//							(float)Math.pow((yf)*0.8f, 2) +
-					//							(float)Math.pow((zf-0.5)*1.5f, 2)
-					//					);
-					//					caves = (float)Math.pow(simplex_noise(1, xf*5, yf*5, zf*5), 3);
-					//					density = (
-					//							simplex_noise(5, xf, yf*0.5f, zf) * center_falloff *plateau_falloff
-					//					);
-					//					density *= (float)Math.pow(
-					//							noise((xf+1)*3.0f, (yf+1)*3.0f, (zf+1)*3.0f)+0.4f, 1.8f
-					//					);
-					//					if(caves<1.5f){
-					//						density = 0;
-					//					}
-					//					if(density > 3.1f)
-					////					if(y2 == 0)
-					//						map[x2][y2][z2] = new Voxel(Voxel.grass);
-					//					else
-					map[x2][y2][z2] = new Voxel(Voxel.nothing);
+					xf=(float)(x2+ (x*Map.chunkSize))/((float)Map.chunkSize*4);
+					yf=(float)(y2+ (y*Map.chunkSize))/((float)Map.chunkSize*1.5f);
+					zf=(float)(z2+ (z*Map.chunkSize))/((float)Map.chunkSize*4);
+
+					if(yf <= 0.70){
+						plateau_falloff = 1.0f;
+					} else if(0.70f < yf && yf < 0.9) {
+						plateau_falloff = 1.0f-(yf-0.7f)*10.0f;
+					} else {
+						plateau_falloff = 0.0f;
+					}
+					center_falloff = 0.1f/(
+							(float)Math.pow((xf-0.5f)*1.5f,2)+
+							(float)Math.pow((yf)*0.8f, 2) +
+							(float)Math.pow((zf-0.5)*1.5f, 2)
+					);
+					caves = (float)Math.pow(simplex_noise(1, xf*5, yf*5, zf*5), 3);
+					density = (simplex_noise(5, xf, yf*0.5f, zf) * center_falloff *plateau_falloff);
+					density *= (float)Math.pow(noise((xf+1)*3.0f, (yf+1)*3.0f, (zf+1)*3.0f)+0.4f, 1.8f);
+					if(caves<1.5f){
+						density = 0;
+					}
+					if(density > 3.1f)
+						map[x2][y2][z2] = new Voxel(Voxel.grass);
+					else
+						map[x2][y2][z2] = new Voxel(Voxel.nothing);
 				}
 			}
 		}
-		addAcircle(Map.chunkSize/2, Map.chunkSize/2, 15);
-		addAsquare(0, 0, 31);
+		for (int x2 = 0; x2 < Map.chunkSize; x2++) {
+			for (int z2 = 0; z2 < Map.chunkSize; z2++) {
+				for (int y2 = 0; y2 < Map.chunkSize-1; y2++) {
+					if (map[x2][y2+1][z2].id == Voxel.grass) {
+						map[x2][y2][z2] = new Voxel(Voxel.rock);
+					}
+				}
+			}
+		}
 	}
 
-	public void addAcircle(int xCenter, int yCenter, int radius)
-	{
+	public void addAcircle(int xCenter, int yCenter, int radius) {
 		int x, y, r2;
 		for(int z = 10; z >= 0; z-- ){
 			r2 = radius * radius;
@@ -86,8 +84,7 @@ public class Chunk {
 		}
 	}
 
-	public void addAsquare(int xstart, int ystart, int length)
-	{
+	public void addAsquare(int xstart, int ystart, int length) {
 		int x, y, r2;
 		for(int z = 1; z >= 0; z-- ){
 			for (x = xstart; x <= length; x++) {
@@ -112,36 +109,36 @@ public class Chunk {
 		for (int x = 0; x < Map.chunkSize; x++) {
 			for (int y = 0; y < Map.chunkSize; y++) {
 				for (int z = 0; z < Map.chunkSize; z++) { 
-					if (map[x][y][z].id == Voxel.grass) {
+					if (map[x][y][z].id != Voxel.nothing) {
 						if (y+1 >= Map.chunkSize) {
-							addTopFace(fa, x, y, z);
+							addTopFace(fa, x, y, z,map[x][y][z].id);
 						} else if (map[x][y+1][z].id == Voxel.nothing) {
-							addTopFace(fa, x, y, z);
+							addTopFace(fa, x, y, z,map[x][y][z].id);
 						}
 						if (y-1 < 0) {
-							addBotFace(fa, x, y, z);
+							addBotFace(fa, x, y, z,map[x][y][z].id);
 						} else if (map[x][y-1][z].id == Voxel.nothing) {
-							addBotFace(fa, x, y, z);
+							addBotFace(fa, x, y, z,map[x][y][z].id);
 						}
 						if (z-1 < 0) {
-							addBackFace(fa, x, y, z);
+							addBackFace(fa, x, y, z,map[x][y][z].id);
 						} else if (map[x][y][z-1].id == Voxel.nothing) {
-							addBackFace(fa, x, y, z);
+							addBackFace(fa, x, y, z,map[x][y][z].id);
 						}
 						if (z+1 >= Map.chunkSize) {
-							addFrontFace(fa, x, y, z);
+							addFrontFace(fa, x, y, z,map[x][y][z].id);
 						} else if (map[x][y][z+1].id == Voxel.nothing) {
-							addFrontFace(fa, x, y, z);
+							addFrontFace(fa, x, y, z,map[x][y][z].id);
 						}
 						if (x+1 >= Map.chunkSize) {
-							addRightFace(fa, x, y, z);
+							addRightFace(fa, x, y, z,map[x][y][z].id);
 						} else if (map[x+1][y][z].id == Voxel.nothing) {
-							addRightFace(fa, x, y, z);
+							addRightFace(fa, x, y, z,map[x][y][z].id);
 						}
 						if (x-1 < 0) {
-							addLeftFace(fa, x, y, z);
+							addLeftFace(fa, x, y, z,map[x][y][z].id);
 						} else if (map[x-1][y][z].id == Voxel.nothing) {
-							addLeftFace(fa, x, y, z);
+							addLeftFace(fa, x, y, z,map[x][y][z].id);
 						}
 					}
 				}
@@ -163,7 +160,7 @@ public class Chunk {
 			StaticVariables.releaseSema();
 		}
 	}
-	public void addTopFace(FloatArray fa, int x, int y, int z) {
+	public void addTopFace(FloatArray fa, int x, int y, int z, int type) {
 		float occlusion = 0;
 		if (x-1 < 0 || y+1 >= Map.chunkSize || map[x-1][y+1][z].id == Voxel.nothing) {
 			occlusion++;
@@ -180,8 +177,8 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(1); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(0f);
-		fa.add(0.5f);
+		fa.add((type-1)/Voxel.maxTypes);
+		fa.add(2f/3f);
 		fa.add(occlusion); // Occlusionvalue
 
 		occlusion = 0;
@@ -200,8 +197,8 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(1); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(0.5f);
-		fa.add(0.5f);
+		fa.add(type/Voxel.maxTypes);
+		fa.add(2f/3f);
 		fa.add(occlusion); // Occlusionvalue
 
 		occlusion = 0;
@@ -220,8 +217,8 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(1); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(0.5f);
-		fa.add(0f);
+		fa.add(type/Voxel.maxTypes);
+		fa.add(1f/3f);
 		fa.add(occlusion); // Occlusionvalue
 
 
@@ -231,8 +228,8 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(1); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(0.5f);
-		fa.add(0f);
+		fa.add(type/Voxel.maxTypes);
+		fa.add(1f/3f);
 		fa.add(occlusion); // Occlusionvalue
 
 		occlusion = 0;
@@ -251,8 +248,8 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(1); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(0f);
-		fa.add(0f);
+		fa.add((type-1)/Voxel.maxTypes);
+		fa.add(1f/3f);
 		fa.add(occlusion); // Occlusionvalue
 
 		occlusion = 0;
@@ -271,11 +268,11 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(1); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(0f);
-		fa.add(0.5f);
+		fa.add(type/Voxel.maxTypes);
+		fa.add(2f/3f);
 		fa.add(occlusion); // Occlusionvalue
 	}
-	public void addBotFace(FloatArray fa, int x, int y, int z) {
+	public void addBotFace(FloatArray fa, int x, int y, int z, int type) {
 		float occlusion = 0;
 		if (z-1 < 0 || y-1 < 0 || map[x][y-1][z-1].id == Voxel.nothing) {
 			occlusion++;
@@ -292,7 +289,7 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(-1); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(0);
+		fa.add((type-1)/Voxel.maxTypes);
 		fa.add(1);
 		fa.add(occlusion); // Occlusionvalue
 
@@ -312,7 +309,7 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(-1); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(0.5f);
+		fa.add(type/Voxel.maxTypes);
 		fa.add(1);
 		fa.add(occlusion); // Occlusionvalue
 
@@ -332,8 +329,8 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(-1); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(0.5f);
-		fa.add(0.5f);
+		fa.add(type/Voxel.maxTypes);
+		fa.add(2f/3f);
 		fa.add(occlusion); // Occlusionvalue
 
 		fa.add(1+x);
@@ -342,8 +339,8 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(-1); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(0.5f);
-		fa.add(0.5f);
+		fa.add(type/Voxel.maxTypes);
+		fa.add(2f/3f);
 		fa.add(occlusion); // Occlusionvalue
 
 		occlusion = 0;
@@ -362,8 +359,8 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(-1); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(0f);
-		fa.add(0.5f);
+		fa.add((type-1)/Voxel.maxTypes);
+		fa.add(2f/3f);
 		fa.add(occlusion); // Occlusionvalue
 
 		occlusion = 0;
@@ -382,13 +379,13 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(-1); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(0);
+		fa.add((type-1)/Voxel.maxTypes);
 		fa.add(1);
 		fa.add(occlusion); // Occlusionvalue
 
 	}
 
-	public void addLeftFace(FloatArray fa, int x, int y, int z) {
+	public void addLeftFace(FloatArray fa, int x, int y, int z, int type) {
 		float occlusion = 0;
 		if (y-1 < 0 || x-1 <0 || map[x-1][y-1][z].id == Voxel.nothing) {
 			occlusion++;
@@ -405,8 +402,8 @@ public class Chunk {
 		fa.add(-1); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(0.5f);
-		fa.add(0.5f);
+		fa.add((type-1)/Voxel.maxTypes);
+		fa.add(1f/3f);
 		fa.add(occlusion); // Occlusionvalue
 
 		occlusion = 0;
@@ -425,8 +422,8 @@ public class Chunk {
 		fa.add(-1); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(1);
-		fa.add(0.5f);
+		fa.add(type/Voxel.maxTypes);
+		fa.add(1f/3f);
 		fa.add(occlusion); // Occlusionvalue
 
 		occlusion = 0;
@@ -445,7 +442,7 @@ public class Chunk {
 		fa.add(-1); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(1);
+		fa.add(type/Voxel.maxTypes);
 		fa.add(0);
 		fa.add(occlusion); // Occlusionvalue
 
@@ -455,7 +452,7 @@ public class Chunk {
 		fa.add(-1); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(1);
+		fa.add(type/Voxel.maxTypes);
 		fa.add(0);
 		fa.add(occlusion); // Occlusionvalue
 
@@ -475,7 +472,7 @@ public class Chunk {
 		fa.add(-1); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(0.5f);
+		fa.add((type-1)/Voxel.maxTypes);
 		fa.add(0);
 		fa.add(occlusion); // Occlusionvalue
 
@@ -495,13 +492,13 @@ public class Chunk {
 		fa.add(-1); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(0.5f);
-		fa.add(0.5f);
+		fa.add((type-1)/Voxel.maxTypes);
+		fa.add(1f/3f);
 		fa.add(occlusion); // Occlusionvalue
 
 	}
 
-	public void addRightFace(FloatArray fa, int x, int y, int z) {
+	public void addRightFace(FloatArray fa, int x, int y, int z, int type) {
 		float occlusion = 0;
 		if (y-1 < 0 || x+1 >= Map.chunkSize || map[x+1][y-1][z].id == Voxel.nothing) {
 			occlusion++;
@@ -518,8 +515,8 @@ public class Chunk {
 		fa.add(1); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(0.5f);
-		fa.add(0.5f);
+		fa.add((type-1)/Voxel.maxTypes);
+		fa.add(1/3f);
 		fa.add(occlusion); // Occlusionvalue
 
 		occlusion = 0;
@@ -538,8 +535,8 @@ public class Chunk {
 		fa.add(1); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(1f);
-		fa.add(0.5f);
+		fa.add(type/Voxel.maxTypes);
+		fa.add(1/3f);
 		fa.add(occlusion); // Occlusionvalue
 
 		occlusion = 0;
@@ -558,7 +555,7 @@ public class Chunk {
 		fa.add(1); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(1f);
+		fa.add(type/Voxel.maxTypes);
 		fa.add(0f);
 		fa.add(occlusion); // Occlusionvalue
 
@@ -568,7 +565,7 @@ public class Chunk {
 		fa.add(1); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(1f);
+		fa.add(type/Voxel.maxTypes);
 		fa.add(0f);
 		fa.add(occlusion); // Occlusionvalue
 
@@ -588,7 +585,7 @@ public class Chunk {
 		fa.add(1); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(0.5f);
+		fa.add((type-1)/Voxel.maxTypes);
 		fa.add(0f);
 		fa.add(occlusion); // Occlusionvalue
 
@@ -608,12 +605,12 @@ public class Chunk {
 		fa.add(1); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(0.5f);
-		fa.add(0.5f);
+		fa.add((type-1)/Voxel.maxTypes);
+		fa.add(1/3f);
 		fa.add(occlusion); // Occlusionvalue
 
 	}
-	public void addFrontFace(FloatArray fa, int x, int y, int z) {
+	public void addFrontFace(FloatArray fa, int x, int y, int z, int type) {
 		float occlusion = 0;
 		if (z+1 >= Map.chunkSize || y-1 < 0 || map[x][y-1][z+1].id == Voxel.nothing) {
 			occlusion++;
@@ -630,8 +627,8 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(1); // Normal Z
-		fa.add(0.5f); // u1
-		fa.add(0.5f); // v1
+		fa.add((type-1)/Voxel.maxTypes);
+		fa.add(1/3f); // v1
 		fa.add(occlusion); // Occlusionvalue
 
 		occlusion = 0;
@@ -650,8 +647,8 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(1); // Normal Z
-		fa.add(1f); // u2
-		fa.add(0.5f); // v2
+		fa.add(type/Voxel.maxTypes);
+		fa.add(1/3f); // v2
 		fa.add(occlusion); // Occlusionvalue
 
 		occlusion = 0;
@@ -670,7 +667,7 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(1); // Normal Z
-		fa.add(1f); // u3
+		fa.add(type/Voxel.maxTypes);
 		fa.add(0f); // v3
 		fa.add(occlusion); // Occlusionvalue
 
@@ -680,7 +677,7 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(1); // Normal Z
-		fa.add(1f); // u3
+		fa.add(type/Voxel.maxTypes);
 		fa.add(0f); // v3
 		fa.add(occlusion); // Occlusionvalue
 
@@ -700,7 +697,7 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(1); // Normal Z
-		fa.add(0.5f); // u4
+		fa.add((type-1)/Voxel.maxTypes);
 		fa.add(0f); // v4
 		fa.add(occlusion); // Occlusionvalue
 
@@ -720,12 +717,12 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(1); // Normal Z
-		fa.add(0.5f); // u1
-		fa.add(0.5f); // v1
+		fa.add((type-1)/Voxel.maxTypes);
+		fa.add(1/3f); // v1
 		fa.add(occlusion); // Occlusionvalue
 
 	}
-	public void addBackFace(FloatArray fa, int x, int y, int z) {
+	public void addBackFace(FloatArray fa, int x, int y, int z, int type) {
 		float occlusion = 0;
 		if (z-1 < 0 || y-1 < 0 || map[x][y-1][z-1].id == Voxel.nothing) {
 			occlusion++;
@@ -742,8 +739,8 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(-1); // Normal Z
-		fa.add(0.5f);
-		fa.add(0.5f);
+		fa.add((type-1)/Voxel.maxTypes);
+		fa.add(1/3f);
 		fa.add(occlusion); // Occlusionvalue
 
 		occlusion = 0;
@@ -762,8 +759,8 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(-1); // Normal Z
-		fa.add(1f);
-		fa.add(0.5f);
+		fa.add(type/Voxel.maxTypes);
+		fa.add(1/3f);
 		fa.add(occlusion); // Occlusionvalue
 
 		occlusion = 0;
@@ -782,7 +779,7 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(-1); // Normal Z
-		fa.add(1f);
+		fa.add(type/Voxel.maxTypes);
 		fa.add(0f);
 		fa.add(occlusion); // Occlusionvalue
 
@@ -792,7 +789,7 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(-1); // Normal Z
-		fa.add(1f);
+		fa.add(type/Voxel.maxTypes);
 		fa.add(0f);
 		fa.add(occlusion); // Occlusionvalue
 
@@ -813,7 +810,7 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(-1); // Normal Z
-		fa.add(0.5f);
+		fa.add((type-1)/Voxel.maxTypes);
 		fa.add(0f);
 		fa.add(occlusion); // Occlusionvalue
 
@@ -833,8 +830,8 @@ public class Chunk {
 		fa.add(0); // Normal X
 		fa.add(0); // Normal Y
 		fa.add(-1); // Normal Z
-		fa.add(0.5f);
-		fa.add(0.5f);
+		fa.add((type-1)/Voxel.maxTypes);
+		fa.add(1/3f);
 		fa.add(occlusion); // Occlusionvalue
 
 	}

@@ -31,7 +31,7 @@ public class LightSource {
 		color = new float[4];
 		color[0] = 1f;
 		color[1] = 1f;
-		color[2] = 0f;
+		color[2] = 1f;
 		color[3] = 1f;
 		if (lightMesh == null) {
 			float[] verts = new float[180];

@@ -130,7 +130,7 @@ public class Renderer {
 			throw new GdxRuntimeException("Couldn't compile shader: "
 					+ skysphereShader.getLog());
 
-		cubeTexture = new Texture(Gdx.files.internal("data/grassmap.png"));
+		cubeTexture = new Texture(Gdx.files.internal("data/blockmap.png"));
 		lightTexture = new Texture(Gdx.files.internal("data/light.png"));
 		blood = new Texture(Gdx.files.internal("data/blood.png"));
 		//texture av Remus tagen 2012-07-16 m�ste ge credit om ska anv�ndas
