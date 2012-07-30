@@ -10,11 +10,20 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Weapon {
 	public int weaponID = 1;
+	
 	public static final int gun = 0;
 	public static final int ak = 1;
 	public static final int block = 2;
 	public static final int emp = 3;
 	public static final int sniper = 4;
+	
+	// Bullet types
+	public static final int bullet_gun = 1000;
+	public static final int bullet_ak = 1001;
+	public static final int bullet_block = 1002;
+	public static final int bullet_emp = 1003;
+	public static final int bullet_sniper = 1004;
+	
 	public Sprite wpn;
 	public Sprite[] gunSpr;
 	public Sprite[] akSpr;
@@ -90,16 +99,16 @@ public class Weapon {
 		empRecharge[4] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emprecharge3.png")));
 		empRecharge[5] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emprecharge4.png")));
 		sniperReload = new Sprite[10];
-		sniperReload[0] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload.png")));
-		sniperReload[1] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload1.png")));
-		sniperReload[2] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload2.png")));
-		sniperReload[3] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload3.png")));
-		sniperReload[4] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload4.png")));
-		sniperReload[5] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload5.png")));
-		sniperReload[6] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload6.png")));
-		sniperReload[7] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload7.png")));
-		sniperReload[8] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload8.png")));
-		sniperReload[9] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperReload9.png")));
+		sniperReload[0] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperreload.png")));
+		sniperReload[1] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperreload1.png")));
+		sniperReload[2] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperreload2.png")));
+		sniperReload[3] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperreload3.png")));
+		sniperReload[4] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperreload4.png")));
+		sniperReload[5] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperreload5.png")));
+		sniperReload[6] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperreload6.png")));
+		sniperReload[7] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperreload7.png")));
+		sniperReload[8] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperreload8.png")));
+		sniperReload[9] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniperreload9.png")));
 		sniperSpr = new Sprite[4];
 		sniperSpr[0] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniper.png")));
 		sniperSpr[1] = new Sprite(new Texture(Gdx.files.internal("data/weapons/sniper1.png")));
