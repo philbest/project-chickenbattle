@@ -108,6 +108,7 @@ public class AnimationPart {
 	public void setTexture(Texture t) {
 		texture = t;
 	}
+	
 	public boolean contains(Vector3 vec) {
 		Vector3 temp = new Vector3(vec);
 		Matrix4 tempMat = new Matrix4(modelMatrix);

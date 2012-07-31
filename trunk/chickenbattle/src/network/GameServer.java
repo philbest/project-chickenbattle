@@ -28,8 +28,6 @@ import com.esotericsoftware.kryonet.Server;
 
 public class GameServer {
 	Server server;
-	public static final int teamBlue = 0;
-	public static final int teamRed = 1;
 	Client lobbyconnection;
 	Message broadcast;
 	public Player[] player;
@@ -170,6 +168,7 @@ public class GameServer {
 					toSend.dead = player[received.id].dead;
 					toSend.initShield = player[received.id].initShield;
 					toSend.currentTeam = player[received.id].currentTeam;
+					toSend.hit = player[received.id].hit;
 
 					player[received.id].posX = received.px;
 					player[received.id].posY = received.py;
@@ -225,6 +224,7 @@ public class GameServer {
 					player[received.id].falldeath = false;
 					player[received.id].initShield = false;
 					player[received.id].dead = false;
+					player[received.id].hit = false;
 					if(player[received.id].shields < 5){
 						long currTime = System.currentTimeMillis();
 						if((currTime-player[received.id].lasthit > 6000l && currTime-player[received.id].lastRegged > 2000l)){
@@ -288,6 +288,7 @@ public class GameServer {
 									else{
 										if(compare.shields == 0 && b.type == Weapon.bullet_sniper){
 											compare.hp = compare.hp-5;
+											compare.hit = true;
 											compare.lasthit = System.currentTimeMillis();
 										}
 										else if(compare.shields > 0){
@@ -299,6 +300,7 @@ public class GameServer {
 										}
 										else{
 											compare.hp =compare.hp-1;
+											compare.hit = true;
 											compare.lasthit = System.currentTimeMillis();
 										}
 

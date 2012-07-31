@@ -13,7 +13,7 @@ public class Player {
 	public BoundingBox box;
 	public float animTimer;
 	public long lastRegged;
-	public boolean falldeath, initShield,dead;
+	public boolean falldeath, initShield,dead, hit;
 	public Player(String xs){
 		this.name = xs;
 		hp = 10;

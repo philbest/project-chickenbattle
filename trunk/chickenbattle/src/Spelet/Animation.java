@@ -31,6 +31,7 @@ public class Animation {
 		String[] rows = str.split("\n");
 		for(int i = 0; i < rows.length; i++) {
 			parts.add(new AnimationPart(rows[i]));
+			System.out.println("WHAT" + parts.get(i));
 		}
 		System.out.println(str2);
 		rows = str2.split("Frame:");
@@ -59,6 +60,7 @@ public class Animation {
 		parts.add(new AnimationPart(0,3,0,2,1,2));
 
 		maxSteps = 30;
+
 	}
 	public void render(Application app, Player player) {
 		for (int i = 0; i < parts.size; i++) {
@@ -71,6 +73,7 @@ public class Animation {
 					animStep = 0;
 				}
 			}
+			
 			AnimationPart a = parts.get(i);
 			a.x = keyframes.get(currentKeyFrame).positions[i].x+(keyframes.get(currentKeyFrame+1).positions[i].x-keyframes.get(currentKeyFrame).positions[i].x)*animStep/maxSteps;
 			a.y = keyframes.get(currentKeyFrame).positions[i].y+(keyframes.get(currentKeyFrame+1).positions[i].y-keyframes.get(currentKeyFrame).positions[i].y)*animStep/maxSteps;

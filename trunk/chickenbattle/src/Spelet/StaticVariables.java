@@ -9,8 +9,10 @@ public class StaticVariables {
 	private static Matrix4 tempMat;
 	private static Semaphore sema;
 	
-	public static final int frag = 0;
-	public static final int falldeath = 1;
+	public static final int teamBlue = 0;
+	public static final int teamRed = 1;
+	public static final int frag = 2;
+	public static final int falldeath = 3;
 	
 	public static void initiate() {
 		tempMat = new Matrix4();

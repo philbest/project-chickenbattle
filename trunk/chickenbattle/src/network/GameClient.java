@@ -16,7 +16,10 @@ import network.Packet.Message;
 import network.Packet.Reject;
 import network.Packet.Update;
 
+import Spelet.StaticAnimations;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -41,7 +44,6 @@ public class GameClient{
 	BlockUpdate bupdate;
 	BlockDamage bdamage;
 	public int id;
-	public boolean dead;
 	public String name;
 
 	public GameClient(){
@@ -101,13 +103,8 @@ public class GameClient{
 						players[response.id].initShield = response.initShield;
 						players[response.id].falldeath = response.falldeath;
 						players[response.id].currentTeam = response.currentTeam;
-						if(players[id].falldeath){
-							dead = true;
-						}
-						if(players[id].hp <= 0){
-							dead = true;
-						}
-						players[response.id].dead = response.dead;			
+						players[response.id].dead = response.dead;	
+						players[response.id].hit = response.hit;
 						
 						bbCorners[0].set(response.x1, response.y1, response.z1);
 						bbCorners[1].set(response.x2, response.y2, response.z2);
@@ -140,11 +137,6 @@ public class GameClient{
 				else if(object instanceof Hit){
 					Hit response = (Hit)object;
 					players[response.id].lasthit = TimeUtils.millis();
-					if(response.id == id){
-						if(players[response.id].hp == 1){
-							dead = true;
-						}
-					}
 				}
 				else if(object instanceof AddServer){
 					AddServer response = (AddServer)object;
