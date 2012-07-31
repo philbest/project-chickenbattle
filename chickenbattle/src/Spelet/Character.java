@@ -29,15 +29,13 @@ public class Character {
 	public Texture modelTexture = null;
 	public int health;
 	public int shields;
-	public boolean bloodsplatt, killer, killed;
+	public boolean bloodsplatt;
 	Mesh model;
 	public Character(String name) {
 
 		health = 10;
 		shields = 5;
 		bloodsplatt = false;
-		killer = false;
-		killed = false;
 		this.charName = name;
 		state = "chill";
 		forceUp = 0;
@@ -54,11 +52,6 @@ public class Character {
 		box = new BoundingBox();
 		modelMatrix = new Matrix4();
 		model = StaticAnimations.walk.parts.get(4).partMesh;	
-	}
-
-	public void updateKill(boolean k1, boolean k2){
-		this.killer = k1;
-		this.killed = k2;
 	}
 
 	public void updateName(String xs){
@@ -89,8 +82,6 @@ public class Character {
 	public void resurrect() {
 		setPos(30,60,50);
 		forceUp = 0;
-		killed = false;
-		killer = false;
 		jumping = false;
 		for (int i = 0; i < inventory.size; i++) {
 			inventory.get(i).restart();

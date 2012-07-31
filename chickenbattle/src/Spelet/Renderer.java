@@ -51,7 +51,6 @@ public class Renderer {
 	Texture cubeTexture;
 	Texture lightTexture;
 	Texture skysphereTexture;
-	Texture blood;
 
 	ShaderProgram simpleShader;
 	ShaderProgram charShader;
@@ -70,6 +69,7 @@ public class Renderer {
 	ShaderProgram shadowGenShader;
 	ShaderProgram shadowMapShader;
 	int renderMode;
+	Texture red, blue, blood, normal;
 	PerspectiveCamera lightCam;
 
 
@@ -96,7 +96,10 @@ public class Renderer {
 		initiateShadows();
 
 		score = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/lobbybg.png")));
-
+		red = new Texture(Gdx.files.internal("data/red.png"));
+		blue = new Texture(Gdx.files.internal("data/blue.png"));
+		blood = new Texture(Gdx.files.internal("data/blood.png"));
+		normal = new Texture(Gdx.files.internal("data/grassmap.png"));
 		sb = new SpriteBatch();
 		font = new BitmapFont();
 
@@ -238,6 +241,28 @@ public class Renderer {
 			if(app.clientid != i)
 				if(app.players[i] != null){
 					charShader.begin();
+					try{
+						if(app.players[i].currentTeam == StaticVariables.teamBlue){
+							StaticAnimations.walk.parts.get(4).setTexture(blue);
+						}
+						else if(app.players[i].currentTeam == StaticVariables.teamRed){
+							StaticAnimations.walk.parts.get(4).setTexture(red);
+						}
+						
+						if(app.players[i].hit){
+							StaticAnimations.walk.parts.get(6).setTexture(blood);
+							app.bloodTimer = 1000;
+						}
+						else if(app.bloodTimer < 0){
+							StaticAnimations.walk.parts.get(6).setTexture(normal);
+						}
+						
+					}
+					catch(NullPointerException e){
+						e.getStackTrace();
+						System.out.println("null");
+					}
+				
 					charShader.setUniform4fv("scene_light", app.light.color, 0, 4);
 					charShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
 					charShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);

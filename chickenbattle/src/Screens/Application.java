@@ -12,12 +12,15 @@ import Spelet.GameInterface;
 import Spelet.LightSource;
 import Spelet.Main;
 import Spelet.Renderer;
+import Spelet.StaticAnimations;
+import Spelet.StaticVariables;
 import Spelet.Weapon;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
@@ -53,6 +56,7 @@ public class Application extends Screen implements InputProcessor{
 	int timer;
 	public boolean multiplayer;
 	int mptimer;
+	public int bloodTimer;
 	Main main;
 	public int ping;
 	public long recoilTime, recoilAK;
@@ -61,7 +65,6 @@ public class Application extends Screen implements InputProcessor{
 		main = m;
 		movement = new Vector3();
 		scoreboard = false;
-
 		ch = new Character(m.name);
 		ch.setPos(7,15,7);
 		players = new Player[10];
@@ -90,6 +93,7 @@ public class Application extends Screen implements InputProcessor{
 		particle.setPosition(500, 500);
 		particle.start();
 		particle.load(Gdx.files.internal("data/particle/fire"), Gdx.files.internal("data/particle/"));
+		bloodTimer = 0;
 		if(multiplayer)
 			client = m.client;
 	}
@@ -104,6 +108,9 @@ public class Application extends Screen implements InputProcessor{
 		ch.update(this);
 		map.update();
 		gi.update();
+		if(bloodTimer > -1000){
+			bloodTimer -= Gdx.graphics.getDeltaTime()*1000;
+		}
 		ch.updateName(((Lobby)main.screens.get(Main.LOBBY)).playerName);
 		ch.inventory.get(ch.weapon).update();
 		gi.updateWeapon(ch.weapon);
@@ -158,7 +165,7 @@ public class Application extends Screen implements InputProcessor{
 				players[client.id].box = ch.box;
 				ch.updateHealth(players[client.id].hp);
 				ch.updateShield(players[client.id].shields);
-
+				
 				if(send){
 					client.sendMessage(players[client.id],ch.box.getCorners());
 					send = false;
