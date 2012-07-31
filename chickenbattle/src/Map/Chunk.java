@@ -60,6 +60,8 @@ public class Chunk {
 				}
 			}
 		}
+		
+//		addAcircle(15,15,13);
 		for (int x2 = 0; x2 < Map.chunkSize; x2++) {
 			for (int z2 = 0; z2 < Map.chunkSize; z2++) {
 				for (int y2 = 0; y2 < Map.chunkSize-1; y2++) {
@@ -69,6 +71,8 @@ public class Chunk {
 				}
 			}
 		}
+		
+	
 	}
 
 	public void addAcircle(int xCenter, int yCenter, int radius) {
