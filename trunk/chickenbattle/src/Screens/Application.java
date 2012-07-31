@@ -18,6 +18,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -55,6 +56,7 @@ public class Application extends Screen implements InputProcessor{
 	Main main;
 	public int ping;
 	public long recoilTime, recoilAK;
+	public ParticleEffect particle;
 	public Application(Main m){
 		main = m;
 		movement = new Vector3();
@@ -84,7 +86,10 @@ public class Application extends Screen implements InputProcessor{
 		gi = new GameInterface(this);
 		gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 		multiplayer = true;
-
+		particle = new ParticleEffect();
+		particle.setPosition(500, 500);
+		particle.start();
+		particle.load(Gdx.files.internal("data/particle/fire"), Gdx.files.internal("data/particle/"));
 		if(multiplayer)
 			client = m.client;
 	}
@@ -93,7 +98,6 @@ public class Application extends Screen implements InputProcessor{
 
 	public void render() {
 		renderer.render(this);
-
 	}
 	public void update() {
 		Gdx.input.setCursorCatched(true);
@@ -114,11 +118,11 @@ public class Application extends Screen implements InputProcessor{
 		else if(recoilTime - recoilAK > 200f && ch.inventory.get(ch.weapon).weaponID == 1){
 			ch.inventory.get(ch.weapon).crosshair = ch.inventory.get(ch.weapon).akCH[2];
 		}
-		if(multiplayer && client.dead){
-			client.dead = false;
-			ch.resurrect();
-			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
-		}
+		//		if(multiplayer && client.dead){
+		//			client.dead = false;
+		//			ch.resurrect();
+		//			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
+		//		}
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
 			touchDown(draggedX, draggedY, 0, 0);
 		movement.set(ch.position);
@@ -140,6 +144,11 @@ public class Application extends Screen implements InputProcessor{
 			clientid = client.id;
 			players = client.getPlayers();
 			if(players[client.id] != null){	
+				if(players[client.id].dead){
+					ch.resurrect();			
+					players[client.id].dead = false;
+					gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
+				}
 				players[client.id].posX = ch.position.x; 
 				players[client.id].posY = ch.position.y; 
 				players[client.id].posZ = ch.position.z;
@@ -165,7 +174,7 @@ public class Application extends Screen implements InputProcessor{
 			chunkstoupdate.clear();
 			chunkstorebuild.clear();
 			chunkstoupdate = client.getChunks();
-			
+
 			for(int i=0; i < chunkstoupdate.size; i++ ){
 				Chunk c = map.chunks.get(chunkstoupdate.get(i).chunk);
 				c.map[chunkstoupdate.get(i).x-c.x*chunkstoupdate.get(i).size][chunkstoupdate.get(i).y-c.y*chunkstoupdate.get(i).size][chunkstoupdate.get(i).z-c.z*chunkstoupdate.get(i).size].id = chunkstoupdate.get(i).modi;
@@ -173,27 +182,27 @@ public class Application extends Screen implements InputProcessor{
 			}
 
 			chunkdamage = client.getStructuralDamage();
-			
+
 			for(int i=0;i<chunkdamage.size;i++){
 				BlockDamage bd = chunkdamage.get(i);
 				Chunk c = map.chunks.get(bd.chunk);
-				
+
 				Voxel vox = c.map[bd.x-c.x*Map.chunkSize][bd.y-c.y*Map.chunkSize][bd.z-c.z*Map.chunkSize];
 				vox.durability -= bd.damage;
-				
+
 				Gdx.app.log("block dura iz ", Integer.toString(vox.durability));
-				
+
 				if(vox.durability <= 0)
 				{
 					vox.id = Voxel.nothing;
 				}
-				
+
 				if(!chunkstorebuild.contains(c, true))
 					chunkstorebuild.add(c);
 			}
-			
+
 			chunkdamage.clear();
-			
+
 			for(int i=0; i<chunkstorebuild.size; i++){
 				chunkstorebuild.get(i).rebuildChunk();
 			}
@@ -367,9 +376,9 @@ public class Application extends Screen implements InputProcessor{
 								Chunk c = map.chunks.get(i);
 								if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
 									//TODO Different bullets - different damage?
-									
+
 									int structuralDamage = c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].damageDone(ch.inventory.get(ch.weapon).bulletType);
-									
+
 									if(multiplayer){
 										client.damageChunk(i, pointX, pointY, pointZ, structuralDamage);
 									} else {
