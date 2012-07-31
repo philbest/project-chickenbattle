@@ -28,6 +28,8 @@ import com.esotericsoftware.kryonet.Server;
 
 public class GameServer {
 	Server server;
+	public static final int teamBlue = 0;
+	public static final int teamRed = 1;
 	Client lobbyconnection;
 	Message broadcast;
 	public Player[] player;
@@ -122,12 +124,14 @@ public class GameServer {
 						}
 						player[ids] = new Player(received.name);
 						player[ids].name = received.name;
+						player[ids].currentTeam = received.team;
 						connections[ids] = connection; 
 						connectionIDs.put(connection, ids);
 
 						AddPlayer newPlayer = new AddPlayer();
 						newPlayer.id = ids;
 						newPlayer.name = received.name;	
+						newPlayer.team = received.team;
 						newPlayer.startx = startx;
 						newPlayer.starty = starty;
 						newPlayer.startz = startz;
@@ -165,6 +169,7 @@ public class GameServer {
 					toSend.falldeath = player[received.id].falldeath;
 					toSend.dead = player[received.id].dead;
 					toSend.initShield = player[received.id].initShield;
+					toSend.currentTeam = player[received.id].currentTeam;
 
 					player[received.id].posX = received.px;
 					player[received.id].posY = received.py;
@@ -220,7 +225,6 @@ public class GameServer {
 					player[received.id].falldeath = false;
 					player[received.id].initShield = false;
 					player[received.id].dead = false;
-
 					if(player[received.id].shields < 5){
 						long currTime = System.currentTimeMillis();
 						if((currTime-player[received.id].lasthit > 6000l && currTime-player[received.id].lastRegged > 2000l)){
@@ -274,7 +278,7 @@ public class GameServer {
 						for(int i=0; i < player.length; i++){
 							Player compare = player[i];
 							if(compare != null && i != b.id){
-								if(compare.box.contains(point)){
+								if(compare.box.contains(point) && compare.currentTeam != player[b.id].currentTeam){
 									hittoSend.id = i;
 									if(b.type == Weapon.bullet_emp){
 										compare.shields = 0;

@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.collision.BoundingBox;
 public class Player {
 	public String name;
 	public int id,hp,kills,deaths, shields;
+	public int currentTeam;
 	public long lasthit;
 	public float posX, posY,posZ,dirX,dirY, dirZ;  
 	public BoundingBox box;
@@ -35,5 +36,4 @@ public class Player {
 	public void setName(String xs){
 		this.name = xs;
 	}
-	
 }

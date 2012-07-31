@@ -26,6 +26,8 @@ public class Lobby extends Screen{
 	public String playerscore;
 	public Sprite background;
 	public Sprite join, exit, crosshair,host;
+	public Sprite currRedB, currBlueB;
+	public Sprite[] buttons;
 	public Sprite name;
 	public Sprite serverbg;
 	public SpriteBatch sb;
@@ -36,6 +38,7 @@ public class Lobby extends Screen{
 	public String playerName;
 	public String tempName;
 	public String MasterServerIP;
+	public int team;
 	int oldX;
 	int oldY;
 	int xpos;
@@ -54,6 +57,14 @@ public class Lobby extends Screen{
 		fontname = new BitmapFont();
 		sb = new SpriteBatch();
 		players = new Player[10];
+		buttons = new Sprite[4];
+		buttons[0] = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/bluebut.png")));
+		buttons[1] = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/redbut.png")));
+		buttons[2] = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/bluepress.png")));
+		buttons[3] = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/redpress.png")));
+		currBlueB = buttons[2];
+		currRedB = buttons[1];
+		team = 0;
 		crosshair = new Sprite(new Texture(Gdx.files.internal("data/weapons/crosshairsmaller.png")));
 		mainbg = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/bg.png")));
 		background = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/lobbybg.png")));
@@ -64,7 +75,7 @@ public class Lobby extends Screen{
 		host = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/host.png")));
 		MasterServerIP = "129.16.21.56";
 		playerName = "anon";
-		tempName = "";
+		tempName = ""; 
 		write = false;
 	}
 
@@ -127,20 +138,36 @@ public class Lobby extends Screen{
 			main.client.Disconnect();
 			System.out.println("connecting to " + MasterServerIP);
 			main.client.Connect(serverlist.get(selectedServer).ip,54555, 54778);
-			main.client.AddPlayer(playerName);
+			main.client.AddPlayer(playerName, team);
 			main.setScreen(Main.GAME);
 
 		} else if (name.getBoundingRectangle().contains(xpos,ypos)){
 			write = true;
 		} else if(host.getBoundingRectangle().contains(xpos,ypos)) {
+
+			try {
+				new GameServer("Hosted from lobby");
+			} catch (IOException e) {
+				System.out.println("Error hosting server");
+			}
+
+		} else if(currBlueB.getBoundingRectangle().contains(xpos,ypos)) {
+			if(currBlueB == buttons[0]){
+				currBlueB = buttons[2];
+				currRedB = buttons[1];
+				team = 0;
+			}
 		
-				try {
-					new GameServer("Hosted from lobby");
-				} catch (IOException e) {
-					System.out.println("Error hosting server");
-				}
-			
-		}else {
+
+		} else if(currRedB.getBoundingRectangle().contains(xpos,ypos)) {
+			if(currRedB == buttons[1]){
+				currRedB = buttons[3];
+				currBlueB = buttons[0];
+				team = 1;
+			}
+		
+
+		} else {
 			if (serverlist != null) {
 				int i = 0;
 				for (AddServer as : serverlist) {
@@ -200,6 +227,10 @@ public class Lobby extends Screen{
 		host.draw(sb);
 		join.setPosition(50, 400);
 		join.draw(sb);
+		currBlueB.setPosition(380, 490);
+		currBlueB.draw(sb);
+		currRedB.setPosition(500, 490);
+		currRedB.draw(sb);
 		fontname.setColor(Color.BLACK);
 		if(!write){
 			fontname.draw(sb, playerName, 50+name.getWidth()/2-20, 515);
