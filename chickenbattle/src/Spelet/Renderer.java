@@ -22,6 +22,9 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
+import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.g3d.loaders.obj.ObjLoader;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -57,6 +60,10 @@ public class Renderer {
 	String playerscore;
 	SpriteBatch sb;
 	Sprite score;
+	
+	DecalBatch decalbatch;
+	Decal grassbb;
+	
 	BitmapFont font;
 
 	FrameBuffer shadowMap;
@@ -136,7 +143,15 @@ public class Renderer {
 		//texture av Remus tagen 2012-07-16 m�ste ge credit om ska anv�ndas
 		//http://forums.epicgames.com/threads/603122-Remus-high-resolution-skydome-texture-pack
 		skysphereTexture = new Texture(Gdx.files.internal("data/skydome.bmp"));
+		// Load a Texture
+		Texture image = new Texture(Gdx.files.internal("data/grassbb.png"));
+		// create a decal sprite
+		grassbb = Decal.newDecal(32, 32, new TextureRegion(image), true);
 
+		// create a DecalBatch to render them with just once at startup
+//		decalbatch = new DecalBatch();
+//		decalbatch.
+//		grassbb.setPosition(500, 250, 5);
 
 	}
 
@@ -151,6 +166,7 @@ public class Renderer {
 
 		renderSkySphere(app);
 		renderMapChunks(app);
+				
 		if(app.multiplayer){
 			renderMultiplayer(app);
 		}
@@ -180,7 +196,21 @@ public class Renderer {
 
 
 		}
+//		
+//		decalbatch.add(grassbb);
+//		decalbatch.flush();
+		app.particle.start();
+		app.particle.update(0.005f);
+		app.particle.setPosition(50, 30);
+		
+		app.particle.draw(sb);	
+
 		sb.end();
+		
+	
+	
+
+		
 	}
 
 	public void renderSkySphere(Application app){

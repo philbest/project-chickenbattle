@@ -12,12 +12,13 @@ public class Player {
 	public BoundingBox box;
 	public float animTimer;
 	public long lastRegged;
-	public boolean falldeath, initShield;
+	public boolean falldeath, initShield,dead;
 	public Player(String xs){
 		this.name = xs;
 		hp = 10;
 		shields = 5;
 		lastRegged = 0l;
+		dead = false;
 		falldeath = false;
 		initShield = false;
 		posX = 0;

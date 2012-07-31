@@ -100,12 +100,7 @@ public class GameClient{
 						players[response.id].lastRegged = response.lastRegged;
 						players[response.id].initShield = response.initShield;
 						players[response.id].falldeath = response.falldeath;
-						if(players[id].falldeath){
-							dead = true;
-						}
-						if(players[id].hp <= 0){
-							dead = true;
-						}
+						players[response.id].dead = response.dead;			
 						
 						bbCorners[0].set(response.x1, response.y1, response.z1);
 						bbCorners[1].set(response.x2, response.y2, response.z2);

@@ -163,6 +163,7 @@ public class GameServer {
 					toSend.lasthit = player[received.id].lasthit;
 					toSend.lastRegged = player[received.id].lastRegged;
 					toSend.falldeath = player[received.id].falldeath;
+					toSend.dead = player[received.id].dead;
 					toSend.initShield = player[received.id].initShield;
 
 					player[received.id].posX = received.px;
@@ -172,6 +173,7 @@ public class GameServer {
 					player[received.id].dirX = received.dx;
 					player[received.id].dirY = received.dy;
 					player[received.id].dirZ = received.dz;
+					
 
 					bbCorners[0].set(received.x1, received.y1, received.z1);
 					bbCorners[1].set(received.x2, received.y2, received.z2);
@@ -217,6 +219,7 @@ public class GameServer {
 					player[received.id].setBox(bbCorners);
 					player[received.id].falldeath = false;
 					player[received.id].initShield = false;
+					player[received.id].dead = false;
 
 					if(player[received.id].shields < 5){
 						long currTime = System.currentTimeMillis();
@@ -238,7 +241,7 @@ public class GameServer {
 							player[received.id].hp = 10;
 							player[received.id].shields = 5;
 							player[received.id].falldeath = true;
-
+							player[received.id].dead = true;
 							player[received.id].posY = 50;
 							broadcast.type = StaticVariables.falldeath;
 							broadcast.message = player[received.id].name;
@@ -297,6 +300,8 @@ public class GameServer {
 
 										if(compare.hp <= 0){
 											player[b.id].kills += 1;
+											
+											compare.dead = true;
 											compare.deaths += 1;
 											compare.hp = 10;
 											compare.shields = 5;
