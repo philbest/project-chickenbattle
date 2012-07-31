@@ -53,7 +53,7 @@ public class Character {
 		position = new Vector3();
 		box = new BoundingBox();
 		modelMatrix = new Matrix4();
-		model = StaticAnimations.walk.parts.get(4).partMesh;		
+		model = StaticAnimations.walk.parts.get(4).partMesh;	
 	}
 
 	public void updateKill(boolean k1, boolean k2){

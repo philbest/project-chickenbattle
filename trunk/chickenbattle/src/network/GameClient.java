@@ -100,6 +100,13 @@ public class GameClient{
 						players[response.id].lastRegged = response.lastRegged;
 						players[response.id].initShield = response.initShield;
 						players[response.id].falldeath = response.falldeath;
+						players[response.id].currentTeam = response.currentTeam;
+						if(players[id].falldeath){
+							dead = true;
+						}
+						if(players[id].hp <= 0){
+							dead = true;
+						}
 						players[response.id].dead = response.dead;			
 						
 						bbCorners[0].set(response.x1, response.y1, response.z1);
@@ -133,6 +140,11 @@ public class GameClient{
 				else if(object instanceof Hit){
 					Hit response = (Hit)object;
 					players[response.id].lasthit = TimeUtils.millis();
+					if(response.id == id){
+						if(players[response.id].hp == 1){
+							dead = true;
+						}
+					}
 				}
 				else if(object instanceof AddServer){
 					AddServer response = (AddServer)object;
@@ -195,9 +207,10 @@ public class GameClient{
 		}
 	}
 
-	public void AddPlayer(String name){
+	public void AddPlayer(String name, int t){
 		AddPlayer player = new AddPlayer();
 		player.name = name;
+		player.team = t;
 		client.sendTCP(player);
 	}
 	public void Disconnect(){
