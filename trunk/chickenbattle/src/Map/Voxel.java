@@ -1,5 +1,7 @@
 package Map;
 
+import com.badlogic.gdx.math.MathUtils;
+
 import Spelet.Weapon;
 
 public class Voxel {
@@ -8,16 +10,20 @@ public class Voxel {
 	public static final int grass = 1;
 	public static final int rock = 2;
 
-	public static final int DEFAULT_DURABILITY = 2;
+	public int defaultDurability = 2;
 
 	public int id;
 	public int durability;
+	public short random;
 	public Voxel(int i) {
 		id = i;
-		if (id == grass)
+		if (id == grass) {
 			durability = 1;
-		else if (id == rock)
+		} else if (id == rock) {
 			durability = 3;
+		}
+		random = (short) MathUtils.random(1000);
+		defaultDurability = durability;
 	}
 	public void hit(int bullet) {
 		if (bullet == Weapon.bullet_ak) {

@@ -193,8 +193,7 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
 		fa.add(0+x); // x1
 		fa.add(1+y); // y1
 		fa.add(1+z); // z1
@@ -213,8 +212,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(1+x); // x1
 		fa.add(1+y); // y1
 		fa.add(1+z); // z1
@@ -233,8 +232,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(1+x); // x1
 		fa.add(1+y); // y1
 		fa.add(0+z); // z1
@@ -264,8 +263,6 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
 		fa.add(0+x); // x1
 		fa.add(1+y); // y1
 		fa.add(0+z); // z1
@@ -284,20 +281,20 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(0+x); // x1
 		fa.add(1+y); // y1
 		fa.add(1+z); // z1
 		fa.add(0); // Normal X
 		fa.add(1); // Normal Y
 		fa.add(0); // Normal Z
-		fa.add(type/Voxel.maxTypes);
+		fa.add((type-1)/Voxel.maxTypes);
 		fa.add(2f/3f);
+		
 		fa.add(occlusion); // Occlusionvalue
 		
-		if(type == Voxel.grass){
-			
+		if(type == Voxel.grass && map[x][y][z].random < 50){
 			ga.add(0+x); // x1
 			ga.add(1+y); // y1
 			ga.add(0+z); // z1
@@ -372,8 +369,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(0+x);
 		fa.add(0+y);
 		fa.add(0+z);
@@ -392,8 +389,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(1+x);
 		fa.add(0+y);
 		fa.add(0+z);
@@ -412,8 +409,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(1+x);
 		fa.add(0+y);
 		fa.add(1+z);
@@ -442,8 +439,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(0+x);
 		fa.add(0+y);
 		fa.add(1+z);
@@ -462,8 +459,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(0+x);
 		fa.add(0+y);
 		fa.add(0+z);
@@ -485,8 +482,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(0+x);
 		fa.add(0+y);
 		fa.add(0+z);
@@ -505,8 +502,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(0+x);
 		fa.add(0+y);
 		fa.add(1+z);
@@ -525,8 +522,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(0+x);
 		fa.add(1+y);
 		fa.add(1+z);
@@ -555,8 +552,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(0+x);
 		fa.add(1+y);
 		fa.add(0+z);
@@ -575,8 +572,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(0+x);
 		fa.add(0+y);
 		fa.add(0+z);
@@ -598,8 +595,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(1+x); // x1
 		fa.add(0+y); // y1
 		fa.add(1+z); // z1
@@ -618,8 +615,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(1+x); // x1
 		fa.add(0+y); // y1
 		fa.add(0+z); // z1
@@ -638,8 +635,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(1+x); // x1
 		fa.add(1+y); // y1
 		fa.add(0+z); // z1
@@ -668,8 +665,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(1+x); // x1
 		fa.add(1+y); // y1
 		fa.add(1+z); // z1
@@ -688,8 +685,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(1+x); // x1
 		fa.add(0+y); // y1
 		fa.add(1+z); // z1
@@ -710,8 +707,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(0+x); // x1
 		fa.add(0+y); // y1
 		fa.add(1+z);
@@ -730,8 +727,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(1+x); // x2
 		fa.add(0+y); // y2
 		fa.add(1+z);
@@ -750,8 +747,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(1f+x); // x3
 		fa.add(1f+y); // y2
 		fa.add(1f+z);
@@ -780,8 +777,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(0+x); // x4
 		fa.add(1+y); // y4
 		fa.add(1+z);
@@ -800,8 +797,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(0+x); // x1
 		fa.add(0+y); // y1
 		fa.add(1+z);
@@ -822,8 +819,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(1+x);
 		fa.add(0+y);
 		fa.add(0+z);
@@ -842,8 +839,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(0+x);
 		fa.add(0+y);
 		fa.add(0+z);
@@ -862,8 +859,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(0+x);
 		fa.add(1+y);
 		fa.add(0+z);
@@ -893,8 +890,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(1+x);
 		fa.add(1+y);
 		fa.add(0+z);
@@ -913,8 +910,8 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-		//if (occlusion != 0)
-		//if (occlusion != 0)
+
+
 		fa.add(1+x);
 		fa.add(0+y);
 		fa.add(0+z);

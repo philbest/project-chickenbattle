@@ -19,7 +19,7 @@ public class SoundManager {
 		weaponSounds.put(Weapon.emp, Gdx.audio.newSound(Gdx.files.internal("data/Sound/Weapons/emp.mp3")));
 	}
 	public static void playWeaponSound(int sid) {
-		//if (weaponSounds.containsKey(sid))
-			//weaponSounds.get(sid).play();
+		if (weaponSounds.containsKey(sid))
+			weaponSounds.get(sid).play();
 	}
 }
