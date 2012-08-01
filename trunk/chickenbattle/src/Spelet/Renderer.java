@@ -422,8 +422,8 @@ public class Renderer {
 			Gdx.gl20.glEnable(GL20.GL_BLEND);
 			
 			grassShader.begin();
-//			grassShader.setUniform4fv("scene_light", app.light.color, 0, 4);
-//			grassShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
+			grassShader.setUniform4fv("scene_light", app.light.color, 0, 4);
+			grassShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
 			grassTexture.bind(0);
 			for (int i = 0; i < app.map.chunks.size;i++) {
 				if (app.map.chunks.get(i).grassMesh != null && app.map.chunks.get(i).grassMesh.getNumVertices() > 0 && app.cam.frustum.boundsInFrustum(app.map.chunks.get(i).bounds)) {
@@ -436,13 +436,13 @@ public class Renderer {
 					modelViewMatrix.set(app.cam.view);
 					modelViewMatrix.mul(cubeModel);
 					normalMatrix.set(modelViewMatrix);
-//					grassShader.setUniformMatrix("normalMatrix", normalMatrix);
-//					grassShader.setUniformMatrix("u_modelViewMatrix", modelViewMatrix);
+					grassShader.setUniformMatrix("normalMatrix", normalMatrix);
+					grassShader.setUniformMatrix("u_modelViewMatrix", modelViewMatrix);
 					grassShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
-//					grassShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
-//					grassShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
-//					grassShader.setUniformf("material_shininess", 0.5f);
-//					grassShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
+					grassShader.setUniformf("material_diffuse", 0.75f,0.75f,0.75f, 1f);
+					grassShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
+					grassShader.setUniformf("material_shininess", 0.5f);
+					grassShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
 
 
 					//simpleShader.setUniformf("dir_light",0,0,0);
