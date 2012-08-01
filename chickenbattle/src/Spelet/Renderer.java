@@ -429,26 +429,14 @@ public class Renderer {
 			//System.out.println("Vertices: " + vertices);
 			simpleShader.end();
 		} else {
-		    //Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
             cubeTexture.bind(0);
-
-            //Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE1);
             crackTexture.bind(1);
 			simpleShader.begin();
 			simpleShader.setUniform4fv("scene_light", app.light.color, 0, 4);
 			simpleShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
-			//		Vector3 temp = new Vector3();
-			//		for (int i = 0; i < app.map.chunks.size; i++) {
-			//			Chunk c = app.map.chunks.get(i);
-			//			temp.set(c.x,c.y,c.z);
-			//			temp.sub(app.cam.position);
-			//			c.distance = temp.len();
-			//		}
-			//app.map.chunks.sort();
 			int vertices = 0;
 			for (int i = 0; i < app.map.chunks.size;i++) {
 				if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0 && app.cam.frustum.boundsInFrustum(app.map.chunks.get(i).bounds)) {
-					//if (app.map.chunks[x][y][z].chunkMesh != null && app.map.chunks[x][y][z].chunkMesh.getNumVertices() > 0) {
 					simpleShader.setUniformi("s_texture", 0);
 					simpleShader.setUniformi("s_crackTexture", 1);
 					cubeModel.setToTranslation(app.map.chunks.get(i).x*Map.chunkSize,app.map.chunks.get(i).y*Map.chunkSize,app.map.chunks.get(i).z*Map.chunkSize);
@@ -483,7 +471,6 @@ public class Renderer {
 			grassTexture.bind(0);
 			for (int i = 0; i < app.map.chunks.size;i++) {
 				if (app.map.chunks.get(i).grassMesh != null && app.map.chunks.get(i).grassMesh.getNumVertices() > 0 && app.cam.frustum.boundsInFrustum(app.map.chunks.get(i).bounds)) {
-					//if (app.map.chunks[x][y][z].chunkMesh != null && app.map.chunks[x][y][z].chunkMesh.getNumVertices() > 0) {
 					simpleShader.setUniformi("s_texture", 0);
 					cubeModel.setToTranslation(app.map.chunks.get(i).x*Map.chunkSize,app.map.chunks.get(i).y*Map.chunkSize,app.map.chunks.get(i).z*Map.chunkSize);
 

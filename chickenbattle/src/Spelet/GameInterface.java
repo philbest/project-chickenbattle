@@ -100,12 +100,13 @@ public class GameInterface {
 		healthsprites[8] = healthbar.createSprite("9");
 		healthsprites[9] = healthbar.createSprite("10");
 		currentHealth = healthsprites[9];
-		weaponsprites = new Sprite[5];
+		weaponsprites = new Sprite[6];
 		weaponsprites[0] = weapons.createSprite("usp");
 		weaponsprites[1] = weapons.createSprite("ak");
 		weaponsprites[2] = weapons.createSprite("block");
 		weaponsprites[3] = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/weapons/emp.png")));
 		weaponsprites[4] = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/weapons/sniper.png")));
+		weaponsprites[5] = new Sprite(new Texture(Gdx.files.internal("data/gameinterface/weapons/sniper.png")));
 		shieldsprites = new Sprite[6];
 		shieldsprites[0] = shieldbar.createSprite("0");
 		shieldsprites[1] = shieldbar.createSprite("1");
