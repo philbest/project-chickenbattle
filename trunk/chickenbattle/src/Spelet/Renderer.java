@@ -51,7 +51,7 @@ public class Renderer {
 	Matrix4 modelViewMatrix = new Matrix4();
 	Matrix3 normalMatrix = new Matrix3();
 
-	Texture cubeTexture;
+	Texture cubeTexture,crackTexture;
 	Texture lightTexture;
 	Texture skysphereTexture;
 	Texture grassTexture;
@@ -143,6 +143,7 @@ public class Renderer {
 					+ skysphereShader.getLog());
 
 		cubeTexture = new Texture(Gdx.files.internal("data/blockmap.png"));
+		crackTexture = new Texture(Gdx.files.internal("data/cracks.png"));
 		lightTexture = new Texture(Gdx.files.internal("data/light.png"));
 		grassTexture = new Texture(Gdx.files.internal("data/grassbb.png"));
 		blood = new Texture(Gdx.files.internal("data/blood.png"));
@@ -336,7 +337,8 @@ public class Renderer {
 			app.cam.direction.set(lightCam.direction);
 			app.cam.up.set(lightCam.up);
 			app.cam.update();
-			cubeTexture.bind(0);
+
+
 			simpleShader.begin();
 			simpleShader.setUniform4fv("scene_light", app.light.color, 0, 4);
 			simpleShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
@@ -378,7 +380,11 @@ public class Renderer {
 			//System.out.println("Vertices: " + vertices);
 			simpleShader.end();
 		} else {
-			cubeTexture.bind(0);
+		    //Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
+            cubeTexture.bind(0);
+
+            //Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE1);
+            crackTexture.bind(1);
 			simpleShader.begin();
 			simpleShader.setUniform4fv("scene_light", app.light.color, 0, 4);
 			simpleShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
@@ -395,6 +401,7 @@ public class Renderer {
 				if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0 && app.cam.frustum.boundsInFrustum(app.map.chunks.get(i).bounds)) {
 					//if (app.map.chunks[x][y][z].chunkMesh != null && app.map.chunks[x][y][z].chunkMesh.getNumVertices() > 0) {
 					simpleShader.setUniformi("s_texture", 0);
+					simpleShader.setUniformi("s_crackTexture", 1);
 					cubeModel.setToTranslation(app.map.chunks.get(i).x*Map.chunkSize,app.map.chunks.get(i).y*Map.chunkSize,app.map.chunks.get(i).z*Map.chunkSize);
 
 					modelViewProjectionMatrix.set(app.cam.combined);
