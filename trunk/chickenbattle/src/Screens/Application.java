@@ -244,6 +244,10 @@ public class Application extends Screen implements InputProcessor{
 			ch.weapon = ch.inventory.get(4).weaponID;
 			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 			gi.swapWeapon();
+		} else if (Input.Keys.NUM_6 == arg0) {
+			ch.weapon = ch.inventory.get(5).weaponID;
+			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
+			gi.swapWeapon();
 		} else if (Input.Keys.NUM_9 == arg0){
 			ch.setPos(map.chunkSize*6/2,map.chunkSize*2/2,map.chunkSize*6/2);
 		}
@@ -382,25 +386,67 @@ public class Application extends Screen implements InputProcessor{
 							}
 						}
 					} else {
-						if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-							for (int i = 0; i < map.chunks.size; i++){
-								Chunk c = map.chunks.get(i);
-								if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-									//TODO Different bullets - different damage?
+						if (ch.inventory.get(ch.weapon).bulletType == Weapon.bullet_rocket) {
+							int radius = 5;
+							Vector3 vec = new Vector3(pointX, pointY, pointZ);
+							Vector3 vec2 = new Vector3();
+							for (int y = pointY-radius; y < pointY+radius; y++) {
+								for (int x = pointX-radius; x < pointX+radius; x++) {
+									for (int z = pointZ-radius; z < pointZ+radius; z++) {
+										vec2.set(x,y,z);
+										float distance = vec2.dst(vec);
+										if (distance < radius) {
+											pointX = x;
+											pointY = y;
+											pointZ = z;
+											if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
+												for (int i = 0; i < map.chunks.size; i++){
+													Chunk c = map.chunks.get(i);
+													if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
+														int structuralDamage = c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].damageDone(ch.inventory.get(ch.weapon).bulletType);
 
-									int structuralDamage = c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].damageDone(ch.inventory.get(ch.weapon).bulletType);
+														if(multiplayer){
+															client.damageChunk(i, pointX, pointY, pointZ, structuralDamage);
+														} else {
+															c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].hit(ch.inventory.get(ch.weapon).bulletType);
+															if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].isDead())
+																c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.nothing;
+															if (!chunkstorebuild.contains(c,false))
+																this.chunkstorebuild.add(c);
 
-									if(multiplayer){
-										client.damageChunk(i, pointX, pointY, pointZ, structuralDamage);
-									} else {
-										c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].hit(ch.inventory.get(ch.weapon).bulletType);
-										if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].isDead())
-											c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.nothing;
-										c.rebuildChunk();
-										break;
+															break;
+														}
+													}
+
+												}
+											}
+										}
 									}
 								}
+							}
+							for (Chunk c : chunkstorebuild) 
+								c.rebuildChunk();
+						} else {
+							if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
+								for (int i = 0; i < map.chunks.size; i++){
+									Chunk c = map.chunks.get(i);
+									if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
+										//TODO Different bullets - different damage?
 
+										int structuralDamage = c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].damageDone(ch.inventory.get(ch.weapon).bulletType);
+
+										if(multiplayer){
+											client.damageChunk(i, pointX, pointY, pointZ, structuralDamage);
+										} else {
+											c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].hit(ch.inventory.get(ch.weapon).bulletType);
+											if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].isDead())
+												c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.nothing;
+											c.rebuildChunk();
+											break;
+										}
+									}
+
+								}
 							}
 						}
 					}

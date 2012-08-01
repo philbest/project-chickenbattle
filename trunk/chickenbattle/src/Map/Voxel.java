@@ -34,6 +34,8 @@ public class Voxel {
 			durability-=2;
 		} else if (bullet == Weapon.bullet_emp) {
 
+		} else if (bullet == Weapon.bullet_rocket) {
+			durability = 0;
 		}
 	}
 	public int damageDone(int bullet) {

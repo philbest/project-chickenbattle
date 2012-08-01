@@ -16,14 +16,14 @@ public class Weapon {
 	public static final int block = 2;
 	public static final int emp = 3;
 	public static final int sniper = 4;
-
+	public static final int rocketlauncher = 5;
 	// Bullet types
 	public static final int bullet_gun = 1000;
 	public static final int bullet_ak = 1001;
 	public static final int bullet_block = 1002;
 	public static final int bullet_emp = 1003;
 	public static final int bullet_sniper = 1004;
-
+	public static final int bullet_rocket = 1005;
 	public Sprite wpn;
 	public Sprite[] gunSpr;
 	public Sprite[] akSpr;
@@ -162,9 +162,7 @@ public class Weapon {
 			magSize = 1;
 			cooldown = 1000;
 			bulletType = Weapon.bullet_emp;
-		}
-		else if (weaponID == sniper) {
-			System.out.println("sniper");
+		} else if (weaponID == sniper) {
 			crosshair = new Sprite(new Texture(Gdx.files.internal("data/crosshairs/snipercrosshair.png")));
 			wpn = sniperSpr[0];
 			maxBullets = 16;
@@ -173,6 +171,15 @@ public class Weapon {
 			magSize = 4;
 			cooldown = 1500;
 			bulletType = Weapon.bullet_sniper;
+		} else if (weaponID == rocketlauncher) {
+			crosshair = new Sprite(new Texture(Gdx.files.internal("data/crosshairs/snipercrosshair.png")));
+			wpn = sniperSpr[0];
+			maxBullets = 16;
+			currentBullets = 1;
+			magBullets = 16;
+			magSize = 1;
+			cooldown = 1500;
+			bulletType = Weapon.bullet_rocket;
 		}
 	}
 	public void restart() {
