@@ -66,9 +66,6 @@ public class Renderer {
 	Sprite score;
 
 	GroupStrategy strategy;
-
-	Array<DecalSprite> billboards;
-
 	BitmapFont font;
 
 	FrameBuffer shadowMap;

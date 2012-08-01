@@ -1,7 +1,5 @@
 package Map;
 
-
-import Spelet.DecalSprite;
 import Spelet.Heightmap;
 import Spelet.HeightmapUtils;
 
@@ -17,13 +15,12 @@ public class Map {
 	public static Heightmap heightmap;
 	public Array<Chunk> chunks;
 	public Array<Chunk> chunksToRebuild;
-	public Array<DecalSprite> billboards;
+
 	public Map() {
 		
 		heightmap = HeightmapUtils.load(Gdx.files.internal("data/noise2.png"));
 		chunks = new Array<Chunk>();
 		chunksToRebuild = new Array<Chunk>();
-		billboards = new Array<DecalSprite>();
 		
 		buildChunks();
 	}
@@ -41,10 +38,6 @@ public class Map {
 			chunksToRebuild.get(i).rebuildChunk();
 		}
 		
-		
-		for(int i = 0; i < chunks.size; i++){
-			billboards.addAll(chunks.get(i).grassboards);
-		}
 	}
 
 	public void update() {
