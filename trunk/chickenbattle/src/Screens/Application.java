@@ -197,7 +197,7 @@ public class Application extends Screen implements InputProcessor{
 				Voxel vox = c.map[bd.x-c.x*Map.chunkSize][bd.y-c.y*Map.chunkSize][bd.z-c.z*Map.chunkSize];
 				vox.durability -= bd.damage;
 
-				Gdx.app.log("block dura iz ", Integer.toString(vox.durability));
+				Gdx.app.log("block dura iz ", Float.toString(vox.durability));
 
 				if(vox.durability <= 0)
 				{

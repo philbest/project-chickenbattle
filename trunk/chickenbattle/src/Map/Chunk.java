@@ -171,7 +171,8 @@ public class Chunk {
 					VertexAttributes.position, 
 					VertexAttributes.normal,
 					VertexAttributes.textureCoords,
-					VertexAttributes.occlusion);
+					VertexAttributes.occlusion,
+					VertexAttributes.crackCoords);
 			chunkMesh.setVertices(fa.items);
 			chunkMesh.calculateBoundingBox(bounds);
 			Matrix4 calcMat = StaticVariables.acquireCalcMat();
@@ -193,7 +194,7 @@ public class Chunk {
 			occlusion++;
 		}
 		occlusion/=2;
-
+		float cracks = ((float)((int)((map[x][y][z].durability / map[x][y][z].defaultDurability)*4)))/4f;
 		fa.add(0+x); // x1
 		fa.add(1+y); // y1
 		fa.add(1+z); // z1
@@ -203,7 +204,9 @@ public class Chunk {
 		fa.add((type-1)/Voxel.maxTypes);
 		fa.add(2f/3f);
 		fa.add(occlusion); // Occlusionvalue
-
+		fa.add(0); // CrackTexture
+		fa.add(cracks+0.25f); // CrackTexture
+		
 		occlusion = 0;
 		if (x+1 >= Map.chunkSize || y+1 >= Map.chunkSize || map[x+1][y+1][z].id == Voxel.nothing) {
 			occlusion++;
@@ -223,6 +226,8 @@ public class Chunk {
 		fa.add(type/Voxel.maxTypes);
 		fa.add(2f/3f);
 		fa.add(occlusion); // Occlusionvalue
+		fa.add(1); // CrackTexture
+		fa.add(cracks+0.25f); // CrackTexture
 
 		occlusion = 0;
 		if (x+1 >= Map.chunkSize || y+1 >= Map.chunkSize || map[x+1][y+1][z].id == Voxel.nothing) {
@@ -243,7 +248,8 @@ public class Chunk {
 		fa.add(type/Voxel.maxTypes);
 		fa.add(1f/3f);
 		fa.add(occlusion); // Occlusionvalue
-
+		fa.add(1); // CrackTexture
+		fa.add(cracks); // CrackTexture
 
 		fa.add(1+x); // x1
 		fa.add(1+y); // y1
@@ -254,6 +260,8 @@ public class Chunk {
 		fa.add(type/Voxel.maxTypes);
 		fa.add(1f/3f);
 		fa.add(occlusion); // Occlusionvalue
+		fa.add(1); // CrackTexture
+		fa.add(cracks); // CrackTexture
 
 		occlusion = 0;
 		if (y+1 >= Map.chunkSize || z-1 < 0 || map[x][y+1][z-1].id == Voxel.nothing) {
@@ -272,6 +280,8 @@ public class Chunk {
 		fa.add((type-1)/Voxel.maxTypes);
 		fa.add(1f/3f);
 		fa.add(occlusion); // Occlusionvalue
+		fa.add(0); // CrackTexture
+		fa.add(cracks); // CrackTexture
 
 		occlusion = 0;
 		if (x-1 < 0 || y+1 >= Map.chunkSize || map[x-1][y+1][z].id == Voxel.nothing) {
@@ -291,7 +301,8 @@ public class Chunk {
 		fa.add(0); // Normal Z
 		fa.add((type-1)/Voxel.maxTypes);
 		fa.add(2f/3f);
-		
+		fa.add(0); // CrackTexture
+		fa.add(cracks+0.25f); // CrackTexture
 		fa.add(occlusion); // Occlusionvalue
 		
 		if(type == Voxel.grass && map[x][y][z].random < 50){
@@ -431,7 +442,7 @@ public class Chunk {
 		}
 		occlusion/=2;
 
-
+		float cracks = ((float)((int)((map[x][y][z].durability / map[x][y][z].defaultDurability)*4)))/4f;
 		fa.add(0+x);
 		fa.add(0+y);
 		fa.add(0+z);
@@ -441,6 +452,8 @@ public class Chunk {
 		fa.add((type-1)/Voxel.maxTypes);
 		fa.add(1);
 		fa.add(occlusion); // Occlusionvalue
+		fa.add(0); // CrackTexture
+		fa.add(cracks+0.25f); // CrackTexture
 
 		occlusion = 0;
 		if (z-1 < 0 || y-1 < 0 || map[x][y-1][z-1].id == Voxel.nothing) {
