@@ -158,7 +158,6 @@ public class GameClient{
 					try {
 						listsafe.acquire();
 					} catch (InterruptedException ignored){}
-					Gdx.app.log("block dmgd ok", Integer.toString(damage.damage));
 					blockdamage.add(damage);
 					listsafe.release();
 				}
