@@ -9,9 +9,11 @@ import network.Player;
 
 import Map.Map;
 import Screens.Application;
+import Screens.Lobby;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -63,8 +65,10 @@ public class Renderer {
 	ShaderProgram grassShader;
 	String playerscore;
 	SpriteBatch sb;
-	Sprite score;
+	Sprite score, teamscore;
 
+	DecalBatch decalbatch;
+	Decal grassbb;
 	GroupStrategy strategy;
 	BitmapFont font;
 
@@ -97,7 +101,8 @@ public class Renderer {
 	public Renderer(Application app) {
 		initiateShadows();
 
-		score = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/lobbybg.png")));
+		score = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/score.png")));
+		teamscore = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/teamscore.png")));
 		red = new Texture(Gdx.files.internal("data/red.png"));
 		blue = new Texture(Gdx.files.internal("data/blue.png"));
 		blood = new Texture(Gdx.files.internal("data/blood.png"));
@@ -116,28 +121,31 @@ public class Renderer {
 		}
 
 		simpleShader = new ShaderProgram(Gdx.files.internal(
-		"data/shaders/simple.vert").readString(), Gdx.files.internal(
-		"data/shaders/simple.frag").readString());
+				"data/shaders/simple.vert").readString(), Gdx.files.internal(
+						"data/shaders/simple.frag").readString());
 		if (!simpleShader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile simple shader: "
 					+ simpleShader.getLog());
-
 		grassShader = new ShaderProgram(Gdx.files.internal("data/shaders/grassShader.vert").readString(), Gdx.files
 				.internal("data/shaders/grassShader.frag").readString());
 		if (!grassShader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile shadow gen shader: " + shadowGenShader.getLog());
-		
-
+		charShader = new ShaderProgram(Gdx.files.internal(
+				"data/shaders/simpleChar.vert").readString(), Gdx.files.internal(
+						"data/shaders/simpleChar.frag").readString());
+		if (!simpleShader.isCompiled())
+			throw new GdxRuntimeException("Couldn't compile simple shader: "
+					+ simpleShader.getLog());
 		particleShader = new ShaderProgram(Gdx.files.internal(
-		"data/shaders/particleShader.vert").readString(), Gdx.files.internal(
-		"data/shaders/particleShader.frag").readString());
+				"data/shaders/particleShader.vert").readString(), Gdx.files.internal(
+						"data/shaders/particleShader.frag").readString());
 		if (!particleShader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile shader: "
 					+ particleShader.getLog());
 
 		skysphereShader = new ShaderProgram(Gdx.files.internal(
-		"data/shaders/skysphereShader.vert").readString(), Gdx.files.internal(
-		"data/shaders/skysphereShader.frag").readString());
+				"data/shaders/skysphereShader.vert").readString(), Gdx.files.internal(
+						"data/shaders/skysphereShader.frag").readString());
 		if (!skysphereShader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile shader: "
 					+ skysphereShader.getLog());
@@ -151,6 +159,15 @@ public class Renderer {
 		//http://forums.epicgames.com/threads/603122-Remus-high-resolution-skydome-texture-pack
 		skysphereTexture = new Texture(Gdx.files.internal("data/skydome.bmp"));
 		// Load a Texture
+		Texture image = new Texture(Gdx.files.internal("data/grassbb.png"));
+		// create a decal sprite
+		grassbb = Decal.newDecal(32, 32, new TextureRegion(image), true);
+
+		// create a DecalBatch to render them with just once at startup
+		//		decalbatch = new DecalBatch();
+		//		decalbatch.
+		//		grassbb.setPosition(500, 250, 5);
+
 	}
 
 	public void render(Application app) {
@@ -178,9 +195,33 @@ public class Renderer {
 		sb.begin();
 		app.ch.inventory.get(app.ch.weapon).render(sb);
 		app.gi.render(sb);
+		if(app.scoreboard && (((Lobby) app.main.screens.get(Main.LOBBY)).gs.mode == StaticVariables.teamServer)){
+			teamscore.setPosition(Gdx.graphics.getWidth()/2-score.getWidth()/2, 100);
+			teamscore.draw(sb,0.80f);
+			int red = 0, blue = 0;
+			for(int i =0; i < app.players.length; i++){	
+				Player x = app.players[i];
+				if(x != null && x.currentTeam == StaticVariables.teamBlue){
+					playerscore = x.name +" kills : " +x.kills + ". Deaths " + x.deaths + ". Ping: " + app.ping;
+					float textWidth = font.getBounds(playerscore).width;
+					float textHeight = font.getBounds(playerscore).height;
+					font.setColor(Color.BLUE);
+					font.draw(sb, playerscore, Gdx.graphics.getWidth()/2 - textWidth/2 + 140, 400 - (blue*20) + textHeight / 2);
+					blue++;
+				}
+				else if(x != null && x.currentTeam == StaticVariables.teamRed){
+					playerscore = x.name +" kills : " +x.kills + ". Deaths " + x.deaths + ". Ping: " + app.ping;
+					float textWidth = font.getBounds(playerscore).width;
+					float textHeight = font.getBounds(playerscore).height;
+					font.setColor(Color.RED);
+					font.draw(sb, playerscore, Gdx.graphics.getWidth()/2 - textWidth/2 - 140, 400 - (red*20) + textHeight / 2);
+					red++;
+				}
+			}
 
-		if(app.scoreboard){
-			score.setPosition(300, 100);
+		}
+		else if(app.scoreboard && (((Lobby) app.main.screens.get(Main.LOBBY)).gs.mode == StaticVariables.freeforall)){
+			score.setPosition(Gdx.graphics.getWidth()/2-score.getWidth()/2, 100);
 			score.draw(sb,0.80f);
 			for(int i =0; i < app.players.length; i++){	
 				Player x = app.players[i];
@@ -192,12 +233,16 @@ public class Renderer {
 				}
 			}
 		}
+
+		//		
+		//		decalbatch.add(grassbb);
+		//		decalbatch.flush();
+
 		app.particle.start();
 		app.particle.update(0.005f);
 		app.particle.setPosition(50, 30);
-
 		app.particle.draw(sb);	
-		sb.end();		
+		sb.end();	
 	}
 
 	public void renderSkySphere(Application app){
@@ -232,7 +277,10 @@ public class Renderer {
 						else if(app.players[i].currentTeam == StaticVariables.teamRed){
 							StaticAnimations.walk.parts.get(4).setTexture(red);
 						}
-						
+						else if(app.players[i].currentTeam == StaticVariables.allTeam){
+							StaticAnimations.walk.parts.get(4).setTexture(normal);
+						}
+
 						if(app.players[i].hit){
 							StaticAnimations.walk.parts.get(6).setTexture(blood);
 							app.bloodTimer = 1000;
@@ -240,13 +288,13 @@ public class Renderer {
 						else if(app.bloodTimer < 0){
 							StaticAnimations.walk.parts.get(6).setTexture(normal);
 						}
-						
+
 					}
 					catch(NullPointerException e){
 						e.getStackTrace();
 						System.out.println("null");
 					}
-				
+
 					charShader.setUniform4fv("scene_light", app.light.color, 0, 4);
 					charShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
 					charShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);

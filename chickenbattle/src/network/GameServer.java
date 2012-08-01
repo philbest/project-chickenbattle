@@ -48,12 +48,12 @@ public class GameServer {
 	String motd;
 	int online;
 	int playercap;
-
+	int serverMode;
 	int ids;
 	boolean hit;
 	public static final float FALL_DEATH_LIMIT = -50f;
 
-	public GameServer (String m) throws IOException {
+	public GameServer (String m, int gamemode) throws IOException {
 		server = new Server();
 		broadcast = new Message();
 		player = new Player[10];
@@ -74,18 +74,19 @@ public class GameServer {
 		startx = 0;
 		starty = 0;
 		startz = 0;
-
 		lobbyconnection = new Client();
 		lobbyconnection.start();
 		Packet.register(lobbyconnection);
 		//lobbyconnection.connect(5000, "192.168.0.101", 50000, 50002);
-		lobbyconnection.connect(5000, "129.16.21.56", 50000, 50002);
-
+		//lobbyconnection.connect(5000, "129.16.21.56", 50000, 50002);
+		lobbyconnection.connect(5000, "129.16.190.170", 50000, 50002);
 		this.motd =m;
 		this.online =0;
 		this.playercap = player.length;
+		serverMode = gamemode;
 
 		AddServer addS = new AddServer();
+		addS.mode = gamemode;
 		addS.motd =motd;
 		addS.online =online;
 		addS.playercap =playercap;
@@ -278,7 +279,7 @@ public class GameServer {
 						for(int i=0; i < player.length; i++){
 							Player compare = player[i];
 							if(compare != null && i != b.id){
-								if(compare.box.contains(point) && compare.currentTeam != player[b.id].currentTeam){
+								if(compare.box.contains(point) && (compare.currentTeam != player[b.id].currentTeam || serverMode == 6)){
 									hittoSend.id = i;
 									if(b.type == Weapon.bullet_emp){
 										compare.shields = 0;
@@ -370,7 +371,7 @@ public class GameServer {
 	public static void main (String[] args) throws IOException {
 		try
 		{
-			new GameServer("Server hosted as standalone");
+			new GameServer("Server hosted as standalone", 5);
 			System.out.println("Game server is online!");
 		}
 		catch(Exception e)

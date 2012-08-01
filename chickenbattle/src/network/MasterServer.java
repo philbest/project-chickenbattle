@@ -38,6 +38,7 @@ public class MasterServer {
 					toAdd.con = connection;
 					toAdd.ip = rec.ip;
 					toAdd.motd = rec.motd;
+					toAdd.mode = rec.mode;
 					toAdd.online = rec.online;
 					toAdd.playercap = rec.playercap;		
 					servers.add(toAdd);
@@ -57,6 +58,7 @@ public class MasterServer {
 						ServerInfo server = servers.get(i);
 						toSend.ip = server.ip;
 						toSend.motd = server.motd;
+						toSend.mode = server.mode;
 						toSend.online = server.online;
 						toSend.playercap = server.playercap;
 						connection.sendTCP(toSend);
@@ -81,6 +83,7 @@ public class MasterServer {
 		Connection con;
 		public String ip;
 		public String motd;
+		public int mode;
 		public int playercap;
 		public int online;
 		public ServerInfo(){		

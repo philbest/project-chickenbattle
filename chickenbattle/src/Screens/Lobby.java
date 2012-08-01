@@ -9,6 +9,7 @@ import network.GameServer;
 import network.Player;
 import network.Packet.AddServer;
 import Spelet.Main;
+import Spelet.StaticVariables;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -28,6 +29,8 @@ public class Lobby extends Screen{
 	public Sprite join, exit, crosshair,host;
 	public Sprite currRedB, currBlueB;
 	public Sprite[] buttons;
+	public Sprite[] ffa;
+	public Sprite currffa;
 	public Sprite name;
 	public Sprite serverbg;
 	public SpriteBatch sb;
@@ -43,14 +46,18 @@ public class Lobby extends Screen{
 	int oldY;
 	int xpos;
 	int ypos;
+	int servermode;
 	float dy;
-	boolean write;
+	boolean write, changeMode;
 	float textWidth, textHeight;
 	public Main main;
 	int numPlayers;
 	int selectedServer;
+	public AddServer gs;
 	public Lobby(Main m) {
 		selectedServer = 0;
+		servermode = 6;
+		changeMode = false;
 		dy = 0;
 		main = m;
 		font = new BitmapFont();
@@ -62,6 +69,10 @@ public class Lobby extends Screen{
 		buttons[1] = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/redbut.png")));
 		buttons[2] = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/bluepress.png")));
 		buttons[3] = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/redpress.png")));
+		ffa = new Sprite[2];
+		ffa[0] = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/ffa.png")));
+		ffa[1] = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/ffa1.png")));
+		currffa = ffa[1];
 		currBlueB = buttons[2];
 		currRedB = buttons[1];
 		team = 0;
@@ -73,7 +84,7 @@ public class Lobby extends Screen{
 		exit = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/exit.png")));
 		name = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/name.png")));
 		host = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/host.png")));
-		MasterServerIP = "129.16.21.56";
+		MasterServerIP = "129.16.190.170";
 		playerName = "anon";
 		tempName = ""; 
 		write = false;
@@ -135,6 +146,7 @@ public class Lobby extends Screen{
 			main.setScreen(Main.MAINMENU);
 			main.client.Terminate();			
 		} else if (serverlist != null && join.getBoundingRectangle().contains(xpos,ypos)) {
+			gs = serverlist.get(selectedServer);
 			main.client.Disconnect();
 			System.out.println("connecting to " + MasterServerIP);
 			main.client.Connect(serverlist.get(selectedServer).ip,54555, 54778);
@@ -144,12 +156,20 @@ public class Lobby extends Screen{
 		} else if (name.getBoundingRectangle().contains(xpos,ypos)){
 			write = true;
 		} else if(host.getBoundingRectangle().contains(xpos,ypos)) {
-
+			int temp;
+			if(currffa == ffa[0]){
+				temp = 6;
+			}
+			else{
+				temp = 5;
+			}
 			try {
-				new GameServer("Hosted from lobby");
+				new GameServer("Hosted from lobby", temp);
 			} catch (IOException e) {
 				System.out.println("Error hosting server");
 			}
+			main.client.getServers();
+			serverlist = main.client.serverlist;
 
 		} else if(currBlueB.getBoundingRectangle().contains(xpos,ypos)) {
 			if(currBlueB == buttons[0]){
@@ -157,7 +177,7 @@ public class Lobby extends Screen{
 				currRedB = buttons[1];
 				team = 0;
 			}
-		
+
 
 		} else if(currRedB.getBoundingRectangle().contains(xpos,ypos)) {
 			if(currRedB == buttons[1]){
@@ -165,7 +185,17 @@ public class Lobby extends Screen{
 				currBlueB = buttons[0];
 				team = 1;
 			}
-		
+
+
+		}  else if(currffa.getBoundingRectangle().contains(xpos,ypos)) {
+			if(currffa == ffa[0]){
+				currffa = ffa[1];
+			}
+			else{
+				currffa = ffa[0];
+				team = 2;
+			}
+
 
 		} else {
 			if (serverlist != null) {
@@ -174,6 +204,7 @@ public class Lobby extends Screen{
 					serverbg.setPosition(background.getX(),background.getHeight()+background.getY()-serverbg.getHeight()*(i+1));
 					if (serverbg.getBoundingRectangle().contains(xpos, ypos)) {
 						selectedServer = i;
+						gs = as;
 						break;
 					}
 					i++;
@@ -210,7 +241,6 @@ public class Lobby extends Screen{
 		if (join.getBoundingRectangle().contains(xpos,ypos)) {
 			join.setColor(1f,0f,0f,1);
 		}
-
 	}
 
 	@Override
@@ -227,10 +257,19 @@ public class Lobby extends Screen{
 		host.draw(sb);
 		join.setPosition(50, 400);
 		join.draw(sb);
-		currBlueB.setPosition(380, 490);
-		currBlueB.draw(sb);
-		currRedB.setPosition(500, 490);
-		currRedB.draw(sb);
+		currffa.setPosition(50, 230);
+		currffa.draw(sb);
+		try{
+			if(gs.mode == StaticVariables.teamServer){
+				currBlueB.setPosition(380, 490);
+				currBlueB.draw(sb);
+				currRedB.setPosition(500, 490);
+				currRedB.draw(sb);
+			}
+		}
+		catch(NullPointerException e){
+			e.getStackTrace();
+		}
 		fontname.setColor(Color.BLACK);
 		if(!write){
 			fontname.draw(sb, playerName, 50+name.getWidth()/2-20, 515);
@@ -243,8 +282,9 @@ public class Lobby extends Screen{
 		if (serverlist != null) {
 			for (AddServer as : serverlist) {
 				serverbg.setPosition(background.getX(),background.getHeight()+background.getY()-serverbg.getHeight()*(i+1));
-				if (selectedServer == i)
+				if (selectedServer == i){
 					serverbg.draw(sb);
+				}
 				else
 					serverbg.draw(sb,0.7f);
 				font.draw(sb, "IP:" + as.ip + " with " + as.online +"/"+as.playercap  , serverbg.getX()+50, serverbg.getY()+80);

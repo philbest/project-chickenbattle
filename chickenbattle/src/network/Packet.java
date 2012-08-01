@@ -78,6 +78,7 @@ public class Packet {
 	static public class AddServer{
 		public String ip;
 		public String motd;
+		public int mode;
 		public int playercap;
 		public int online;
 	}

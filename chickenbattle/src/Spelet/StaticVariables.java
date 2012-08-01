@@ -11,8 +11,11 @@ public class StaticVariables {
 	
 	public static final int teamBlue = 0;
 	public static final int teamRed = 1;
-	public static final int frag = 2;
-	public static final int falldeath = 3;
+	public static final int allTeam = 2;
+	public static final int frag = 3;
+	public static final int falldeath = 4;
+	public static final int teamServer = 5;
+	public static final int freeforall = 6;
 	
 	public static void initiate() {
 		tempMat = new Matrix4();

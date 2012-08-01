@@ -57,7 +57,7 @@ public class Application extends Screen implements InputProcessor{
 	public boolean multiplayer;
 	int mptimer;
 	public int bloodTimer;
-	Main main;
+	public Main main;
 	public int ping;
 	public long recoilTime, recoilAK;
 	public ParticleEffect particle;
