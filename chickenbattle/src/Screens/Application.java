@@ -85,7 +85,7 @@ public class Application extends Screen implements InputProcessor{
 		cam.position.set(0,50,40);
 		cam.near = 0.1f;
 		cam.update();
-		renderer = new Renderer();
+		renderer = new Renderer(this);
 		gi = new GameInterface(this);
 		gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 		multiplayer = true;
@@ -187,7 +187,7 @@ public class Application extends Screen implements InputProcessor{
 				c.map[chunkstoupdate.get(i).x-c.x*chunkstoupdate.get(i).size][chunkstoupdate.get(i).y-c.y*chunkstoupdate.get(i).size][chunkstoupdate.get(i).z-c.z*chunkstoupdate.get(i).size].id = chunkstoupdate.get(i).modi;
 				chunkstorebuild.add(c);
 			}
-
+		
 			chunkdamage = client.getStructuralDamage();
 
 			for(int i=0;i<chunkdamage.size;i++){

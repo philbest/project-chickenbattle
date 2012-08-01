@@ -23,8 +23,10 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
+import com.badlogic.gdx.graphics.g3d.decals.GroupStrategy;
 import com.badlogic.gdx.graphics.g3d.loaders.obj.ObjLoader;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -32,6 +34,7 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.TimeUtils;
 
@@ -51,18 +54,21 @@ public class Renderer {
 	Texture cubeTexture;
 	Texture lightTexture;
 	Texture skysphereTexture;
+	Texture grassTexture;
 
 	ShaderProgram simpleShader;
 	ShaderProgram charShader;
 	ShaderProgram particleShader;
 	ShaderProgram skysphereShader;
+	ShaderProgram grassShader;
 	String playerscore;
 	SpriteBatch sb;
 	Sprite score;
-	
-	DecalBatch decalbatch;
-	Decal grassbb;
-	
+
+	GroupStrategy strategy;
+
+	Array<DecalSprite> billboards;
+
 	BitmapFont font;
 
 	FrameBuffer shadowMap;
@@ -79,8 +85,7 @@ public class Renderer {
 		lightCam.position.set(-10, 5, 16);
 		lightCam.lookAt(16, 0, 16);
 		lightCam.update();
-
-
+		
 		shadowGenShader = new ShaderProgram(Gdx.files.internal("data/shaders/shadowgen.vert").readString(), Gdx.files
 				.internal("data/shaders/shadowgen.frag").readString());
 		if (!shadowGenShader.isCompiled())
@@ -92,7 +97,7 @@ public class Renderer {
 			throw new GdxRuntimeException("Couldn't compile shadow map shader: " + shadowMapShader.getLog());
 
 	}
-	public Renderer() {
+	public Renderer(Application app) {
 		initiateShadows();
 
 		score = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/lobbybg.png")));
@@ -102,6 +107,7 @@ public class Renderer {
 		normal = new Texture(Gdx.files.internal("data/grassmap.png"));
 		sb = new SpriteBatch();
 		font = new BitmapFont();
+
 
 		InputStream in = Gdx.files.internal("data/SkySphere2.obj").read();
 		skysphere = ObjLoader.loadObj(in);
@@ -118,13 +124,12 @@ public class Renderer {
 		if (!simpleShader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile simple shader: "
 					+ simpleShader.getLog());
+
+		grassShader = new ShaderProgram(Gdx.files.internal("data/shaders/grassShader.vert").readString(), Gdx.files
+				.internal("data/shaders/grassShader.frag").readString());
+		if (!grassShader.isCompiled())
+			throw new GdxRuntimeException("Couldn't compile shadow gen shader: " + shadowGenShader.getLog());
 		
-		charShader = new ShaderProgram(Gdx.files.internal(
-		"data/shaders/simpleChar.vert").readString(), Gdx.files.internal(
-		"data/shaders/simpleChar.frag").readString());
-		if (!simpleShader.isCompiled())
-			throw new GdxRuntimeException("Couldn't compile simple shader: "
-					+ simpleShader.getLog());
 
 		particleShader = new ShaderProgram(Gdx.files.internal(
 		"data/shaders/particleShader.vert").readString(), Gdx.files.internal(
@@ -142,20 +147,12 @@ public class Renderer {
 
 		cubeTexture = new Texture(Gdx.files.internal("data/blockmap.png"));
 		lightTexture = new Texture(Gdx.files.internal("data/light.png"));
+		grassTexture = new Texture(Gdx.files.internal("data/grassbb.png"));
 		blood = new Texture(Gdx.files.internal("data/blood.png"));
 		//texture av Remus tagen 2012-07-16 m�ste ge credit om ska anv�ndas
 		//http://forums.epicgames.com/threads/603122-Remus-high-resolution-skydome-texture-pack
 		skysphereTexture = new Texture(Gdx.files.internal("data/skydome.bmp"));
 		// Load a Texture
-		Texture image = new Texture(Gdx.files.internal("data/grassbb.png"));
-		// create a decal sprite
-		grassbb = Decal.newDecal(32, 32, new TextureRegion(image), true);
-
-		// create a DecalBatch to render them with just once at startup
-//		decalbatch = new DecalBatch();
-//		decalbatch.
-//		grassbb.setPosition(500, 250, 5);
-
 	}
 
 	public void render(Application app) {
@@ -163,13 +160,13 @@ public class Renderer {
 		Gdx.gl20.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
-		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		Gdx.gl20.glEnable(GL20.GL_CULL_FACE);
 		Gdx.gl20.glCullFace(GL20.GL_BACK);
 
 		renderSkySphere(app);
 		renderMapChunks(app);
-				
+
 		if(app.multiplayer){
 			renderMultiplayer(app);
 		}
@@ -196,24 +193,13 @@ public class Renderer {
 					font.draw(sb, playerscore, Gdx.graphics.getWidth()/2 - textWidth/2, 400 - (i*20) + textHeight / 2);
 				}
 			}
-
-
 		}
-//		
-//		decalbatch.add(grassbb);
-//		decalbatch.flush();
 		app.particle.start();
 		app.particle.update(0.005f);
 		app.particle.setPosition(50, 30);
-		
+
 		app.particle.draw(sb);	
-
-		sb.end();
-		
-	
-	
-
-		
+		sb.end();		
 	}
 
 	public void renderSkySphere(Application app){
@@ -268,8 +254,8 @@ public class Renderer {
 					charShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
 					charShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
 					charShader.setUniformf("material_shininess", 0.5f);
-					charShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
-					StaticAnimations.walk.render(app, app.players[i]);
+					charShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);				
+
 					this.renderBoundingBox(app,app.players[i].box);
 					charShader.end();
 				}
@@ -427,15 +413,50 @@ public class Renderer {
 					simpleShader.setUniformf("material_shininess", 0.5f);
 					simpleShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
 
-
 					//simpleShader.setUniformf("dir_light",0,0,0);
 
-					app.map.chunks.get(i).chunkMesh.render(simpleShader, GL20.GL_TRIANGLES);
+					app.map.chunks.get(i).chunkMesh.render(simpleShader, GL20.GL_TRIANGLES);	
 					vertices+=app.map.chunks.get(i).chunkMesh.getNumVertices();
 				}
 			}
-			//System.out.println("Vertices: " + vertices);
+			
 			simpleShader.end();
+			Gdx.gl20.glDisable(GL20.GL_CULL_FACE);
+			Gdx.gl20.glEnable(GL20.GL_BLEND);
+			
+			grassShader.begin();
+//			grassShader.setUniform4fv("scene_light", app.light.color, 0, 4);
+//			grassShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
+			grassTexture.bind(0);
+			for (int i = 0; i < app.map.chunks.size;i++) {
+				if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0 && app.cam.frustum.boundsInFrustum(app.map.chunks.get(i).bounds)) {
+					//if (app.map.chunks[x][y][z].chunkMesh != null && app.map.chunks[x][y][z].chunkMesh.getNumVertices() > 0) {
+					simpleShader.setUniformi("s_texture", 0);
+					cubeModel.setToTranslation(app.map.chunks.get(i).x*Map.chunkSize,app.map.chunks.get(i).y*Map.chunkSize,app.map.chunks.get(i).z*Map.chunkSize);
+
+					modelViewProjectionMatrix.set(app.cam.combined);
+					modelViewProjectionMatrix.mul(cubeModel);
+					modelViewMatrix.set(app.cam.view);
+					modelViewMatrix.mul(cubeModel);
+					normalMatrix.set(modelViewMatrix);
+//					grassShader.setUniformMatrix("normalMatrix", normalMatrix);
+//					grassShader.setUniformMatrix("u_modelViewMatrix", modelViewMatrix);
+					grassShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
+//					grassShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
+//					grassShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
+//					grassShader.setUniformf("material_shininess", 0.5f);
+//					grassShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
+
+
+					//simpleShader.setUniformf("dir_light",0,0,0);
+
+					app.map.chunks.get(i).grassMesh.render(grassShader, GL20.GL_TRIANGLES);				
+				}
+			}
+			Gdx.gl20.glEnable(GL20.GL_CULL_FACE);
+			Gdx.gl20.glDisable(GL20.GL_BLEND);
+			//System.out.println("Vertices: " + vertices);
+			grassShader.end();
 		}
 	}
 	public void renderBoundingBox(Application app, BoundingBox b) {
