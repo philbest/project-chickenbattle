@@ -289,12 +289,13 @@ public class GameServer {
 									}
 									else{
 										if(compare.shields == 0 && b.type == Weapon.bullet_sniper){
-											compare.hp = compare.hp-5;
+											compare.hp = compare.hp-10;
 											compare.hit = true;
 											compare.lasthit = System.currentTimeMillis();
 										}
 										else if(compare.shields > 0){
 											compare.shields =compare.shields-1;
+											compare.hp = compare.hp-5;
 											if(compare.shields == 0){
 												compare.initShield = true;
 											}
@@ -313,7 +314,6 @@ public class GameServer {
 											compare.deaths += 1;
 											compare.hp = 10;
 											compare.shields = 5;
-
 											broadcast.type = StaticVariables.frag;
 											broadcast.created = TimeUtils.millis();
 											broadcast.message = player[b.id].name + "," + compare.name;
