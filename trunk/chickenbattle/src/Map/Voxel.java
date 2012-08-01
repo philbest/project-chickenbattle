@@ -47,6 +47,8 @@ public class Voxel {
 			return 2;
 		} else if (bullet == Weapon.bullet_emp) {
 			return 0;
+		} else if (bullet == Weapon.bullet_rocket) {
+			return (int) durability;
 		}
 		return 0;
 	}
