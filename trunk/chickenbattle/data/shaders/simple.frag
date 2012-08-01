@@ -20,11 +20,9 @@ varying float v_occlusion;
 void main()
 {
 	vec4 color;
-	color =texture2D(s_crackTexture,v_crackCoord);
-	if (color.a == 0.0) {
+	color = texture2D(s_crackTexture,v_crackCoord);
+	if (color.r == 1.0 && color.g == 1.0 && color.b == 1.0) {
 		color = texture2D( s_texture, v_texCoord );
-	} else {
-		color = color + texture2D( s_texture, v_texCoord );
 	}
  	vec4 finalDiffuse = vec4(0.0);
 	vec4 finalSpecular = vec4(0.0);
