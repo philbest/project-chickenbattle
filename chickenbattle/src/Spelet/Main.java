@@ -12,6 +12,7 @@ import Screens.Skills;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.utils.TimeUtils;
 
 
 public class Main implements ApplicationListener{
@@ -60,7 +61,7 @@ public class Main implements ApplicationListener{
 	}
 
 	public void render() {
-//		System.out.println(Gdx.graphics.getFramesPerSecond());
+		System.out.println("FPS:" + Gdx.graphics.getFramesPerSecond());
 		GL20 gl = Gdx.graphics.getGL20();
 		gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		activeScreen.update();

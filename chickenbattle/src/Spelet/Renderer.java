@@ -179,18 +179,27 @@ public class Renderer {
 		Gdx.gl20.glEnable(GL20.GL_CULL_FACE);
 		Gdx.gl20.glCullFace(GL20.GL_BACK);
 
+		long time = TimeUtils.millis();
 		renderSkySphere(app);
+		System.out.println("rendering skysphere took: " + (TimeUtils.millis()-time));
+		time = TimeUtils.millis();
 		renderMapChunks(app);
+		System.out.println("rendering map took: " + (TimeUtils.millis()-time));
+		time = TimeUtils.millis();
 
 		if(app.multiplayer){
 			renderMultiplayer(app);
 		}
-		renderVector(app.from,app.to,app);
-		for (int i = 0; i < app.map.chunks.size;i++) {
-			if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0) {
-				this.renderBoundingBox(app,app.map.chunks.get(i).bounds);
-			}
-		}
+		System.out.println("rendering players took: " + (TimeUtils.millis()-time));
+		time = TimeUtils.millis();
+//		renderVector(app.from,app.to,app);
+//		for (int i = 0; i < app.map.chunks.size;i++) {
+//			if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0) {
+//				this.renderBoundingBox(app,app.map.chunks.get(i).bounds);
+//			}
+//		}
+		System.out.println("rendering boxes took: " + (TimeUtils.millis()-time));
+		time = TimeUtils.millis();
 		Gdx.gl20.glDisable(GL20.GL_CULL_FACE);
 		sb.begin();
 		app.ch.inventory.get(app.ch.weapon).render(sb);
@@ -238,11 +247,13 @@ public class Renderer {
 		//		decalbatch.add(grassbb);
 		//		decalbatch.flush();
 
-		app.particle.start();
-		app.particle.update(0.005f);
-		app.particle.setPosition(50, 30);
-		app.particle.draw(sb);	
-		sb.end();	
+//		app.particle.start();
+//		app.particle.update(0.005f);
+//		app.particle.setPosition(50, 30);
+//		app.particle.draw(sb);	
+		sb.end();
+		System.out.println("rendering UI took: " + (TimeUtils.millis()-time));
+		time = TimeUtils.millis();
 	}
 
 	public void renderSkySphere(Application app){
@@ -434,11 +445,15 @@ public class Renderer {
 			simpleShader.begin();
 			simpleShader.setUniform4fv("scene_light", app.light.color, 0, 4);
 			simpleShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
-			int vertices = 0;
+			simpleShader.setUniformi("s_texture", 0);
+			simpleShader.setUniformi("s_crackTexture", 1);
+			simpleShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
+			simpleShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
+			simpleShader.setUniformf("material_shininess", 0.5f);
+			simpleShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
+//			int vertices = 0;
 			for (int i = 0; i < app.map.chunks.size;i++) {
 				if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0 && app.cam.frustum.boundsInFrustum(app.map.chunks.get(i).bounds)) {
-					simpleShader.setUniformi("s_texture", 0);
-					simpleShader.setUniformi("s_crackTexture", 1);
 					cubeModel.setToTranslation(app.map.chunks.get(i).x*Map.chunkSize,app.map.chunks.get(i).y*Map.chunkSize,app.map.chunks.get(i).z*Map.chunkSize);
 
 					modelViewProjectionMatrix.set(app.cam.combined);
@@ -449,15 +464,11 @@ public class Renderer {
 					simpleShader.setUniformMatrix("normalMatrix", normalMatrix);
 					simpleShader.setUniformMatrix("u_modelViewMatrix", modelViewMatrix);
 					simpleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
-					simpleShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
-					simpleShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
-					simpleShader.setUniformf("material_shininess", 0.5f);
-					simpleShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
 
 					//simpleShader.setUniformf("dir_light",0,0,0);
 
 					app.map.chunks.get(i).chunkMesh.render(simpleShader, GL20.GL_TRIANGLES);	
-					vertices+=app.map.chunks.get(i).chunkMesh.getNumVertices();
+//					vertices+=app.map.chunks.get(i).chunkMesh.getNumVertices();
 				}
 			}
 			
@@ -469,9 +480,13 @@ public class Renderer {
 			grassShader.setUniform4fv("scene_light", app.light.color, 0, 4);
 			grassShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
 			grassTexture.bind(0);
+			grassShader.setUniformf("material_diffuse", 0.75f,0.75f,0.75f, 1f);
+			grassShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
+			grassShader.setUniformf("material_shininess", 0.5f);
+			grassShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
+			simpleShader.setUniformi("s_texture", 0);
 			for (int i = 0; i < app.map.chunks.size;i++) {
 				if (app.map.chunks.get(i).grassMesh != null && app.map.chunks.get(i).grassMesh.getNumVertices() > 0 && app.cam.frustum.boundsInFrustum(app.map.chunks.get(i).bounds)) {
-					simpleShader.setUniformi("s_texture", 0);
 					cubeModel.setToTranslation(app.map.chunks.get(i).x*Map.chunkSize,app.map.chunks.get(i).y*Map.chunkSize,app.map.chunks.get(i).z*Map.chunkSize);
 
 					modelViewProjectionMatrix.set(app.cam.combined);
@@ -482,10 +497,6 @@ public class Renderer {
 					grassShader.setUniformMatrix("normalMatrix", normalMatrix);
 					grassShader.setUniformMatrix("u_modelViewMatrix", modelViewMatrix);
 					grassShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
-					grassShader.setUniformf("material_diffuse", 0.75f,0.75f,0.75f, 1f);
-					grassShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
-					grassShader.setUniformf("material_shininess", 0.5f);
-					grassShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
 
 
 					//simpleShader.setUniformf("dir_light",0,0,0);
