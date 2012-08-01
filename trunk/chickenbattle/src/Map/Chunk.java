@@ -1,28 +1,35 @@
 package Map;
 
+import Spelet.DecalSprite;
 import Spelet.StaticVariables;
 import Spelet.VertexAttributes;
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.collision.BoundingBox;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 
 
 public class Chunk {
 	public Voxel[][][] map;
 	public Mesh chunkMesh;
+	public Mesh grassMesh;
 	public BoundingBox bounds;
 	public int x, y, z;
 	public int hieght;
 	float distance;	
 	float xf, yf, zf;
 
+	public Array<DecalSprite> grassboards;
+	
 	public Chunk(int x, int y, int z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		hieght=32;
 		map = new Voxel[Map.chunkSize][Map.chunkSize][Map.chunkSize];
+		grassboards = new Array<DecalSprite>();
 		distance = 0;
 		bounds = new BoundingBox();
 
@@ -71,6 +78,19 @@ public class Chunk {
 				}
 			}
 		}
+//		for (int x2 = 0; x2 < Map.chunkSize; x2++) {
+//			for (int z2 = 0; z2 < Map.chunkSize; z2++) {
+//				for (int y2 = 0; y2 < Map.chunkSize-1; y2++) {
+//					if (map[x2][y2][z2].id == Voxel.grass) {
+//						DecalSprite grassbb  = new DecalSprite().build("data/grassbb.png");
+//						grassbb.sprite.setDimensions(6, 6);
+//						grassbb.sprite.setPosition(MathUtils.random(0,100),MathUtils.random(0,100),MathUtils.random(0,100));
+//						grassboards.add(grassbb);
+//					}
+//				}
+//			}
+//		}
+//		
 		
 	
 	}
@@ -110,14 +130,15 @@ public class Chunk {
 			chunkMesh.dispose();
 		}
 		FloatArray fa = new FloatArray();
+		FloatArray ga = new FloatArray();
 		for (int x = 0; x < Map.chunkSize; x++) {
 			for (int y = 0; y < Map.chunkSize; y++) {
 				for (int z = 0; z < Map.chunkSize; z++) { 
 					if (map[x][y][z].id != Voxel.nothing) {
 						if (y+1 >= Map.chunkSize) {
-							addTopFace(fa, x, y, z,map[x][y][z].id);
+							addTopFace(fa,ga, x, y, z,map[x][y][z].id);
 						} else if (map[x][y+1][z].id == Voxel.nothing) {
-							addTopFace(fa, x, y, z,map[x][y][z].id);
+							addTopFace(fa,ga, x, y, z,map[x][y][z].id);
 						}
 						if (y-1 < 0) {
 							addBotFace(fa, x, y, z,map[x][y][z].id);
@@ -149,7 +170,6 @@ public class Chunk {
 			}
 		}
 
-
 		if (fa.size > 0) {
 			chunkMesh = new Mesh(true, fa.size, 0,
 					VertexAttributes.position, 
@@ -163,8 +183,12 @@ public class Chunk {
 			bounds.mul(calcMat);
 			StaticVariables.releaseSema();
 		}
+		if(ga.size >0){
+			grassMesh = new Mesh(true, ga.size, 0 , VertexAttributes.position, VertexAttributes.normal, VertexAttributes.textureCoords );
+			grassMesh.setVertices(ga.items);
+		}
 	}
-	public void addTopFace(FloatArray fa, int x, int y, int z, int type) {
+	public void addTopFace(FloatArray fa, FloatArray ga, int x, int y, int z, int type) {
 		float occlusion = 0;
 		if (x-1 < 0 || y+1 >= Map.chunkSize || map[x-1][y+1][z].id == Voxel.nothing) {
 			occlusion++;
@@ -275,6 +299,73 @@ public class Chunk {
 		fa.add(type/Voxel.maxTypes);
 		fa.add(2f/3f);
 		fa.add(occlusion); // Occlusionvalue
+		
+		if(type == Voxel.grass){
+			
+			ga.add(0+x); // x1
+			ga.add(1+y); // y1
+			ga.add(0+z); // z1
+			ga.add(0); // Normal X
+			ga.add(1); // Normal Y
+			ga.add(0); // Normal Z
+			//Texture
+			ga.add(0); 
+			ga.add(1);
+						
+			ga.add(1+x); // x1
+			ga.add(1+y); // y1
+			ga.add(1+z); // z1
+			ga.add(0); // Normal X
+			ga.add(1); // Normal Y
+			ga.add(0); // Normal Z
+			//Texture
+			ga.add(1); 
+			ga.add(1);
+						
+
+			ga.add(1+x); // x1
+			ga.add(2+y); // y1
+			ga.add(1+z); // z1
+			ga.add(0); // Normal X
+			ga.add(1); // Normal Y
+			ga.add(0); // Normal Z
+			//Texture
+			ga.add(1); 
+			ga.add(0);
+			
+			ga.add(0+x); // x1
+			ga.add(1+y); // y1
+			ga.add(0+z); // z1
+			ga.add(0); // Normal X
+			ga.add(1); // Normal Y
+			ga.add(0); // Normal Z
+			//Texture
+			ga.add(0); 
+			ga.add(1);
+			
+			ga.add(0+x); // x1
+			ga.add(2+y); // y1
+			ga.add(0+z); // z1
+			ga.add(0); // Normal X
+			ga.add(1); // Normal Y
+			ga.add(0); // Normal Z
+			//Texture
+			ga.add(0); 
+			ga.add(0);
+			
+			ga.add(1+x); // x1
+			ga.add(2+y); // y1
+			ga.add(1+z); // z1
+			ga.add(0); // Normal X
+			ga.add(1); // Normal Y
+			ga.add(0); // Normal Z
+			//Texture
+			ga.add(1); 
+			ga.add(0);
+		
+		}
+		
+		
 	}
 	public void addBotFace(FloatArray fa, int x, int y, int z, int type) {
 		float occlusion = 0;
