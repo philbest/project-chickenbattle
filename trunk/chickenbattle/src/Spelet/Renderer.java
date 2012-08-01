@@ -269,6 +269,7 @@ public class Renderer {
 		for(int i = 0; i< app.players.length; i++){
 			if(app.clientid != i)
 				if(app.players[i] != null){
+	
 					charShader.begin();
 					try{
 						if(app.players[i].currentTeam == StaticVariables.teamBlue){
@@ -301,7 +302,7 @@ public class Renderer {
 					charShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
 					charShader.setUniformf("material_shininess", 0.5f);
 					charShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);				
-
+					StaticAnimations.walk.render(app, app.players[i]);
 					this.renderBoundingBox(app,app.players[i].box);
 					charShader.end();
 				}
