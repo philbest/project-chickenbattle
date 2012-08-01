@@ -320,7 +320,6 @@ public class Weapon {
 			for(int i = 0; i < empRecharge.length; i++){
 				if(reloadTimer > i*80){
 					wpn = empRecharge[i];
-					System.out.println(reloadTimes);
 				}
 			}
 			if(!reloading){
