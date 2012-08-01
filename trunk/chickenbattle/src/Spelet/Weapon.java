@@ -332,6 +332,13 @@ public class Weapon {
 				}
 			}
 		}
+		if(shootbool && weaponID == ak){
+			for(int i = 0; i < akSpr.length; i++){
+				if(shootAnim > i*100){
+					wpn = akSpr[i];
+				}
+			}
+		}
 		if(shootbool && weaponID == sniper){
 			for(int i = 0; i < blockSpr.length; i++){
 				if(shootAnim > i*75){
