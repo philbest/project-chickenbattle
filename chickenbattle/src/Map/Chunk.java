@@ -1,6 +1,5 @@
 package Map;
 
-import Spelet.DecalSprite;
 import Spelet.StaticVariables;
 import Spelet.VertexAttributes;
 import com.badlogic.gdx.graphics.Mesh;
@@ -20,8 +19,6 @@ public class Chunk {
 	public int hieght;
 	float distance;	
 	float xf, yf, zf;
-
-	public Array<DecalSprite> grassboards;
 	
 	public Chunk(int x, int y, int z) {
 		this.x = x;
@@ -29,7 +26,6 @@ public class Chunk {
 		this.z = z;
 		hieght=32;
 		map = new Voxel[Map.chunkSize][Map.chunkSize][Map.chunkSize];
-		grassboards = new Array<DecalSprite>();
 		distance = 0;
 		bounds = new BoundingBox();
 
