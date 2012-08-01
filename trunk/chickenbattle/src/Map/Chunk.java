@@ -328,7 +328,7 @@ public class Chunk {
 			
 			ga.add(0.25f+x); // x1
 			ga.add(1+y); // y1
-			ga.add(0+z); // z1
+			ga.add(0.25f+z); // z1
 			ga.add(0); // Normal X
 			ga.add(1); // Normal Y
 			ga.add(0); // Normal Z
@@ -338,7 +338,7 @@ public class Chunk {
 			
 			ga.add(0.25f+x); // x1
 			ga.add(1.5f+y); // y1
-			ga.add(0+z); // z1
+			ga.add(0.25f+z); // z1
 			ga.add(0); // Normal X
 			ga.add(1); // Normal Y
 			ga.add(0); // Normal Z
@@ -368,7 +368,7 @@ public class Chunk {
 						
 			ga.add(0.75f+x); // x1
 			ga.add(1+y); // y1
-			ga.add(0+z); // z1
+			ga.add(0.25f+z); // z1
 			ga.add(0); // Normal X
 			ga.add(1); // Normal Y
 			ga.add(0); // Normal Z
@@ -379,7 +379,7 @@ public class Chunk {
 
 			ga.add(0.75f+x); // x1
 			ga.add(1.5f+y); // y1
-			ga.add(0+z); // z1
+			ga.add(0.25f+z); // z1
 			ga.add(0); // Normal X
 			ga.add(1); // Normal Y
 			ga.add(0); // Normal Z
@@ -409,7 +409,7 @@ public class Chunk {
 			
 			ga.add(0.75f+x); // x1
 			ga.add(1.5f+y); // y1
-			ga.add(0+z); // z1
+			ga.add(0.25f+z); // z1
 			ga.add(0); // Normal X
 			ga.add(1); // Normal Y
 			ga.add(0); // Normal Z
