@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -151,9 +152,12 @@ public class Renderer {
 					+ skysphereShader.getLog());
 
 		cubeTexture = new Texture(Gdx.files.internal("data/blockmap.png"));
+		//cubeTexture.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Nearest);
 		crackTexture = new Texture(Gdx.files.internal("data/cracks.png"));
+		//crackTexture.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Nearest);
 		lightTexture = new Texture(Gdx.files.internal("data/light.png"));
 		grassTexture = new Texture(Gdx.files.internal("data/grassbb.png"));
+		//grassTexture.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Nearest);
 		blood = new Texture(Gdx.files.internal("data/blood.png"));
 		//texture av Remus tagen 2012-07-16 m�ste ge credit om ska anv�ndas
 		//http://forums.epicgames.com/threads/603122-Remus-high-resolution-skydome-texture-pack
@@ -179,27 +183,18 @@ public class Renderer {
 		Gdx.gl20.glEnable(GL20.GL_CULL_FACE);
 		Gdx.gl20.glCullFace(GL20.GL_BACK);
 
-		long time = TimeUtils.millis();
-		renderSkySphere(app);
-		System.out.println("rendering skysphere took: " + (TimeUtils.millis()-time));
-		time = TimeUtils.millis();
 		renderMapChunks(app);
-		System.out.println("rendering map took: " + (TimeUtils.millis()-time));
-		time = TimeUtils.millis();
 
 		if(app.multiplayer){
 			renderMultiplayer(app);
 		}
-		System.out.println("rendering players took: " + (TimeUtils.millis()-time));
-		time = TimeUtils.millis();
 //		renderVector(app.from,app.to,app);
 //		for (int i = 0; i < app.map.chunks.size;i++) {
 //			if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0) {
 //				this.renderBoundingBox(app,app.map.chunks.get(i).bounds);
 //			}
 //		}
-		System.out.println("rendering boxes took: " + (TimeUtils.millis()-time));
-		time = TimeUtils.millis();
+		renderSkySphere(app);
 		Gdx.gl20.glDisable(GL20.GL_CULL_FACE);
 		sb.begin();
 		app.ch.inventory.get(app.ch.weapon).render(sb);
@@ -217,8 +212,7 @@ public class Renderer {
 					font.setColor(Color.BLUE);
 					font.draw(sb, playerscore, Gdx.graphics.getWidth()/2 - textWidth/2 + 140, 400 - (blue*20) + textHeight / 2);
 					blue++;
-				}
-				else if(x != null && x.currentTeam == StaticVariables.teamRed){
+				} else if(x != null && x.currentTeam == StaticVariables.teamRed){
 					playerscore = x.name +" kills : " +x.kills + ". Deaths " + x.deaths + ". Ping: " + app.ping;
 					float textWidth = font.getBounds(playerscore).width;
 					float textHeight = font.getBounds(playerscore).height;
@@ -228,8 +222,7 @@ public class Renderer {
 				}
 			}
 
-		}
-		else if(app.scoreboard && (((Lobby) app.main.screens.get(Main.LOBBY)).gs.mode == StaticVariables.freeforall)){
+		} else if(app.scoreboard && (((Lobby) app.main.screens.get(Main.LOBBY)).gs.mode == StaticVariables.freeforall)){
 			score.setPosition(Gdx.graphics.getWidth()/2-score.getWidth()/2, 100);
 			score.draw(sb,0.80f);
 			for(int i =0; i < app.players.length; i++){	
@@ -241,19 +234,9 @@ public class Renderer {
 					font.draw(sb, playerscore, Gdx.graphics.getWidth()/2 - textWidth/2, 400 - (i*20) + textHeight / 2);
 				}
 			}
-		}
-
-		//		
-		//		decalbatch.add(grassbb);
-		//		decalbatch.flush();
-
-//		app.particle.start();
-//		app.particle.update(0.005f);
-//		app.particle.setPosition(50, 30);
-//		app.particle.draw(sb);	
+		}	
 		sb.end();
-		System.out.println("rendering UI took: " + (TimeUtils.millis()-time));
-		time = TimeUtils.millis();
+
 	}
 
 	public void renderSkySphere(Application app){
