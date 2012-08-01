@@ -426,7 +426,7 @@ public class Renderer {
 //			grassShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
 			grassTexture.bind(0);
 			for (int i = 0; i < app.map.chunks.size;i++) {
-				if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0 && app.cam.frustum.boundsInFrustum(app.map.chunks.get(i).bounds)) {
+				if (app.map.chunks.get(i).grassMesh != null && app.map.chunks.get(i).grassMesh.getNumVertices() > 0 && app.cam.frustum.boundsInFrustum(app.map.chunks.get(i).bounds)) {
 					//if (app.map.chunks[x][y][z].chunkMesh != null && app.map.chunks[x][y][z].chunkMesh.getNumVertices() > 0) {
 					simpleShader.setUniformi("s_texture", 0);
 					cubeModel.setToTranslation(app.map.chunks.get(i).x*Map.chunkSize,app.map.chunks.get(i).y*Map.chunkSize,app.map.chunks.get(i).z*Map.chunkSize);
@@ -446,7 +446,6 @@ public class Renderer {
 
 
 					//simpleShader.setUniformf("dir_light",0,0,0);
-
 					app.map.chunks.get(i).grassMesh.render(grassShader, GL20.GL_TRIANGLES);				
 				}
 			}
