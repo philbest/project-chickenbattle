@@ -79,8 +79,8 @@ public class Character {
 		box.mul(modelMatrix);
 	}
 
-	public void resurrect() {
-		setPos(30,60,50);
+	public void resurrect(int x, int y, int z) {
+		setPos(x,y,z);
 		forceUp = 0;
 		jumping = false;
 		for (int i = 0; i < inventory.size; i++) {
@@ -114,7 +114,7 @@ public class Character {
 			oldPos.set(position);
 			movement.set(app.cam.direction.x,0,app.cam.direction.z);
 			movement.nor();
-			movement.mul(Gdx.graphics.getDeltaTime()*10);
+			movement.mul(Gdx.graphics.getDeltaTime()*7);
 			addMovement(movement);
 
 			for (Vector3 vec : box.getCorners()) {
@@ -137,7 +137,7 @@ public class Character {
 			oldPos.set(position);
 			movement.set(app.cam.direction.x,0,app.cam.direction.z);
 			movement.nor();
-			movement.mul(Gdx.graphics.getDeltaTime()*10*-1);
+			movement.mul(Gdx.graphics.getDeltaTime()*5*-1);
 			addMovement(movement);
 			for (Vector3 vec : box.getCorners()) {
 				int pointX = (int) vec.x;
@@ -160,7 +160,7 @@ public class Character {
 			movement.set(app.cam.direction.x,0,app.cam.direction.z);
 			movement.crs(app.cam.up);
 			movement.nor();
-			movement.mul(Gdx.graphics.getDeltaTime()*10);
+			movement.mul(Gdx.graphics.getDeltaTime()*5);
 			addMovement(movement);
 			for (Vector3 vec : box.getCorners()) {
 				int pointX = (int) vec.x;
@@ -184,7 +184,7 @@ public class Character {
 			movement.set(app.cam.direction.x,0,app.cam.direction.z);
 			movement.crs(app.cam.up);
 			movement.nor();
-			movement.mul(Gdx.graphics.getDeltaTime()*-10);
+			movement.mul(Gdx.graphics.getDeltaTime()*-5);
 			addMovement(movement);
 			for (Vector3 vec : box.getCorners()) {
 				int pointX = (int) vec.x;
@@ -205,7 +205,7 @@ public class Character {
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
 			oldPos.set(position);
-			movement.set(0,-1*Gdx.graphics.getDeltaTime()*10,0);
+			movement.set(0,-1*Gdx.graphics.getDeltaTime()*2,0);
 			addMovement(movement);
 			for (Vector3 vec : box.getCorners()) {
 				int pointX = (int) vec.x;
@@ -227,7 +227,7 @@ public class Character {
 		}			
 		if (jumping) {
 			oldPos.set(position);
-			movement.set(0,Gdx.graphics.getDeltaTime()*10*forceUp,0);
+			movement.set(0,Gdx.graphics.getDeltaTime()*4*forceUp,0);
 			addMovement(movement);
 			for (Vector3 vec : box.getCorners()) {
 				int pointX = (int) vec.x;
