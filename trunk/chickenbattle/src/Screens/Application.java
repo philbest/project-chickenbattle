@@ -57,7 +57,7 @@ public class Application extends Screen implements InputProcessor{
 	public Main main;
 	public int ping;
 	public long recoilTime, recoilAK;
-	public ParticleEffect particle;
+	//public ParticleEffect particle;
 	public Application(Main m){
 		main = m;
 		movement = new Vector3();
@@ -86,10 +86,10 @@ public class Application extends Screen implements InputProcessor{
 		gi = new GameInterface(this);
 		gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 		multiplayer = true;
-		particle = new ParticleEffect();
-		particle.setPosition(500, 500);
-		particle.start();
-		particle.load(Gdx.files.internal("data/particle/fire"), Gdx.files.internal("data/particle/"));
+//		particle = new ParticleEffect();
+//		particle.setPosition(500, 500);
+//		particle.start();
+//		particle.load(Gdx.files.internal("data/particle/fire"), Gdx.files.internal("data/particle/"));
 		bloodTimer = 0;
 		if(multiplayer)
 			client = m.client;
