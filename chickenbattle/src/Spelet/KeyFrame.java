@@ -16,7 +16,6 @@ public class KeyFrame {
 		positions = new Vector3[objects];
 		rotationX = new float[objects];
 		rotationZ = new float[objects];
-		System.out.println("reading" + str);
 		for (int i = 0; i < rows.length; i++) {
 			String[] data = rows[i].split(" ");
 			positions[i] = new Vector3();

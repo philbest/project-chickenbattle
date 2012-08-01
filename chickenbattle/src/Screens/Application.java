@@ -12,15 +12,12 @@ import Spelet.GameInterface;
 import Spelet.LightSource;
 import Spelet.Main;
 import Spelet.Renderer;
-import Spelet.StaticAnimations;
-import Spelet.StaticVariables;
 import Spelet.Weapon;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
@@ -197,10 +194,7 @@ public class Application extends Screen implements InputProcessor{
 				Voxel vox = c.map[bd.x-c.x*Map.chunkSize][bd.y-c.y*Map.chunkSize][bd.z-c.z*Map.chunkSize];
 				vox.durability -= bd.damage;
 
-				Gdx.app.log("block dura iz ", Float.toString(vox.durability));
-
-				if(vox.durability <= 0)
-				{
+				if(vox.durability <= 0) {
 					vox.id = Voxel.nothing;
 				}
 

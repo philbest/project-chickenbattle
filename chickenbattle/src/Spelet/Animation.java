@@ -31,9 +31,7 @@ public class Animation {
 		String[] rows = str.split("\n");
 		for(int i = 0; i < rows.length; i++) {
 			parts.add(new AnimationPart(rows[i]));
-			System.out.println("WHAT" + parts.get(i));
 		}
-		System.out.println(str2);
 		rows = str2.split("Frame:");
 		for(int i = 1; i < rows.length; i++) {
 
