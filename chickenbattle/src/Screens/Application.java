@@ -66,7 +66,7 @@ public class Application extends Screen implements InputProcessor{
 		movement = new Vector3();
 		scoreboard = false;
 		ch = new Character(m.name);
-		ch.setPos(7,15,7);
+		ch.setPos(map.chunkSize*6/2,map.chunkSize*2/2,map.chunkSize*6/2);
 		players = new Player[10];
 		oldPos = new Vector3();
 		comparevec = new Vector3();
@@ -152,7 +152,7 @@ public class Application extends Screen implements InputProcessor{
 			players = client.getPlayers();
 			if(players[client.id] != null){	
 				if(players[client.id].dead){
-					ch.resurrect();			
+					ch.resurrect(map.chunkSize*6/2,map.chunkSize*2/2,map.chunkSize*6/2);			
 					players[client.id].dead = false;
 					gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 				}
@@ -165,7 +165,7 @@ public class Application extends Screen implements InputProcessor{
 				players[client.id].box = ch.box;
 				ch.updateHealth(players[client.id].hp);
 				ch.updateShield(players[client.id].shields);
-				
+
 				if(send){
 					client.sendMessage(players[client.id],ch.box.getCorners());
 					send = false;
@@ -187,7 +187,7 @@ public class Application extends Screen implements InputProcessor{
 				c.map[chunkstoupdate.get(i).x-c.x*chunkstoupdate.get(i).size][chunkstoupdate.get(i).y-c.y*chunkstoupdate.get(i).size][chunkstoupdate.get(i).z-c.z*chunkstoupdate.get(i).size].id = chunkstoupdate.get(i).modi;
 				chunkstorebuild.add(c);
 			}
-		
+
 			chunkdamage = client.getStructuralDamage();
 
 			for(int i=0;i<chunkdamage.size;i++){
@@ -221,18 +221,22 @@ public class Application extends Screen implements InputProcessor{
 	@Override
 	public boolean keyDown(int arg0) {
 		if (Input.Keys.NUM_1 == arg0) {
-			ch.weapon = ch.inventory.get(0).weaponID;
+			zoom=false;
+			ch.weapon = ch.inventory.get(0).weaponID;		
 			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 			gi.swapWeapon();
 		} else if (Input.Keys.NUM_2 == arg0) {
+			zoom=false;
 			ch.weapon = ch.inventory.get(1).weaponID;
 			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 			gi.swapWeapon();
 		} else if (Input.Keys.NUM_3 == arg0) {
+			zoom=false;
 			ch.weapon = ch.inventory.get(2).weaponID;
 			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 			gi.swapWeapon();
 		} else if (Input.Keys.NUM_4 == arg0) {
+			zoom=false;
 			ch.weapon = ch.inventory.get(3).weaponID;
 			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 			gi.swapWeapon();
@@ -241,7 +245,7 @@ public class Application extends Screen implements InputProcessor{
 			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 			gi.swapWeapon();
 		} else if (Input.Keys.NUM_9 == arg0){
-			ch.setPos(30,60,50);
+			ch.setPos(map.chunkSize*6/2,map.chunkSize*2/2,map.chunkSize*6/2);
 		}
 		else if (Input.Keys.TAB == arg0){
 			scoreboard = true;
@@ -430,8 +434,15 @@ public class Application extends Screen implements InputProcessor{
 		deltaY = deltaY*-1;
 		draggedX = arg0;
 		draggedY = arg1;
-		angleLeft -= deltaX/5;
-		angleUP += deltaY/5;
+
+		if(zoom){
+			angleLeft -= deltaX/100;
+			angleUP += deltaY/100;
+		}
+		else{
+			angleLeft -= deltaX/10;
+			angleUP += deltaY/10;
+		}
 		if (angleUP < -90)
 			angleUP = -90;
 		if (angleUP > 90)
@@ -445,13 +456,9 @@ public class Application extends Screen implements InputProcessor{
 	}
 	private void recoil(){
 		if(ch.weapon == Weapon.ak){
-			cam.direction.set(0,0,-6);
-			cam.up.set(0,6,0);
-			int temp = MathUtils.random(0, 10);
-			angleUP += temp;
-			angleLeft += MathUtils.random(-5, 5);
 			cam.direction.set(0,0,-1);
 			cam.up.set(0,1,0);
+			angleLeft += MathUtils.random(-1, 1);
 			angleUP += MathUtils.random(0, 4);
 			cam.rotate(angleUP, 1, 0, 0);
 			cam.rotate(angleLeft, 0, 1, 0);
@@ -469,7 +476,8 @@ public class Application extends Screen implements InputProcessor{
 		else if(ch.weapon == Weapon.sniper){
 			cam.direction.set(0,0,-1);
 			cam.up.set(0,1,0);
-			angleUP += MathUtils.random(15, 35);
+			angleLeft += MathUtils.random(-1, 1);
+			angleUP += MathUtils.random(0, 6);
 			cam.rotate(angleUP, 1, 0, 0);
 			cam.rotate(angleLeft, 0, 1, 0);
 			cam.update();

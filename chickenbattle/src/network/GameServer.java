@@ -226,6 +226,7 @@ public class GameServer {
 					player[received.id].initShield = false;
 					player[received.id].dead = false;
 					player[received.id].hit = false;
+					
 					if(player[received.id].shields < 5){
 						long currTime = System.currentTimeMillis();
 						if((currTime-player[received.id].lasthit > 6000l && currTime-player[received.id].lastRegged > 2000l)){
