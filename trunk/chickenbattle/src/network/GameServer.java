@@ -293,9 +293,16 @@ public class GameServer {
 											compare.hit = true;
 											compare.lasthit = System.currentTimeMillis();
 										}
-										else if(compare.shields > 0){
+										else if(compare.shields > 0 && b.type == Weapon.bullet_sniper){
 											compare.shields =compare.shields-1;
 											compare.hp = compare.hp-5;
+											if(compare.shields == 0){
+												compare.initShield = true;
+											}
+											compare.lasthit = System.currentTimeMillis();
+										}
+										else if(compare.shields > 0){
+											compare.shields =compare.shields-1;
 											if(compare.shields == 0){
 												compare.initShield = true;
 											}
