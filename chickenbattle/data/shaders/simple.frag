@@ -3,8 +3,10 @@ precision lowp float;
 #endif
 
 uniform sampler2D s_texture;
+uniform sampler2D s_crackTexture;
 uniform vec3 u_lightPos;
 varying vec2 v_texCoord;
+varying vec2 v_crackCoord;
 
 uniform float material_shininess;
 uniform vec4 material_diffuse; 
@@ -18,7 +20,12 @@ varying float v_occlusion;
 void main()
 {
 	vec4 color;
-	color = texture2D( s_texture, v_texCoord );
+	color =texture2D(s_crackTexture,v_crackCoord);
+	if (color.a == 0.0) {
+		color = texture2D( s_texture, v_texCoord );
+	} else {
+		color = color + texture2D( s_texture, v_texCoord );
+	}
  	vec4 finalDiffuse = vec4(0.0);
 	vec4 finalSpecular = vec4(0.0);
 	
