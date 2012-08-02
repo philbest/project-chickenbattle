@@ -2,6 +2,7 @@ package Screens;
 import network.GameClient;
 import network.Packet.BlockDamage;
 import network.Packet.BlockUpdate;
+import network.Packet.ExplosionUpd;
 import network.Packet.Message;
 import network.Player;
 import Map.Chunk;
@@ -43,6 +44,7 @@ public class Application extends Screen implements InputProcessor{
 	public Array<Chunk> chunkstorebuild;
 	public Array<Message> servermessages;
 	public Array<BlockDamage> chunkdamage;
+	public Array<ExplosionUpd> newExplosions;
 	public boolean zoom;
 	Vector3 movement;
 	GameClient client;
@@ -77,6 +79,7 @@ public class Application extends Screen implements InputProcessor{
 		chunkstorebuild = new Array<Chunk>();
 		servermessages = new Array<Message>();
 		chunkdamage = new Array<BlockDamage>();
+		newExplosions = new Array<ExplosionUpd>();
 		map = new Map(true);
 		send = false;
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -103,6 +106,7 @@ public class Application extends Screen implements InputProcessor{
 		renderer.render(this);
 	}
 	public void update() {
+		explosions.update();
 		Gdx.input.setCursorCatched(true);
 		ch.update(this);
 		map.update();
@@ -204,8 +208,14 @@ public class Application extends Screen implements InputProcessor{
 
 					chunkstorebuild.add(c);
 			}
-
 			chunkdamage.clear();
+			
+			newExplosions = client.explosions;
+			for (int i = 0; i < newExplosions.size; i++) {
+				ExplosionUpd e = newExplosions.get(i);
+				explosions.addExplotion(e.x, e.y, e.z);
+			}
+			newExplosions.clear();
 
 			for(int i=0; i<chunkstorebuild.size; i++){
 				chunkstorebuild.get(i).rebuildChunk();
@@ -247,6 +257,8 @@ public class Application extends Screen implements InputProcessor{
 			gi.swapWeapon();
 		} else if (Input.Keys.NUM_9 == arg0){
 			ch.setPos(Map.chunkSize*6/2,Map.chunkSize*2/2,Map.chunkSize*6/2);
+		} else if (Input.Keys.NUM_7 == arg0) {
+			explosions.addExplotion(cam.position.x, cam.position.y, cam.position.z+5);
 		}
 		else if (Input.Keys.TAB == arg0){
 			scoreboard = true;
