@@ -24,18 +24,20 @@ public class AnimationPart {
 	public float w, h, d;
 	public float rotationX;
 	public float rotationZ;
+	public float rotationY;
 	Matrix4 temp = new Matrix4();
 	public AnimationPart(String str) {
 		String[] strings = str.split(" ");
 		// x,y,z,w,h,d,rotX,rotZ
-		x = Float.parseFloat(strings[0]);
-		y = Float.parseFloat(strings[1]);
-		z = Float.parseFloat(strings[2]);
-		w = Float.parseFloat(strings[3]);
-		h = Float.parseFloat(strings[4]);
-		d = Float.parseFloat(strings[5]);
-		rotationX = Float.parseFloat(strings[6]);
-		rotationZ = Float.parseFloat(strings[7]);
+		x = Float.parseFloat(strings[1]);
+		y = Float.parseFloat(strings[2]);
+		z = Float.parseFloat(strings[3]);
+		w = Float.parseFloat(strings[4]);
+		h = Float.parseFloat(strings[5]);
+		d = Float.parseFloat(strings[6]);
+		rotationX = Float.parseFloat(strings[7]);
+		rotationY = Float.parseFloat(strings[8]);
+		rotationZ = Float.parseFloat(strings[9]);
 		FloatArray fa = new FloatArray();
 		modelMatrix = new Matrix4();
 		box = new BoundingBox();
@@ -93,6 +95,7 @@ public class AnimationPart {
 		modelMatrix.setToTranslation(x,y,z);
 		modelMatrix.rotate(1,0,0,rotationX);
 		modelMatrix.rotate(0,0,1,rotationZ);
+		modelMatrix.rotate(0,1,0,rotationY);
 		partMesh.calculateBoundingBox(box);
 		box.mul(modelMatrix);
 	}
