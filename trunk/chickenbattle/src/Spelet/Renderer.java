@@ -210,6 +210,7 @@ public class Renderer {
 		//			}
 		//		}
 		renderSkySphere(app);
+		renderExplosions(app);
 		Gdx.gl20.glDisable(GL20.GL_CULL_FACE);
 		sb.begin();
 		app.ch.inventory.get(app.ch.weapon).render(sb);
@@ -272,7 +273,24 @@ public class Renderer {
 		skysphere.render(skysphereShader, GL20.GL_TRIANGLES);
 		skysphereShader.end();
 	}
-
+	public void renderExplosions(Application app) {
+		Gdx.gl.glDisable(GL20.GL_CULL_FACE);
+		explosionShader.begin();
+		for (int i = 0; i < app.explosions.explosions.size; i++) {
+			System.out.println("RENDERING EXPLOSIONS");
+			Explosion e = app.explosions.explosions.get(i);
+			explosionShader.setUniformf("u_ptime",e.timeAlive);
+			
+			
+			modelViewProjectionMatrix.set(app.cam.combined);
+			modelViewProjectionMatrix.mul(e.modelMatrix);
+			explosionShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
+			
+			e.mesh.render(explosionShader, GL20.GL_TRIANGLES);
+		}
+		explosionShader.end();
+		Gdx.gl.glEnable(GL20.GL_CULL_FACE);
+	}
 	public void renderMultiplayer(Application app) {
 
 		for(int i = 0; i< app.players.length; i++){
