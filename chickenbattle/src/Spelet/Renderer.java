@@ -63,6 +63,7 @@ public class Renderer {
 	ShaderProgram charShader;
 	ShaderProgram lineShader;
 	ShaderProgram skysphereShader;
+	ShaderProgram explosionShader;
 	ShaderProgram grassShader;
 	String playerscore;
 	SpriteBatch sb;
@@ -87,7 +88,7 @@ public class Renderer {
 		lightCam.position.set(-10, 5, 16);
 		lightCam.lookAt(16, 0, 16);
 		lightCam.update();
-		
+
 		shadowGenShader = new ShaderProgram(Gdx.files.internal("data/shaders/shadowgen.vert").readString(), Gdx.files
 				.internal("data/shaders/shadowgen.frag").readString());
 		if (!shadowGenShader.isCompiled())
@@ -122,31 +123,45 @@ public class Renderer {
 		}
 
 		simpleShader = new ShaderProgram(Gdx.files.internal(
-				"data/shaders/simple.vert").readString(), Gdx.files.internal(
-						"data/shaders/simple.frag").readString());
+		"data/shaders/simple.vert").readString(), Gdx.files.internal(
+		"data/shaders/simple.frag").readString());
 		if (!simpleShader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile simple shader: "
 					+ simpleShader.getLog());
+
+
 		grassShader = new ShaderProgram(Gdx.files.internal("data/shaders/grassShader.vert").readString(), Gdx.files
 				.internal("data/shaders/grassShader.frag").readString());
 		if (!grassShader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile shadow gen shader: " + shadowGenShader.getLog());
+
+
 		charShader = new ShaderProgram(Gdx.files.internal(
-				"data/shaders/simpleChar.vert").readString(), Gdx.files.internal(
-						"data/shaders/simpleChar.frag").readString());
-		if (!simpleShader.isCompiled())
+		"data/shaders/simpleChar.vert").readString(), Gdx.files.internal(
+		"data/shaders/simpleChar.frag").readString());
+		if (!charShader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile simple shader: "
-					+ simpleShader.getLog());
+					+ charShader.getLog());
+
+		explosionShader = new ShaderProgram(Gdx.files.internal(
+		"data/shaders/explosionShader.vert").readString(), Gdx.files.internal(
+		"data/shaders/explosionShader.frag").readString());
+		if (!explosionShader.isCompiled())
+			throw new GdxRuntimeException("Couldn't compile shader: "
+					+ explosionShader.getLog());
+		
+		
 		lineShader = new ShaderProgram(Gdx.files.internal(
-				"data/shaders/lineShader.vert").readString(), Gdx.files.internal(
-						"data/shaders/lineShader.frag").readString());
+		"data/shaders/lineShader.vert").readString(), Gdx.files.internal(
+		"data/shaders/lineShader.frag").readString());
 		if (!lineShader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile shader: "
 					+ lineShader.getLog());
 
+
 		skysphereShader = new ShaderProgram(Gdx.files.internal(
-				"data/shaders/skysphereShader.vert").readString(), Gdx.files.internal(
-						"data/shaders/skysphereShader.frag").readString());
+		"data/shaders/skysphereShader.vert").readString(), Gdx.files.internal(
+		"data/shaders/skysphereShader.frag").readString());
 		if (!skysphereShader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile shader: "
 					+ skysphereShader.getLog());
@@ -188,12 +203,12 @@ public class Renderer {
 		if(app.multiplayer){
 			renderMultiplayer(app);
 		}
-//		renderVector(app.from,app.to,app);
-//		for (int i = 0; i < app.map.chunks.size;i++) {
-//			if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0) {
-//				this.renderBoundingBox(app,app.map.chunks.get(i).bounds);
-//			}
-//		}
+		//		renderVector(app.from,app.to,app);
+		//		for (int i = 0; i < app.map.chunks.size;i++) {
+		//			if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0) {
+		//				this.renderBoundingBox(app,app.map.chunks.get(i).bounds);
+		//			}
+		//		}
 		renderSkySphere(app);
 		Gdx.gl20.glDisable(GL20.GL_CULL_FACE);
 		sb.begin();
@@ -263,7 +278,7 @@ public class Renderer {
 		for(int i = 0; i< app.players.length; i++){
 			if(app.clientid != i)
 				if(app.players[i] != null){
-	
+
 					charShader.begin();
 					try{
 						if(app.players[i].currentTeam == StaticVariables.teamBlue){
@@ -423,8 +438,8 @@ public class Renderer {
 			//System.out.println("Vertices: " + vertices);
 			simpleShader.end();
 		} else {
-            cubeTexture.bind(0);
-            crackTexture.bind(1);
+			cubeTexture.bind(0);
+			crackTexture.bind(1);
 			simpleShader.begin();
 			simpleShader.setUniform4fv("scene_light", app.light.color, 0, 4);
 			simpleShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
@@ -434,7 +449,7 @@ public class Renderer {
 			simpleShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
 			simpleShader.setUniformf("material_shininess", 0.5f);
 			simpleShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
-//			int vertices = 0;
+			//			int vertices = 0;
 			for (int i = 0; i < app.map.chunks.size;i++) {
 				if (app.map.chunks.get(i).chunkMesh != null && app.map.chunks.get(i).chunkMesh.getNumVertices() > 0 && app.cam.frustum.boundsInFrustum(app.map.chunks.get(i).bounds)) {
 					cubeModel.setToTranslation(app.map.chunks.get(i).x*Map.chunkSize,app.map.chunks.get(i).y*Map.chunkSize,app.map.chunks.get(i).z*Map.chunkSize);
@@ -451,14 +466,14 @@ public class Renderer {
 					//simpleShader.setUniformf("dir_light",0,0,0);
 
 					app.map.chunks.get(i).chunkMesh.render(simpleShader, GL20.GL_TRIANGLES);	
-//					vertices+=app.map.chunks.get(i).chunkMesh.getNumVertices();
+					//					vertices+=app.map.chunks.get(i).chunkMesh.getNumVertices();
 				}
 			}
-			
+
 			simpleShader.end();
 			Gdx.gl20.glDisable(GL20.GL_CULL_FACE);
 			Gdx.gl20.glEnable(GL20.GL_BLEND);
-			
+
 			grassShader.begin();
 			grassShader.setUniform4fv("scene_light", app.light.color, 0, 4);
 			grassShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
