@@ -8,6 +8,7 @@ import Map.Chunk;
 import Map.Map;
 import Map.Voxel;
 import Spelet.Character;
+import Spelet.ExplosionManager;
 import Spelet.GameInterface;
 import Spelet.LightSource;
 import Spelet.Main;
@@ -56,8 +57,10 @@ public class Application extends Screen implements InputProcessor{
 	public Main main;
 	public int ping;
 	public long recoilTime, recoilAK;
+	public ExplosionManager explosions;
 	//public ParticleEffect particle;
 	public Application(Main m){
+		explosions = new ExplosionManager();
 		main = m;
 		movement = new Vector3();
 		scoreboard = false;
