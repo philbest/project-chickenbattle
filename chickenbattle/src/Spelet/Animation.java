@@ -86,7 +86,7 @@ public class Animation {
 			Vector3 temp = new Vector3(player.dirX,player.dirZ,0);
 			temp.nor();
 			double radians = MathUtils.atan2(temp.x,temp.y);
-			startPosMatrix.rotate(0,1,0,(float)(MathUtils.radiansToDegrees*radians));
+			startPosMatrix.rotate(0,1,0,(float)(MathUtils.radiansToDegrees*radians)+180);
 			a.updateModelMatrix(startPosMatrix);
 			a.render(app, player);
 			timer += Gdx.graphics.getDeltaTime()*1000;
