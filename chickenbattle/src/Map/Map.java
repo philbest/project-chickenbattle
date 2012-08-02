@@ -1,9 +1,5 @@
 package Map;
 
-import Spelet.Heightmap;
-import Spelet.HeightmapUtils;
-
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 
 
@@ -12,19 +8,16 @@ public class Map {
 	public static final int x = chunkSize*4; // Must be multiple of chunkSize;
 	public static final int y = chunkSize*2; // Must be multiple of chunkSize;
 	public static final int z = chunkSize*4; // Must be multiple of chunkSize;
-	public static Heightmap heightmap;
 	public Array<Chunk> chunks;
 	public Array<Chunk> chunksToRebuild;
 
-	public Map() {
-		
-		heightmap = HeightmapUtils.load(Gdx.files.internal("data/noise2.png"));
+	public Map(Boolean x) {
 		chunks = new Array<Chunk>();
 		chunksToRebuild = new Array<Chunk>();
-		
-		buildChunks();
+		buildChunks(x);
+		System.out.println("LOL");
 	}
-	public void buildChunks() {
+	public void buildChunks(boolean rebuild) {
 		for (int chunkX = 0; chunkX < x/chunkSize; chunkX++) {
 			for (int chunkY = 0; chunkY < y/chunkSize; chunkY++) {
 				for (int chunkZ = 0; chunkZ < z/chunkSize; chunkZ++) {
@@ -34,17 +27,19 @@ public class Map {
 				}	
 			}
 		}
-		for (int i = 0; i < chunksToRebuild.size; i++) {
-			chunksToRebuild.get(i).rebuildChunk();
+
+		if(rebuild){
+			for (int i = 0; i < chunksToRebuild.size; i++) {
+				chunksToRebuild.get(i).rebuildChunk();
+			}
 		}
-		
 	}
 
 	public void update() {
-//		int startValue = Math.min(chunksToRebuild.size-1, 1);
-//		for (int i = startValue; i >= 0; i--) {
-//			chunksToRebuild.get(i).rebuildChunk();
-//			chunksToRebuild.removeIndex(i);
-//		}
+		//		int startValue = Math.min(chunksToRebuild.size-1, 1);
+		//		for (int i = startValue; i >= 0; i--) {
+		//			chunksToRebuild.get(i).rebuildChunk();
+		//			chunksToRebuild.removeIndex(i);
+		//		}
 	}
 }

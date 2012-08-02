@@ -75,7 +75,7 @@ public class Application extends Screen implements InputProcessor{
 		chunkstorebuild = new Array<Chunk>();
 		servermessages = new Array<Message>();
 		chunkdamage = new Array<BlockDamage>();
-		map = new Map();
+		map = new Map(true);
 		send = false;
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		cam.near = 0.1f;
@@ -199,6 +199,7 @@ public class Application extends Screen implements InputProcessor{
 				}
 
 				if(!chunkstorebuild.contains(c, true))
+
 					chunkstorebuild.add(c);
 			}
 
@@ -335,117 +336,8 @@ public class Application extends Screen implements InputProcessor{
 				recoil();
 
 				if(multiplayer){		
-					if(ch.inventory.get(ch.weapon).weaponID == 4){
-						client.sendBullet(point,direction, clientid, Weapon.bullet_sniper);
-					}
-					else{
-						client.sendBullet(point,direction, clientid, Weapon.bullet_gun);
-					}
+					client.sendBullet(point,direction, clientid, ch.inventory.get(ch.weapon).bulletType);
 				}
-				while (!hit && range < 200) {
-					range += direction.len();
-					point.add(direction);
-					pointX = (int) point.x;
-					pointY = (int) point.y;
-					pointZ = (int) point.z;
-					if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {		
-						for (Chunk c : map.chunks) {
-							if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-								if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id != Voxel.nothing) {
-									hit = true;
-								}
-								break;
-							}
-						}
-					}
-				}
-				if (hit) {
-					if (ch.weapon == Weapon.block) {
-						point.sub(direction);
-						pointX = (int) point.x;
-						pointY = (int) point.y;
-						pointZ = (int) point.z;
-						if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-							for (int i = 0; i < map.chunks.size; i++){
-								Chunk c = map.chunks.get(i);
-								if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-									if(multiplayer){
-										client.sendChunkUpdate(i, pointX, pointY, pointZ, Map.chunkSize, Voxel.grass);
-									} else{
-										c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.grass;
-										c.rebuildChunk();
-										break;
-									}
-								}		
-							}
-						}
-					} else {
-						if (ch.inventory.get(ch.weapon).bulletType == Weapon.bullet_rocket) {
-							int radius = 5;
-							Vector3 vec = new Vector3(pointX, pointY, pointZ);
-							Vector3 vec2 = new Vector3();
-							for (int y = pointY-radius; y < pointY+radius; y++) {
-								for (int x = pointX-radius; x < pointX+radius; x++) {
-									for (int z = pointZ-radius; z < pointZ+radius; z++) {
-										vec2.set(x,y,z);
-										float distance = vec2.dst(vec);
-										if (distance < radius) {
-											pointX = x;
-											pointY = y;
-											pointZ = z;
-											if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-												for (int i = 0; i < map.chunks.size; i++){
-													Chunk c = map.chunks.get(i);
-													if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-														int structuralDamage = c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].damageDone(ch.inventory.get(ch.weapon).bulletType);
-
-														if(multiplayer){
-															client.damageChunk(i, pointX, pointY, pointZ, structuralDamage);
-														} else {
-															c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].hit(ch.inventory.get(ch.weapon).bulletType);
-															if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].isDead())
-																c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.nothing;
-															if (!chunkstorebuild.contains(c,false))
-																this.chunkstorebuild.add(c);
-
-															break;
-														}
-													}
-
-												}
-											}
-										}
-									}
-								}
-							}
-							for (Chunk c : chunkstorebuild) 
-								c.rebuildChunk();
-						} else {
-							if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
-								for (int i = 0; i < map.chunks.size; i++){
-									Chunk c = map.chunks.get(i);
-									if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
-										//TODO Different bullets - different damage?
-
-										int structuralDamage = c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].damageDone(ch.inventory.get(ch.weapon).bulletType);
-
-										if(multiplayer){
-											client.damageChunk(i, pointX, pointY, pointZ, structuralDamage);
-										} else {
-											c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].hit(ch.inventory.get(ch.weapon).bulletType);
-											if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].isDead())
-												c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.nothing;
-											c.rebuildChunk();
-											break;
-										}
-									}
-
-								}
-							}
-						}
-					}
-				}
-
 			}
 		}
 		return false;

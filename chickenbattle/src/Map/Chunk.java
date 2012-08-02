@@ -67,6 +67,8 @@ public class Chunk {
 						map[x2][y2][z2] = new Voxel(Voxel.grass);
 					else
 						map[x2][y2][z2] = new Voxel(Voxel.nothing);
+					
+					
 				}
 			}
 		}

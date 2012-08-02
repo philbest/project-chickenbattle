@@ -53,6 +53,7 @@ public class MasterServer {
 					}
 				}
 				else if( object instanceof GetServers){
+					System.out.println("Requtin servers");
 					AddServer toSend = new AddServer();
 					for(int i = 0; i < servers.size; i++){
 						ServerInfo server = servers.get(i);

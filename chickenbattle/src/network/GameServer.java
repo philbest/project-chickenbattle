@@ -16,10 +16,14 @@ import network.Packet.Message;
 import network.Packet.Reject;
 import network.Packet.Update;
 import network.Packet.UpdateServer;
+import Map.Chunk;
+import Map.Map;
+import Map.Voxel;
 import Spelet.StaticVariables;
 import Spelet.Weapon;
 
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -37,13 +41,17 @@ public class GameServer {
 	Update toSend;
 	Update newN;
 	BlockUpdate btoSend;
-	BlockDamage bdtoSend;
+	BlockDamage bdamage;
 	UpdateServer updServer;
 	Hit hittoSend;
 	Vector3 point;
 	Vector3 direction;
 	int startx,starty,startz;
+	Map map;
 	InetAddress ownIP;
+	int pointX,pointY,pointZ;
+
+	Json json;
 
 	String motd;
 	int online;
@@ -54,17 +62,22 @@ public class GameServer {
 	public static final float FALL_DEATH_LIMIT = -50f;
 
 	public GameServer (String m, int gamemode) throws IOException {
+		map = new Map(false);
 		server = new Server();
 		broadcast = new Message();
 		player = new Player[10];
 		connections = new Connection[10];
 		ownIP = InetAddress.getLocalHost();
 		bbCorners = new Vector3[8];
+		json = new Json();
+
 		for(int i=0; i < 8; i++)
 			bbCorners[i] = new Vector3(0,0,0);
 		point = new Vector3(0,0,0);
 		direction = new Vector3(0,0,0);
 		toSend = new Update();
+		bdamage = new BlockDamage();
+		btoSend = new BlockUpdate();
 		hittoSend = new Hit();
 		connectionIDs = new HashMap<Connection,Integer>();
 		updServer = new UpdateServer();
@@ -78,8 +91,9 @@ public class GameServer {
 		lobbyconnection.start();
 		Packet.register(lobbyconnection);
 		//lobbyconnection.connect(5000, "192.168.0.101", 50000, 50002);
-		//lobbyconnection.connect(5000, "129.16.21.56", 50000, 50002);
-		lobbyconnection.connect(5000, "129.16.190.170", 50000, 50002);
+		lobbyconnection.connect(5000, "129.16.21.56", 50000, 50002);
+
+		//		lobbyconnection.connect(5000, "129.16.190.170", 50000, 50002);
 		this.motd =m;
 		this.online =0;
 		this.playercap = player.length;
@@ -90,11 +104,17 @@ public class GameServer {
 		addS.motd =motd;
 		addS.online =online;
 		addS.playercap =playercap;
-
 		lobbyconnection.sendTCP(addS);
+		//		String addservea = json.toJson(addS);
+		//		System.out.println(addservea);
 
-		lobbyconnection.addListener(new Listener() {
+		//		AddServer passing = json.fromJson(AddServer.class, addservea);
+		//
+		//		System.out.println(passing.motd);
+
+		lobbyconnection.addListener(new Listener() {	
 			public void received (Connection connection, Object object) {
+
 				if (object instanceof UpdateServer){
 				}
 			}
@@ -178,7 +198,7 @@ public class GameServer {
 					player[received.id].dirX = received.dx;
 					player[received.id].dirY = received.dy;
 					player[received.id].dirZ = received.dz;
-					
+
 
 					bbCorners[0].set(received.x1, received.y1, received.z1);
 					bbCorners[1].set(received.x2, received.y2, received.z2);
@@ -226,7 +246,7 @@ public class GameServer {
 					player[received.id].initShield = false;
 					player[received.id].dead = false;
 					player[received.id].hit = false;
-					
+
 					if(player[received.id].shields < 5){
 						long currTime = System.currentTimeMillis();
 						if((currTime-player[received.id].lasthit > 6000l && currTime-player[received.id].lastRegged > 2000l)){
@@ -262,11 +282,7 @@ public class GameServer {
 					btoSend = received;
 					server.sendToAllTCP(btoSend);		
 				}
-				else if(object instanceof BlockDamage){
-					BlockDamage received = (BlockDamage) object;
-					bdtoSend = received;
-					server.sendToAllTCP(bdtoSend);
-				}
+
 				else if(object instanceof Bullet){
 					hit = false;
 
@@ -316,7 +332,7 @@ public class GameServer {
 
 										if(compare.hp <= 0){
 											player[b.id].kills += 1;
-											
+
 											compare.dead = true;
 											compare.deaths += 1;
 											compare.hp = 10;
@@ -333,10 +349,116 @@ public class GameServer {
 								}
 							}
 						}
+						if(!hit){
+							pointX = (int) point.x;
+							pointY = (int) point.y;
+							pointZ = (int) point.z;
+							if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {		
+								for (Chunk c : map.chunks) {
+									if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
+										if (c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize] .id != Voxel.nothing) {
+											hit = true;
+										}
+										break;
+									}
+								}
+							}
+						}
+						if (hit) {
+							if (b.type == Weapon.bullet_block) {
+								point.sub(direction);
+								pointX = (int) point.x;
+								pointY = (int) point.y;
+								pointZ = (int) point.z;
+								if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
+									for (int i = 0; i < map.chunks.size; i++){
+										Chunk c = map.chunks.get(i);
+										if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {											
+											c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.grass;
+											btoSend.chunk = i;
+											btoSend.x = pointX;
+											btoSend.y = pointY;
+											btoSend.z = pointZ;
+											btoSend.size = Map.chunkSize;
+											btoSend.modi = Voxel.grass;
+											server.sendToAllTCP(btoSend);	
+
+										}
+									}		
+								}
+							}
+							else {
+								if (b.type == Weapon.bullet_rocket) {
+									int radius = 5;
+									Vector3 vec = new Vector3(pointX, pointY, pointZ);
+									Vector3 vec2 = new Vector3();
+									for (int y = pointY-radius; y < pointY+radius; y++) {
+										for (int x = pointX-radius; x < pointX+radius; x++) {
+											for (int z = pointZ-radius; z < pointZ+radius; z++) {
+												vec2.set(x,y,z);
+												float distance = vec2.dst(vec);
+												if (distance < radius) {
+													pointX = x;
+													pointY = y;
+													pointZ = z;
+													if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
+														for (int i = 0; i < map.chunks.size; i++){
+															Chunk c = map.chunks.get(i);
+															if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
+																int structuralDamage = c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].damageDone(b.type);
+
+																Voxel vox = c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize];
+																vox.durability -= structuralDamage;
+
+																if(vox.durability <= 0) {
+																	vox.id = Voxel.nothing;
+																}
+																
+																bdamage.chunk = i;
+																bdamage.x = pointX;
+																bdamage.y = pointY;
+																bdamage.z = pointZ;
+																bdamage.damage = structuralDamage;
+																server.sendToAllTCP(bdamage);
+
+															} 
+														}
+													}
+												}
+											}
+										}
+									}
+								} else {
+									if (pointX >= 0 && pointX < Map.x && pointY >= 0 && pointY < Map.y && pointZ >= 0 && pointZ < Map.z) {
+										for (int i = 0; i < map.chunks.size; i++){
+											Chunk c = map.chunks.get(i);
+											if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
+												//TODO Different bullets - different damage?
+												int structuralDamage = c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].damageDone(b.type);
+												
+												Voxel vox = c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize];
+												vox.durability -= structuralDamage;
+
+												if(vox.durability <= 0) {
+													vox.id = Voxel.nothing;
+												}
+												
+												bdamage.chunk = i;
+												bdamage.x = pointX;
+												bdamage.y = pointY;
+												bdamage.z = pointZ;
+												bdamage.damage = structuralDamage;
+												server.sendToAllTCP(bdamage);
+											}
+										}
+
+									}
+								}
+							}
+						}
 					}
 				}
 			}
-
 			public void disconnected (Connection c) {
 				if(connectionIDs.get(c)!= null){
 					Disconnected dc = new Disconnected();	
@@ -384,7 +506,7 @@ public class GameServer {
 		}
 		catch(Exception e)
 		{
-			System.out.println(e.getMessage());
+			System.out.println(e);
 			System.out.println("Server fucked up.");
 		}	
 	}
