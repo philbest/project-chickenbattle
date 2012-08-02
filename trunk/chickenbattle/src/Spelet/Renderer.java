@@ -61,7 +61,7 @@ public class Renderer {
 
 	ShaderProgram simpleShader;
 	ShaderProgram charShader;
-	ShaderProgram particleShader;
+	ShaderProgram lineShader;
 	ShaderProgram skysphereShader;
 	ShaderProgram grassShader;
 	String playerscore;
@@ -137,12 +137,12 @@ public class Renderer {
 		if (!simpleShader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile simple shader: "
 					+ simpleShader.getLog());
-		particleShader = new ShaderProgram(Gdx.files.internal(
-				"data/shaders/particleShader.vert").readString(), Gdx.files.internal(
-						"data/shaders/particleShader.frag").readString());
-		if (!particleShader.isCompiled())
+		lineShader = new ShaderProgram(Gdx.files.internal(
+				"data/shaders/lineShader.vert").readString(), Gdx.files.internal(
+						"data/shaders/lineShader.frag").readString());
+		if (!lineShader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile shader: "
-					+ particleShader.getLog());
+					+ lineShader.getLog());
 
 		skysphereShader = new ShaderProgram(Gdx.files.internal(
 				"data/shaders/skysphereShader.vert").readString(), Gdx.files.internal(
@@ -512,15 +512,15 @@ public class Renderer {
 		indices[8] = 4; indices[9] = 5; indices[10] = 6; indices[11] = 7;
 		indices[12] = 4; indices[13] = 0; indices[14] = 3; indices[15] =0; indices[16] = 1;
 		Mesh vectorTest = new Mesh(true,8,17,new VertexAttribute(Usage.Position, 3,"a_position"));
-		particleShader.begin(); 
+		lineShader.begin(); 
 		vectorTest.setVertices(vertices);
 		vectorTest.setIndices(indices);
 
 		modelViewProjectionMatrix.set(app.cam.combined);
-		particleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
+		lineShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
 
-		vectorTest.render(particleShader, GL20.GL_LINE_STRIP);
-		particleShader.end();
+		vectorTest.render(lineShader, GL20.GL_LINE_STRIP);
+		lineShader.end();
 		vectorTest.dispose();
 	}
 
@@ -538,7 +538,7 @@ public class Renderer {
 
 	public void renderVector(Vector3 from,Vector3 to, Application app) {
 		Mesh vectorTest = new Mesh(true,2,0,new VertexAttribute(Usage.Position, 3,"a_position"));
-		particleShader.begin();
+		lineShader.begin();
 		float[] vertices = new float[]{ from.x,from.y,from.z,to.x,to.y,to.z}; 
 		vectorTest.setVertices(vertices);
 
@@ -546,10 +546,10 @@ public class Renderer {
 		Matrix4 modelViewProjectionMatrix = new Matrix4();
 		modelViewProjectionMatrix.set(app.cam.combined);
 
-		particleShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
+		lineShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
 
-		vectorTest.render(particleShader, GL20.GL_LINES);
-		particleShader.end();
+		vectorTest.render(lineShader, GL20.GL_LINES);
+		lineShader.end();
 		vectorTest.dispose();
 	}
 }

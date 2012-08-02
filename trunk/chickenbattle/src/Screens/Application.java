@@ -85,10 +85,10 @@ public class Application extends Screen implements InputProcessor{
 		gi = new GameInterface(this);
 		gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 		multiplayer = true;
-//		particle = new ParticleEffect();
-//		particle.setPosition(500, 500);
-//		particle.start();
-//		particle.load(Gdx.files.internal("data/particle/fire"), Gdx.files.internal("data/particle/"));
+		//		particle = new ParticleEffect();
+		//		particle.setPosition(500, 500);
+		//		particle.start();
+		//		particle.load(Gdx.files.internal("data/particle/fire"), Gdx.files.internal("data/particle/"));
 		bloodTimer = 0;
 		if(multiplayer)
 			client = m.client;
@@ -297,24 +297,8 @@ public class Application extends Screen implements InputProcessor{
 				zoom = true;
 				ch.inventory.get(ch.weapon).zoomS = true;
 			}
-		} else if(ch.inventory.get(ch.weapon).weaponID == 3){		
-			if(ch.inventory.get(ch.weapon).shootEMP()){
-				ch.inventory.get(ch.weapon).reload();
-				gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
-				gi.animateShell(ch.inventory.get(ch.weapon).magBullets);
-				Vector3 point = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).origin);
-				Vector3 direction = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).direction);
-				from.set(point);
-				to.set(from);
-				direction.mul(100);
-				to.add(direction);
-				direction.nor();
-				direction.mul(0.5f);
-				if(multiplayer){		
-					client.sendBullet(point,direction, clientid, Weapon.bullet_emp);
-				}
-			}
-		} else {
+		} 		
+		else if(arg3 == Input.Buttons.LEFT ){
 			if (ch.inventory.get(ch.weapon).shoot()) {
 				gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 				gi.animateShell(ch.inventory.get(ch.weapon).magBullets);
