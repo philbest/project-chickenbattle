@@ -18,7 +18,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -63,7 +62,7 @@ public class Application extends Screen implements InputProcessor{
 		movement = new Vector3();
 		scoreboard = false;
 		ch = new Character(m.name);
-		ch.setPos(map.chunkSize*6/2,map.chunkSize*2/2,map.chunkSize*6/2);
+		ch.setPos(Map.chunkSize*6/2,Map.chunkSize*2/2,Map.chunkSize*6/2);
 		players = new Player[10];
 		oldPos = new Vector3();
 		comparevec = new Vector3();
@@ -149,7 +148,7 @@ public class Application extends Screen implements InputProcessor{
 			players = client.getPlayers();
 			if(players[client.id] != null){	
 				if(players[client.id].dead){
-					ch.resurrect(map.chunkSize*6/2,map.chunkSize*2/2,map.chunkSize*6/2);			
+					ch.resurrect(Map.chunkSize*6/2,Map.chunkSize*2/2,Map.chunkSize*6/2);			
 					players[client.id].dead = false;
 					gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 				}
@@ -244,7 +243,7 @@ public class Application extends Screen implements InputProcessor{
 			gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 			gi.swapWeapon();
 		} else if (Input.Keys.NUM_9 == arg0){
-			ch.setPos(map.chunkSize*6/2,map.chunkSize*2/2,map.chunkSize*6/2);
+			ch.setPos(Map.chunkSize*6/2,Map.chunkSize*2/2,Map.chunkSize*6/2);
 		}
 		else if (Input.Keys.TAB == arg0){
 			scoreboard = true;
@@ -319,7 +318,6 @@ public class Application extends Screen implements InputProcessor{
 			if (ch.inventory.get(ch.weapon).shoot()) {
 				gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 				gi.animateShell(ch.inventory.get(ch.weapon).magBullets);
-				float range = 0;
 				Vector3 point = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).origin);
 				Vector3 direction = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).direction);
 				from.set(point);
@@ -328,10 +326,6 @@ public class Application extends Screen implements InputProcessor{
 				to.add(direction);
 				direction.nor();
 				direction.mul(0.5f);
-				boolean hit = false;
-				int pointX = (int) point.x;
-				int pointY = (int) point.y;
-				int pointZ = (int) point.z;
 
 				recoil();
 
