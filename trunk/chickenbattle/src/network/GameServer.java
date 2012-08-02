@@ -11,6 +11,7 @@ import network.Packet.BlockDamage;
 import network.Packet.BlockUpdate;
 import network.Packet.Bullet;
 import network.Packet.Disconnected;
+import network.Packet.ExplosionUpd;
 import network.Packet.Hit;
 import network.Packet.Message;
 import network.Packet.Reject;
@@ -34,6 +35,7 @@ public class GameServer {
 	Server server;
 	Client lobbyconnection;
 	Message broadcast;
+	ExplosionUpd explo;
 	public Player[] player;
 	Vector3[] bbCorners;
 	HashMap<Connection,Integer> connectionIDs;
@@ -70,7 +72,7 @@ public class GameServer {
 		ownIP = InetAddress.getLocalHost();
 		bbCorners = new Vector3[8];
 		json = new Json();
-
+		explo = new ExplosionUpd();
 		for(int i=0; i < 8; i++)
 			bbCorners[i] = new Vector3(0,0,0);
 		point = new Vector3(0,0,0);
@@ -425,6 +427,13 @@ public class GameServer {
 																bdamage.z = pointZ;
 																bdamage.damage = structuralDamage;
 																server.sendToAllTCP(bdamage);
+																
+
+																explo.x = pointX;
+																explo.y = pointY;
+																explo.z = pointZ;
+																
+																server.sendToAllTCP(explo);
 
 															} 
 														}

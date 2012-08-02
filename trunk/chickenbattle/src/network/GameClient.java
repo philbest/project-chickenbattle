@@ -10,6 +10,7 @@ import network.Packet.BlockDamage;
 import network.Packet.BlockUpdate;
 import network.Packet.Bullet;
 import network.Packet.Disconnected;
+import network.Packet.ExplosionUpd;
 import network.Packet.GetServers;
 import network.Packet.Hit;
 import network.Packet.Message;
@@ -33,7 +34,7 @@ public class GameClient{
 	Array<BlockUpdate> chunkstoupdate;
 	Array<BlockDamage> blockdamage;
 	Array<BlockUpdate> servedchunks;
-
+	public Array<ExplosionUpd> explosions;
 	public Array<AddServer> serverlist;
 	Semaphore listsafe;
 	Vector3[] bbCorners;
@@ -133,6 +134,11 @@ public class GameClient{
 					chunkstoupdate.add(response);
 					listsafe.release();
 				}
+				
+				else if(object instanceof ExplosionUpd){
+					ExplosionUpd response = (ExplosionUpd)object;
+					explosions.add(response);				
+				}
 
 				else if(object instanceof Hit){
 					Hit response = (Hit)object;
@@ -164,6 +170,8 @@ public class GameClient{
 			}
 		});		
 	}
+	
+	
 
 	public Player[] getPlayers(){
 		return players;
