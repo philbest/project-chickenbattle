@@ -23,6 +23,7 @@ public class Packet {
 		kryo.register(UpdateServer.class);
 		kryo.register(GetServers.class);
 		kryo.register(Message.class);
+		kryo.register(ExplosionUpd.class);
 	}
 
 	static public class Update {
@@ -47,6 +48,9 @@ public class Packet {
 
 	static public class Added {
 		public int id;
+		public float x,y,z;
+	}
+	static public class ExplosionUpd{
 		public float x,y,z;
 	}
 
