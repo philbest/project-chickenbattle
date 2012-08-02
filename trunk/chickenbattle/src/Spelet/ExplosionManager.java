@@ -8,7 +8,7 @@ public class ExplosionManager {
 		explosions = new Array<Explosion>();
 	}
 	public void addExplotion(float x, float y, float z) {
-		explosions.add(new Explosion(x,y,z,1,10000,100,0.2f));
+		explosions.add(new Explosion(x,y,z,1,1000,500,0.2f));
 	}
 	public void update() {
 		for (int i = explosions.size-1; i >= 0; i--) {

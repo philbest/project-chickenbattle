@@ -396,6 +396,11 @@ public class GameServer {
 							}
 							else {
 								if (b.type == Weapon.bullet_rocket) {
+									explo.x = pointX;
+									explo.y = pointY;
+									explo.z = pointZ;
+									
+									server.sendToAllTCP(explo);
 									int radius = 5;
 									Vector3 vec = new Vector3(pointX, pointY, pointZ);
 									Vector3 vec2 = new Vector3();
@@ -427,14 +432,6 @@ public class GameServer {
 																bdamage.z = pointZ;
 																bdamage.damage = structuralDamage;
 																server.sendToAllTCP(bdamage);
-																
-
-																explo.x = pointX;
-																explo.y = pointY;
-																explo.z = pointZ;
-																
-																server.sendToAllTCP(explo);
-
 															} 
 														}
 													}

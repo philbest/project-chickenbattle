@@ -31,6 +31,7 @@ public class Explosion {
 			dirCalc.rot(rotMat);
 			rotMat.setToRotation(0,0,1,rz);
 			dirCalc.rot(rotMat);
+			dirCalc.mul(MathUtils.random(3f));
 			addVertices(dirCalc.x,dirCalc.y,dirCalc.z);
 		}
 		mesh = new Mesh(true, fa.size, 0,
@@ -86,7 +87,6 @@ public class Explosion {
 		timeAlive += Gdx.graphics.getDeltaTime()*1000;
 	}
 	public boolean isDead() {
-		System.out.println(ttl + " " + timeAlive);
 		return (ttl < timeAlive);
 	}
 }
