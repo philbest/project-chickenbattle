@@ -6,5 +6,5 @@ varying float v_ptime;
 void main()
 {
 v_ptime = u_ptime;
-gl_Position = u_mvpMatrix * (a_position+a_pdir*u_ptime/100);
+gl_Position = u_mvpMatrix * (a_position+a_pdir*u_ptime/300);
 }

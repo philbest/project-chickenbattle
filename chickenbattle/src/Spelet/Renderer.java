@@ -277,7 +277,6 @@ public class Renderer {
 		Gdx.gl.glDisable(GL20.GL_CULL_FACE);
 		explosionShader.begin();
 		for (int i = 0; i < app.explosions.explosions.size; i++) {
-			System.out.println("RENDERING EXPLOSIONS");
 			Explosion e = app.explosions.explosions.get(i);
 			explosionShader.setUniformf("u_ptime",e.timeAlive);
 			
