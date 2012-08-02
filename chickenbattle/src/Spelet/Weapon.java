@@ -24,6 +24,9 @@ public class Weapon {
 	public static final int bullet_emp = 1003;
 	public static final int bullet_sniper = 1004;
 	public static final int bullet_rocket = 1005;
+	
+	
+	
 	public Sprite wpn;
 	public Sprite[] gunSpr;
 	public Sprite[] akSpr;

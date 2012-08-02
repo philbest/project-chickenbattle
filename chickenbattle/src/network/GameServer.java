@@ -324,6 +324,11 @@ public class GameServer {
 											}
 											compare.lasthit = System.currentTimeMillis();
 										}
+										else if(compare.shields == 0 && b.type == Weapon.bullet_gun){
+											compare.hp = compare.hp-5;
+											compare.hit = true;
+											compare.lasthit = System.currentTimeMillis();
+										}
 										else{
 											compare.hp =compare.hp-1;
 											compare.hit = true;
@@ -413,7 +418,7 @@ public class GameServer {
 																if(vox.durability <= 0) {
 																	vox.id = Voxel.nothing;
 																}
-																
+
 																bdamage.chunk = i;
 																bdamage.x = pointX;
 																bdamage.y = pointY;
@@ -435,14 +440,14 @@ public class GameServer {
 											if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {
 												//TODO Different bullets - different damage?
 												int structuralDamage = c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].damageDone(b.type);
-												
+
 												Voxel vox = c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize];
 												vox.durability -= structuralDamage;
 
 												if(vox.durability <= 0) {
 													vox.id = Voxel.nothing;
 												}
-												
+
 												bdamage.chunk = i;
 												bdamage.x = pointX;
 												bdamage.y = pointY;
