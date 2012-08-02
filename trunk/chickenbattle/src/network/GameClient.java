@@ -125,7 +125,7 @@ public class GameClient{
 				else if (object instanceof Reject){
 					System.exit(0);
 				}
-				else if(object instanceof BlockUpdate){
+				else if(object instanceof BlockUpdate){							
 					BlockUpdate response = (BlockUpdate)object;
 					try {
 						listsafe.acquire();
@@ -292,7 +292,6 @@ public class GameClient{
 		update.x5 = ch[4].x;
 		update.y5 = ch[4].y;
 		update.z5 = ch[4].z;
-
 		update.x6 = ch[5].x;
 		update.y6 = ch[5].y;
 		update.z6 = ch[5].z;

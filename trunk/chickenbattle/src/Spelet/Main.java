@@ -44,7 +44,7 @@ public class Main implements ApplicationListener{
 		screens.put(SKILLS, new Skills(this));
 		activeScreen = screens.get(MAINMENU);
 		activeScreen.enter();
-		Gdx.graphics.setVSync(true);
+		Gdx.graphics.setVSync(false);
 	}
 
 
