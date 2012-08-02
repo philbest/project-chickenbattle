@@ -59,6 +59,7 @@ public class GameClient{
 		bullet = new Bullet();
 		bdamage = new BlockDamage();
 		listsafe = new Semaphore(1);
+		explosions=  new Array<ExplosionUpd>();
 		chunkstoupdate = new Array<BlockUpdate>();
 		servedchunks = new Array<BlockUpdate>();
 		blockdamage = new Array<BlockDamage>();
