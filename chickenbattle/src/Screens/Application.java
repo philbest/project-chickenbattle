@@ -300,9 +300,14 @@ public class Application extends Screen implements InputProcessor{
 				zoom = true;
 				ch.inventory.get(ch.weapon).zoomS = true;
 			}
-		} 		
+			if(ch.inventory.get(ch.weapon).weaponID == 5){
+				ch.inventory.get(ch.weapon).zoomR = true;
+			}
+		}
 		else if(arg3 == Input.Buttons.LEFT ){
+
 			if (ch.inventory.get(ch.weapon).shoot()) {
+
 				gi.updateShells(ch.inventory.get(ch.weapon).magBullets);
 				gi.animateShell(ch.inventory.get(ch.weapon).magBullets);
 				Vector3 point = new Vector3(cam.getPickRay(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2).origin);
@@ -333,6 +338,7 @@ public class Application extends Screen implements InputProcessor{
 		if(arg3 == Input.Buttons.RIGHT ){
 			zoom = false;
 			ch.inventory.get(ch.weapon).zoomS = false;
+			ch.inventory.get(ch.weapon).zoomR = false;
 		}
 		return false;
 	}
