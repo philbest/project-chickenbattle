@@ -39,6 +39,7 @@ public class Weapon {
 	public Sprite[] rocketSpr;
 	public Sprite[] sniperReload;
 	public Sprite[] akCH, empCH;
+	public Sprite[] akChill;
 	public Sprite crosshair;
 	public Sprite sniperZoom;
 	int offset;
@@ -50,7 +51,7 @@ public class Weapon {
 	public int magSize;
 	public int cooldown;
 	public int reloadTimes;
-	public int currentCooldown, shootAnim, reloadTimer, empTimer, empAnim, rocketAnim;
+	public int currentCooldown, shootAnim, reloadTimer, empTimer, empAnim, rocketAnim, anim;
 	public long lastShot;
 	public BitmapFont font;
 	public int bulletType;
@@ -78,15 +79,51 @@ public class Weapon {
 		gunReload[2] = new Sprite(new Texture(Gdx.files.internal("data/weapons/gunreload1.png")));
 		gunReload[3] = new Sprite(new Texture(Gdx.files.internal("data/weapons/gunreload2.png")));
 		gunReload[4] = new Sprite(new Texture(Gdx.files.internal("data/weapons/gunreload3.png")));
-		akReload = new Sprite[8];
+		akReload = new Sprite[33];
 		akReload[0] = akSpr[0];
-		akReload[1] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akreload.png")));
-		akReload[2] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akreload1.png")));
-		akReload[3] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akreload2.png")));
-		akReload[4] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akreload3.png")));
-		akReload[5] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akreload4.png")));
-		akReload[6] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akreload5.png")));
-		akReload[7] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akreload6.png")));
+		akReload[1] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel31.png")));
+		akReload[2] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel30.png")));
+		akReload[3] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel29.png")));
+		akReload[4] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel28.png")));
+		akReload[5] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel27.png")));
+		akReload[6] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel26.png")));
+		akReload[7] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel25.png")));
+		akReload[8] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel24.png")));
+		akReload[9] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel23.png")));
+		akReload[10] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel22.png")));
+		akReload[11] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel21.png")));
+		akReload[12] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel20.png")));
+		akReload[13] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel19.png")));
+		akReload[14] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel18.png")));
+		akReload[15] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel17.png")));
+		akReload[16] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel16.png")));
+		akReload[17] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel15.png")));
+		akReload[18] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel14.png")));
+		akReload[19] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel13.png")));
+		akReload[20] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel12.png")));
+		akReload[21] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel21.png")));
+		akReload[22] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel10.png")));
+		akReload[23] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel9.png")));
+		akReload[24] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel8.png")));
+		akReload[25] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel7.png")));
+		akReload[26] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel6.png")));
+		akReload[27] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel5.png")));
+		akReload[28] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel4.png")));
+		akReload[29] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel3.png")));
+		akReload[30] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel2.png")));
+		akReload[31] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel1.png")));
+		akReload[32] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akrel0.png")));
+		akChill = new Sprite[10];
+		akChill[0] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akanim0.png")));
+		akChill[1] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akanim1.png")));
+		akChill[2] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akanim2.png")));
+		akChill[3] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akanim3.png")));
+		akChill[4] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akanim4.png")));
+		akChill[5] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akanim5.png")));
+		akChill[6] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akanim6.png")));
+		akChill[7] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akanim7.png")));
+		akChill[8] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akanim8.png")));
+		akChill[9] = new Sprite(new Texture(Gdx.files.internal("data/weapons/akanim9.png")));
 		empSpr = new Sprite[10];
 		empSpr[0] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emp.png")));
 		empSpr[1] = new Sprite(new Texture(Gdx.files.internal("data/weapons/emp1.png")));
@@ -140,6 +177,7 @@ public class Weapon {
 		rocketSpr[3].setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		rocketSpr[4].setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		reloadTimes = 0;
+		anim = 600;
 		if (weaponID == gun) {
 			crosshair = new Sprite(new Texture(Gdx.files.internal("data/crosshairs/guncrosshair.png")));
 			wpn = gunSpr[0];
@@ -268,6 +306,7 @@ public class Weapon {
 		empTimer -= delta;
 		empAnim -= delta;
 		rocketAnim -= delta;
+		anim -= delta;
 
 		if(currentCooldown<0)
 			currentCooldown = 0;
@@ -328,17 +367,24 @@ public class Weapon {
 				reloadTimer = 500;
 			}
 		}
-		if(reloadTimes > 0 && weaponID == ak){
-			for(int i = 0; i < akSpr.length; i++){
-				if(shootAnim > i*60){
-					wpn = akSpr[i];
+		if(reloading && weaponID == ak){
+			for(int i = 0; i < akReload.length; i++){
+				if(reloadTimer > i*100){
+					wpn = akReload[i];
 				}
 			}
-			if(!reloading){
-				reloadTimes--; 
-				reloadTimer = 500;
-			}
 		}
+//		
+//		if(!reloading && weaponID == ak && !shootbool){
+//			for(int i = 0; i < akChill.length; i++){
+//				if(anim > i*60){
+//					wpn = akChill[i];
+//				}
+//			}
+//			if(anim < 0){
+//				anim = 600;
+//			}
+//		}
 		if(reloadTimes > 0 && weaponID == emp){
 			crosshair = empCH[1];
 			for(int i = 0; i < empRecharge.length; i++){
@@ -432,7 +478,7 @@ public class Weapon {
 					reloadTimes = (magSize-magBullets)/3+1;
 				}
 				if(weaponID == ak){
-					reloadTimes = (magSize-magBullets)/10;
+					reloadTimer = 3300;
 				}
 				if(weaponID == emp){
 					reloadTimes = 16;
