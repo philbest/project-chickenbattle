@@ -37,7 +37,7 @@ public class Explosion {
 		this.ttl = ttl;
 		gravity = -1f;
 		timer = 0;
-		initialForceUp = 5f;
+		initialForceUp = 7f;
 	}
 	public void update(Application app) {
 		timeAlive += Gdx.graphics.getDeltaTime()*1000;

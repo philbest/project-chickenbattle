@@ -7,6 +7,7 @@ import Screens.Application;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
+import com.badlogic.gdx.utils.TimeUtils;
 
 public class ExplosionManager {
 	public Array<Explosion> explosions;
@@ -33,14 +34,14 @@ public class ExplosionManager {
 	public void addExplotion(float x, float y, float z, float cx, float cy, float cz) {
 		float ttl = 2000;
 		explosions.add(new Explosion(x,y,z,cx,cy,cz,ttl));
-		explosions.add(new Explosion(x+0.5f,y,z,cx,cy,cz,ttl));
-		explosions.add(new Explosion(x,y,z+0.5f,cx,cy,cz,ttl));
-		explosions.add(new Explosion(x+0.5f,y,z+0.5f,cx,cy,cz,ttl));
-		
-		explosions.add(new Explosion(x,y+0.5f,z,cx,cy,cz,ttl));
-		explosions.add(new Explosion(x+0.5f,y+0.5f,z,cx,cy,cz,ttl));
-		explosions.add(new Explosion(x,y+0.5f,z+0.5f,cx,cy,cz,ttl));
-		explosions.add(new Explosion(x+0.5f,y+0.5f,z+0.5f,cx,cy,cz,ttl));
+//		explosions.add(new Explosion(x+0.5f,y,z,cx,cy,cz,ttl));
+//		explosions.add(new Explosion(x,y,z+0.5f,cx,cy,cz,ttl));
+//		explosions.add(new Explosion(x+0.5f,y,z+0.5f,cx,cy,cz,ttl));
+//		
+//		explosions.add(new Explosion(x,y+0.5f,z,cx,cy,cz,ttl));
+//		explosions.add(new Explosion(x+0.5f,y+0.5f,z,cx,cy,cz,ttl));
+//		explosions.add(new Explosion(x,y+0.5f,z+0.5f,cx,cy,cz,ttl));
+//		explosions.add(new Explosion(x+0.5f,y+0.5f,z+0.5f,cx,cy,cz,ttl));
 	}
 	public void update(Application app) {
 		for (int i = explosions.size-1; i >= 0; i--) {
