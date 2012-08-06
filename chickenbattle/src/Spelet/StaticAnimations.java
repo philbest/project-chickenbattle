@@ -8,7 +8,6 @@ public class StaticAnimations {
 	public static Animation walk,sitdown,standup;
 	public static BoundingBox walkBox,sitBox,standBox;
 
-
 	public static void initiate() {
 		String s1 = Gdx.files.internal("data/animations/steven6.cpart").readString();
 		String s2 = Gdx.files.internal("data/animations/steven6.ckey").readString();
