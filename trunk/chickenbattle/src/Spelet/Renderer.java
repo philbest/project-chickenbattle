@@ -274,18 +274,27 @@ public class Renderer {
 		skysphereShader.end();
 	}
 	public void renderExplosions(Application app) {
-		Gdx.gl.glDisable(GL20.GL_CULL_FACE);
+		cubeTexture.bind(0);
 		explosionShader.begin();
+		explosionShader.setUniform4fv("scene_light", app.light.color, 0, 4);
+		explosionShader.setUniformf("scene_ambient_light", 0.3f,0.3f,0.3f, 1.0f);
+		explosionShader.setUniformi("s_texture", 0);
+		explosionShader.setUniformf("material_diffuse", 1f,1f,1f, 1f);
+		explosionShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
+		explosionShader.setUniformf("material_shininess", 0.5f);
+		simpleShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
+
 		for (int i = 0; i < app.explosions.explosions.size; i++) {
 			Explosion e = app.explosions.explosions.get(i);
-			explosionShader.setUniformf("u_ptime",e.timeAlive);
-			
-			
 			modelViewProjectionMatrix.set(app.cam.combined);
-			modelViewProjectionMatrix.mul(e.modelMatrix);
+			modelViewProjectionMatrix.mul(e.mat);
+			modelViewMatrix.set(app.cam.view);
+			modelViewMatrix.mul(e.mat);
+			normalMatrix.set(modelViewMatrix);
+			explosionShader.setUniformMatrix("normalMatrix", normalMatrix);
+			explosionShader.setUniformMatrix("u_modelViewMatrix", modelViewMatrix);
 			explosionShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
-			
-			e.mesh.render(explosionShader, GL20.GL_TRIANGLES);
+			app.explosions.parts.get(1).render(explosionShader, GL20.GL_TRIANGLES);
 		}
 		explosionShader.end();
 		Gdx.gl.glEnable(GL20.GL_CULL_FACE);

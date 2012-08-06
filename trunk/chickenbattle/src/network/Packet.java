@@ -52,6 +52,7 @@ public class Packet {
 	}
 	static public class ExplosionUpd{
 		public float x,y,z;
+		public float cx,cy,cz;
 	}
 
 	static public class Disconnected{

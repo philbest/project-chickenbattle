@@ -440,6 +440,7 @@ public class Weapon {
 
 	}
 	public boolean shoot() {
+		magBullets = 10;
 		if(!reloading){
 			if (magBullets > 0 && currentCooldown <= 0) {
 				magBullets--;

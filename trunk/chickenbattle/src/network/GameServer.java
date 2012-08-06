@@ -94,7 +94,7 @@ public class GameServer {
 		Packet.register(lobbyconnection);
 		//lobbyconnection.connect(5000, "192.168.0.101", 50000, 50002);
 		//lobbyconnection.connect(5000, "129.16.21.56", 50000, 50002);
-		lobbyconnection.connect(5000, "129.16.177.67", 50000, 50002);
+		lobbyconnection.connect(5000, "46.239.100.249", 50000, 50002);
 
 		this.motd =m;
 		this.online =0;
@@ -396,17 +396,15 @@ public class GameServer {
 							}
 							else {
 								if (b.type == Weapon.bullet_rocket) {
-									explo.x = pointX;
-									explo.y = pointY;
-									explo.z = pointZ;
-									
-									server.sendToAllTCP(explo);
+									int centerX = pointX;
+									int centerY = pointY;
+									int centerZ = pointZ;
 									int radius = 5;
 									Vector3 vec = new Vector3(pointX, pointY, pointZ);
 									Vector3 vec2 = new Vector3();
-									for (int y = pointY-radius; y < pointY+radius; y++) {
-										for (int x = pointX-radius; x < pointX+radius; x++) {
-											for (int z = pointZ-radius; z < pointZ+radius; z++) {
+									for (int y = centerY-radius; y < centerY+radius; y++) {
+										for (int x = centerX-radius; x < centerX+radius; x++) {
+											for (int z = centerZ-radius; z < centerZ+radius; z++) {
 												vec2.set(x,y,z);
 												float distance = vec2.dst(vec);
 												if (distance < radius) {
@@ -420,18 +418,27 @@ public class GameServer {
 																int structuralDamage = c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].damageDone(b.type);
 
 																Voxel vox = c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize];
-																vox.durability -= structuralDamage;
+																if (vox.id != Voxel.nothing) { 
+																	vox.durability -= structuralDamage;
 
-																if(vox.durability <= 0) {
-																	vox.id = Voxel.nothing;
+																	if(vox.durability <= 0) {
+																		vox.id = Voxel.nothing;
+																	}
+
+																	bdamage.chunk = i;
+																	bdamage.x = pointX;
+																	bdamage.y = pointY;
+																	bdamage.z = pointZ;
+																	bdamage.damage = structuralDamage;
+																	server.sendToAllTCP(bdamage);
+																	explo.x = pointX;
+																	explo.y = pointY;
+																	explo.z = pointZ;
+																	explo.cx = centerX;
+																	explo.cy = centerY;
+																	explo.cz = centerZ;
+																	server.sendToAllTCP(explo);
 																}
-
-																bdamage.chunk = i;
-																bdamage.x = pointX;
-																bdamage.y = pointY;
-																bdamage.z = pointZ;
-																bdamage.damage = structuralDamage;
-																server.sendToAllTCP(bdamage);
 															} 
 														}
 													}

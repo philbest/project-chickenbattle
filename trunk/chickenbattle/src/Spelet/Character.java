@@ -31,6 +31,10 @@ public class Character {
 	public int shields;
 	public boolean bloodsplatt;
 	Mesh model;
+	/* Collision Detection idé:
+	 * Gör axis aligned box. Loopa från x=minX till maxX, y=minY till maxY, z=minZ till maxZ.
+	 * Sen kolla box.contains(x,y,z); 
+	 */
 	public Character(String name) {
 
 		health = 10;

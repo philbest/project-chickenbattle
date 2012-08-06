@@ -106,7 +106,7 @@ public class Application extends Screen implements InputProcessor{
 		renderer.render(this);
 	}
 	public void update() {
-		explosions.update();
+		explosions.update(this);
 		Gdx.input.setCursorCatched(true);
 		ch.update(this);
 		map.update();
@@ -213,7 +213,7 @@ public class Application extends Screen implements InputProcessor{
 			newExplosions = client.explosions;
 			for (int i = 0; i < newExplosions.size; i++) {
 				ExplosionUpd e = newExplosions.get(i);
-				explosions.addExplotion(e.x, e.y, e.z);
+				explosions.addExplotion(e.x, e.y, e.z, e.cx, e.cy,e.cz);
 			}
 			newExplosions.clear();
 
@@ -257,8 +257,6 @@ public class Application extends Screen implements InputProcessor{
 			gi.swapWeapon();
 		} else if (Input.Keys.NUM_9 == arg0){
 			ch.setPos(Map.chunkSize*6/2,Map.chunkSize*2/2,Map.chunkSize*6/2);
-		} else if (Input.Keys.NUM_7 == arg0) {
-			explosions.addExplotion(cam.position.x, cam.position.y, cam.position.z+5);
 		}
 		else if (Input.Keys.TAB == arg0){
 			scoreboard = true;
