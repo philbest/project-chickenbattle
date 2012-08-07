@@ -61,7 +61,7 @@ public class Main implements ApplicationListener{
 	}
 
 	public void render() {
-		System.out.println("FPS:" + Gdx.graphics.getFramesPerSecond());
+//		System.out.println("FPS:" + Gdx.graphics.getFramesPerSecond());
 		GL20 gl = Gdx.graphics.getGL20();
 		gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		activeScreen.update();

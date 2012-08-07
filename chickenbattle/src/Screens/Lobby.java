@@ -166,7 +166,7 @@ public class Lobby extends Screen{
 				temp = 5;
 			}
 			try {
-				new GameServer("Hosted from lobby", temp);
+				GameServer gs = new GameServer("Hosted from lobby", temp);
 			} catch (IOException e) {
 				System.out.println("Error hosting server");
 			}
