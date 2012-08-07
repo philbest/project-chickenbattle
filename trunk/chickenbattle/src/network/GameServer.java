@@ -24,6 +24,7 @@ import Spelet.StaticVariables;
 import Spelet.Weapon;
 
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.esotericsoftware.kryonet.Client;
@@ -34,25 +35,23 @@ import com.esotericsoftware.kryonet.Server;
 public class GameServer {
 	Server server;
 	Client lobbyconnection;
-	Message broadcast;
-	ExplosionUpd explo;
 	public Player[] player;
 	Vector3[] bbCorners;
 	HashMap<Connection,Integer> connectionIDs;
 	Connection[] connections;
-	Update toSend;
-	Update newN;
-	BlockUpdate btoSend;
-	BlockDamage bdamage;
-	UpdateServer updServer;
-	Hit hittoSend;
+	Array<Update> toSend;
+	Array<BlockUpdate> btoSend;
+	Array<BlockDamage> bdamage;
+	Array<UpdateServer> updServer;
+	Array<Hit> hittoSend;
+	Array<Message> broadcast;
+	Array<ExplosionUpd> explo;
 	Vector3 point;
 	Vector3 direction;
 	int startx,starty,startz;
 	Map map;
 	InetAddress ownIP;
 	int pointX,pointY,pointZ;
-
 	Json json;
 
 	String motd;
@@ -63,26 +62,34 @@ public class GameServer {
 	boolean hit;
 	public static final float FALL_DEATH_LIMIT = -50f;
 
+	Thread thread;
+	boolean running;
+	long timer;
+	long lastUpdate;
+	long timerOffset;
 	public GameServer (String m, int gamemode) throws IOException {
+		running = true;
 		map = new Map(false);
 		server = new Server();
-		broadcast = new Message();
+
 		player = new Player[10];
 		connections = new Connection[10];
 		ownIP = InetAddress.getLocalHost();
 		bbCorners = new Vector3[8];
 		json = new Json();
-		explo = new ExplosionUpd();
+
 		for(int i=0; i < 8; i++)
 			bbCorners[i] = new Vector3(0,0,0);
 		point = new Vector3(0,0,0);
 		direction = new Vector3(0,0,0);
-		toSend = new Update();
-		bdamage = new BlockDamage();
-		btoSend = new BlockUpdate();
-		hittoSend = new Hit();
+		toSend = new Array<Update>();
+		bdamage = new Array<BlockDamage>();
+		btoSend = new Array<BlockUpdate>();
+		hittoSend = new Array<Hit>();
 		connectionIDs = new HashMap<Connection,Integer>();
-		updServer = new UpdateServer();
+		updServer = new Array<UpdateServer>();
+		broadcast = new Array<Message>();
+		explo = new Array<ExplosionUpd>();
 		server.start();
 		Packet.register(server);
 		server.bind(54555, 54778);   
@@ -156,13 +163,13 @@ public class GameServer {
 						newPlayer.startx = startx;
 						newPlayer.starty = starty;
 						newPlayer.startz = startz;
-
-						updServer.motd = motd;
-						updServer.playercap =playercap;
-						updServer.online = numPlayers();
-						lobbyconnection.sendTCP(updServer);
-
 						server.sendToAllTCP(newPlayer);
+
+						UpdateServer msg = new UpdateServer();
+						msg.motd = motd;
+						msg.playercap =playercap;
+						msg.online = numPlayers();
+						updServer.add(msg);
 					}
 					else{
 						connection.sendTCP(new Reject());
@@ -171,27 +178,28 @@ public class GameServer {
 
 				else if (object instanceof Update) {
 					final Update received = (Update)object;
-					toSend.id = received.id;
-					toSend.px = received.px;
-					toSend.py = received.py;	
-					toSend.pz = received.pz;
+					Update msg = new Update();
+					msg.id = received.id;
+					msg.px = received.px;
+					msg.py = received.py;	
+					msg.pz = received.pz;
 
-					toSend.dx = received.dx;
-					toSend.dy = received.dy;	
-					toSend.dz = received.dz;
+					msg.dx = received.dx;
+					msg.dy = received.dy;	
+					msg.dz = received.dz;
 
-					toSend.kills = player[received.id].kills;
-					toSend.deaths = player[received.id].deaths;
-					toSend.hp = player[received.id].hp;
-					toSend.shields = player[received.id].shields;
-					toSend.name = player[received.id].name;
-					toSend.lasthit = player[received.id].lasthit;
-					toSend.lastRegged = player[received.id].lastRegged;
-					toSend.falldeath = player[received.id].falldeath;
-					toSend.dead = player[received.id].dead;
-					toSend.initShield = player[received.id].initShield;
-					toSend.currentTeam = player[received.id].currentTeam;
-					toSend.hit = player[received.id].hit;
+					msg.kills = player[received.id].kills;
+					msg.deaths = player[received.id].deaths;
+					msg.hp = player[received.id].hp;
+					msg.shields = player[received.id].shields;
+					msg.name = player[received.id].name;
+					msg.lasthit = player[received.id].lasthit;
+					msg.lastRegged = player[received.id].lastRegged;
+					msg.falldeath = player[received.id].falldeath;
+					msg.dead = player[received.id].dead;
+					msg.initShield = player[received.id].initShield;
+					msg.currentTeam = player[received.id].currentTeam;
+					msg.hit = player[received.id].hit;
 
 					player[received.id].posX = received.px;
 					player[received.id].posY = received.py;
@@ -211,37 +219,37 @@ public class GameServer {
 					bbCorners[6].set(received.x7, received.y7, received.z7);
 					bbCorners[7].set(received.x8, received.y8, received.z8);		
 
-					toSend.x1 = received.x1;
-					toSend.y1 = received.y1;
-					toSend.z1 = received.z1;
+					msg.x1 = received.x1;
+					msg.y1 = received.y1;
+					msg.z1 = received.z1;
 
-					toSend.x2 = received.x2;
-					toSend.y2 = received.y2;
-					toSend.z2 = received.z2;
+					msg.x2 = received.x2;
+					msg.y2 = received.y2;
+					msg.z2 = received.z2;
 
-					toSend.x3 = received.x3;
-					toSend.y3 = received.y3;
-					toSend.z3 = received.z3;
+					msg.x3 = received.x3;
+					msg.y3 = received.y3;
+					msg.z3 = received.z3;
 
-					toSend.x4 = received.x4;
-					toSend.y4 = received.y4;
-					toSend.z4 = received.z4;
+					msg.x4 = received.x4;
+					msg.y4 = received.y4;
+					msg.z4 = received.z4;
 
-					toSend.x5 = received.x5;
-					toSend.y5 = received.y5;
-					toSend.z5 = received.z5;
+					msg.x5 = received.x5;
+					msg.y5 = received.y5;
+					msg.z5 = received.z5;
 
-					toSend.x6 = received.x6;
-					toSend.y6 = received.y6;
-					toSend.z6 = received.z6;
+					msg.x6 = received.x6;
+					msg.y6 = received.y6;
+					msg.z6 = received.z6;
 
-					toSend.x7 = received.x7;
-					toSend.y7 = received.y7;
-					toSend.z7 = received.z7;
+					msg.x7 = received.x7;
+					msg.y7 = received.y7;
+					msg.z7 = received.z7;
 
-					toSend.x8 = received.x8;
-					toSend.y8 = received.y8;
-					toSend.z8 = received.z8;
+					msg.x8 = received.x8;
+					msg.y8 = received.y8;
+					msg.z8 = received.z8;
 
 					player[received.id].setBox(bbCorners);
 					player[received.id].falldeath = false;
@@ -252,7 +260,6 @@ public class GameServer {
 					if(player[received.id].shields < 5){
 						long currTime = System.currentTimeMillis();
 						if((currTime-player[received.id].lasthit > 6000l && currTime-player[received.id].lastRegged > 2000l)){
-							System.out.println("Added shield to: " + player[received.id].name);
 							if(player[received.id].shields == 0){
 								player[received.id].initShield = true;
 							}
@@ -271,23 +278,29 @@ public class GameServer {
 							player[received.id].falldeath = true;
 							player[received.id].dead = true;
 							player[received.id].posY = 50;
-							broadcast.type = StaticVariables.falldeath;
-							broadcast.message = player[received.id].name;
-							broadCast(broadcast);
+							Message bc = new Message();
+							bc.type = StaticVariables.falldeath;
+							bc.message = player[received.id].name;
+							broadcast.add(bc);
 						}
 					}
-
-					server.sendToAllTCP(toSend);
+					toSend.add(msg);
+					//server.sendToAllTCP(toSend); // FIX
 				}
 				else if (object instanceof BlockUpdate){
 					BlockUpdate received = (BlockUpdate)object;
-					btoSend = received;
-					server.sendToAllTCP(btoSend);		
-				}
-
-				else if(object instanceof Bullet){
+					BlockUpdate msg = new BlockUpdate();
+					msg.chunk = received.chunk;
+					msg.x = received.x;
+					msg.y = received.y;
+					msg.z = received.z;
+					msg.size = received.size;
+					msg.modi = received.modi;
+					btoSend.add(msg);
+					//server.sendToAllTCP(btoSend);//FIX		
+				} else if(object instanceof Bullet){
 					hit = false;
-
+					Hit msg = new Hit();
 					float range = 0;
 					Bullet b = (Bullet)object;
 					direction.set(b.dx, b.dy, b.dz);
@@ -299,39 +312,34 @@ public class GameServer {
 							Player compare = player[i];
 							if(compare != null && i != b.id){
 								if(compare.box.contains(point) && (compare.currentTeam != player[b.id].currentTeam || serverMode == 6)){
-									hittoSend.id = i;
+									msg.id = i;
 									if(b.type == Weapon.bullet_emp){
 										compare.shields = 0;
 										compare.initShield = true;
 										compare.lasthit = System.currentTimeMillis();
-									}
-									else{
+									}else{
 										if(compare.shields == 0 && b.type == Weapon.bullet_sniper){
 											compare.hp = compare.hp-10;
 											compare.hit = true;
 											compare.lasthit = System.currentTimeMillis();
-										}
-										else if(compare.shields > 0 && b.type == Weapon.bullet_sniper){
+										}else if(compare.shields > 0 && b.type == Weapon.bullet_sniper){
 											compare.shields =compare.shields-1;
 											compare.hp = compare.hp-5;
 											if(compare.shields == 0){
 												compare.initShield = true;
 											}
 											compare.lasthit = System.currentTimeMillis();
-										}
-										else if(compare.shields > 0){
+										}else if(compare.shields > 0){
 											compare.shields =compare.shields-1;
 											if(compare.shields == 0){
 												compare.initShield = true;
 											}
 											compare.lasthit = System.currentTimeMillis();
-										}
-										else if(compare.shields == 0 && b.type == Weapon.bullet_gun){
+										}else if(compare.shields == 0 && b.type == Weapon.bullet_gun){
 											compare.hp = compare.hp-5;
 											compare.hit = true;
 											compare.lasthit = System.currentTimeMillis();
-										}
-										else{
+										}else{
 											compare.hp =compare.hp-1;
 											compare.hit = true;
 											compare.lasthit = System.currentTimeMillis();
@@ -344,14 +352,16 @@ public class GameServer {
 											compare.deaths += 1;
 											compare.hp = 10;
 											compare.shields = 5;
-											broadcast.type = StaticVariables.frag;
-											broadcast.created = TimeUtils.millis();
-											broadcast.message = player[b.id].name + "," + compare.name;
-											broadCast(broadcast);
+											Message bc = new Message();
+											bc.type = StaticVariables.frag;
+											bc.created = TimeUtils.millis();
+											bc.message = player[b.id].name + "," + compare.name;
+											broadcast.add(bc);
 										}
 										player[i] = compare;
 										hit = true;
-										server.sendToAllTCP(hittoSend);
+										hittoSend.add(msg);
+										//server.sendToAllTCP(hittoSend); // FIX
 									}
 								}
 							}
@@ -382,19 +392,19 @@ public class GameServer {
 										Chunk c = map.chunks.get(i);
 										if (c.x == (pointX/Map.chunkSize) && c.y == (pointY/Map.chunkSize) && c.z == (pointZ/Map.chunkSize)) {											
 											c.map[pointX-c.x*Map.chunkSize][pointY-c.y*Map.chunkSize][pointZ-c.z*Map.chunkSize].id = Voxel.grass;
-											btoSend.chunk = i;
-											btoSend.x = pointX;
-											btoSend.y = pointY;
-											btoSend.z = pointZ;
-											btoSend.size = Map.chunkSize;
-											btoSend.modi = Voxel.grass;
-											server.sendToAllTCP(btoSend);	
-
+											BlockUpdate bo = new BlockUpdate();
+											bo.chunk = i;
+											bo.x = pointX;
+											bo.y = pointY;
+											bo.z = pointZ;
+											bo.size = Map.chunkSize;
+											bo.modi = Voxel.grass;
+											btoSend.add(bo);
+											//server.sendToAllTCP(btoSend); // FIX
 										}
 									}		
 								}
-							}
-							else {
+							} else {
 								if (b.type == Weapon.bullet_rocket) {
 									int centerX = pointX;
 									int centerY = pointY;
@@ -424,20 +434,23 @@ public class GameServer {
 																	if(vox.durability <= 0) {
 																		vox.id = Voxel.nothing;
 																	}
-
-																	bdamage.chunk = i;
-																	bdamage.x = pointX;
-																	bdamage.y = pointY;
-																	bdamage.z = pointZ;
-																	bdamage.damage = structuralDamage;
-																	server.sendToAllTCP(bdamage);
-																	explo.x = pointX;
-																	explo.y = pointY;
-																	explo.z = pointZ;
-																	explo.cx = centerX;
-																	explo.cy = centerY;
-																	explo.cz = centerZ;
-																	server.sendToAllTCP(explo);
+																	BlockDamage bd = new BlockDamage();
+																	bd.chunk = i;
+																	bd.x = pointX;
+																	bd.y = pointY;
+																	bd.z = pointZ;
+																	bd.damage = structuralDamage;
+																	bdamage.add(bd);
+																	//server.sendToAllTCP(bdamage); // FIX
+																	ExplosionUpd eu = new ExplosionUpd();
+																	eu.x = pointX;
+																	eu.y = pointY;
+																	eu.z = pointZ;
+																	eu.cx = centerX;
+																	eu.cy = centerY;
+																	eu.cz = centerZ;
+																	explo.add(eu);
+																	//server.sendToAllTCP(explo);
 																}
 															} 
 														}
@@ -460,13 +473,14 @@ public class GameServer {
 												if(vox.durability <= 0) {
 													vox.id = Voxel.nothing;
 												}
-
-												bdamage.chunk = i;
-												bdamage.x = pointX;
-												bdamage.y = pointY;
-												bdamage.z = pointZ;
-												bdamage.damage = structuralDamage;
-												server.sendToAllTCP(bdamage);
+												BlockDamage bd = new BlockDamage();
+												bd.chunk = i;
+												bd.x = pointX;
+												bd.y = pointY;
+												bd.z = pointZ;
+												bd.damage = structuralDamage;
+												bdamage.add(bd);
+												//server.sendToAllTCP(bdamage); // FIX
 											}
 										}
 
@@ -479,19 +493,23 @@ public class GameServer {
 			}
 			public void disconnected (Connection c) {
 				if(connectionIDs.get(c)!= null){
+					UpdateServer msg = new UpdateServer();
 					Disconnected dc = new Disconnected();	
 					dc.id = connectionIDs.get(c);
 					connectionIDs.remove(c);
 					player[dc.id] = null;
 					connections[dc.id] = null;
 					server.sendToAllTCP(dc);
-					updServer.motd = motd;
-					updServer.playercap =playercap;
-					updServer.online = numPlayers();
-					lobbyconnection.sendTCP(updServer);
+					msg.motd = motd;
+					msg.playercap =playercap;
+					msg.online = numPlayers();
+					updServer.add(msg);
+					//lobbyconnection.sendTCP(updServer); // FIX
 				}
 			}
 		});
+		thread = new Thread(new ServerThread());
+		thread.start();
 	}
 
 	public int numPlayers(){
@@ -503,10 +521,6 @@ public class GameServer {
 		return c;
 	}
 
-	public void broadCast(Message msg){
-		server.sendToAllTCP(msg);
-	}
-
 	public boolean fixId(){
 		for(int i=0; i < player.length; i++){
 			if(player[i] == null){
@@ -516,18 +530,80 @@ public class GameServer {
 		}
 		return false;
 	}
-	public static void main (String[] args) throws IOException {
-		try
-		{
-			new GameServer("Server hosted as standalone", 5);
-			System.out.println("Game server is online!");
+		public static void main (String[] args) throws IOException {
+			try
+			{
+				new GameServer("Server hosted as standalone", 5);
+				System.out.println("Game server is online!");
+			}
+			catch(Exception e)
+			{
+				System.out.println(e);
+				System.out.println("Server fucked up.");
+			}	
 		}
-		catch(Exception e)
-		{
-			System.out.println(e);
-			System.out.println("Server fucked up.");
-		}	
+	public void kill() {
+		running = false;
 	}
+
+	private class ServerThread implements Runnable {
+		public void run() {
+			while (running) {
+				if (timer >= 16) {
+					int size = bdamage.size;
+					for (int i = size-1; i >= 0; i--) {
+						server.sendToAllTCP(bdamage.get(i));
+						bdamage.removeIndex(i);
+					}
+					size = toSend.size;
+					for (int i = size-1; i >= 0; i--) {
+						server.sendToAllTCP(toSend.get(i));
+						toSend.removeIndex(i);
+					}
+					size = btoSend.size;
+					for (int i = size-1; i >= 0; i--) {
+						server.sendToAllTCP(btoSend.get(i));
+						btoSend.removeIndex(i);
+					}
+					
+					size = updServer.size;
+					for (int i = size-1; i >= 0; i--) {
+						server.sendToAllTCP(updServer.get(i));
+						updServer.removeIndex(i);
+					}
+					
+					size = hittoSend.size;
+					for (int i = size-1; i >= 0; i--) {
+						server.sendToAllTCP(hittoSend.get(i));
+						hittoSend.removeIndex(i);
+					}
+					size = explo.size;
+					for (int i = size-1; i >= 0; i--) {
+						server.sendToAllTCP(explo.get(i));
+						explo.removeIndex(i);
+					}
+					size = broadcast.size;
+					for (int i = size-1; i >= 0; i--) {
+						server.sendToAllTCP(broadcast.get(i));
+						broadcast.removeIndex(i);
+					}
+					lastUpdate = System.currentTimeMillis();
+					timerOffset = timer-16;
+					timer -= 16;
+				} else {
+					timer = System.currentTimeMillis()-lastUpdate+timerOffset;
+				}
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+
 
 }
 
