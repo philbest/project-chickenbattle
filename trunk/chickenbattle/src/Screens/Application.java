@@ -8,6 +8,7 @@ import network.Player;
 import Map.Chunk;
 import Map.Map;
 import Map.Voxel;
+import Particles.ParticleSystem;
 import Spelet.Character;
 import Spelet.ExplosionManager;
 import Spelet.GameInterface;
@@ -60,9 +61,11 @@ public class Application extends Screen implements InputProcessor{
 	public int ping;
 	public long recoilTime, recoilAK;
 	public ExplosionManager explosions;
+	public ParticleSystem explosionParticles;
 	//public ParticleEffect particle;
 	public Application(Main m){
 		explosions = new ExplosionManager();
+		explosionParticles = new ParticleSystem();
 		main = m;
 		movement = new Vector3();
 		scoreboard = false;
@@ -107,6 +110,7 @@ public class Application extends Screen implements InputProcessor{
 	}
 	public void update() {
 		explosions.update(this);
+		explosionParticles.update(this);
 		Gdx.input.setCursorCatched(true);
 		ch.update(this);
 		map.update();
@@ -209,11 +213,15 @@ public class Application extends Screen implements InputProcessor{
 					chunkstorebuild.add(c);
 			}
 			chunkdamage.clear();
-			
+
 			newExplosions = client.explosions;
+			ExplosionUpd e = null;
 			for (int i = 0; i < newExplosions.size; i++) {
-				ExplosionUpd e = newExplosions.get(i);
+				e=newExplosions.get(i);
 				explosions.addExplotion(e.x, e.y, e.z, e.cx, e.cy,e.cz);
+			}
+			if (e != null) {
+				explosionParticles.addExplosion(e.cx,e.cy,e.cz);
 			}
 			newExplosions.clear();
 

@@ -11,6 +11,7 @@ uniform vec4 material_diffuse;
 uniform vec4 material_specular; 
 uniform vec4 scene_ambient_light;
 uniform vec4 scene_light;
+uniform float u_alpha;
 
 varying vec3 N;
 varying vec3 v;
@@ -37,5 +38,7 @@ void main()
 	finalSpecular += scene_light *specularTerm / (1.0+distance);
 	
 	vec4 ambientTerm = ambient * scene_ambient_light;
-	gl_FragColor = ambientTerm  + finalDiffuse * diffuse + finalSpecular * material_specular;
+	vec4 finalColor = ambientTerm  + finalDiffuse * diffuse + finalSpecular * material_specular;
+	finalColor.a = u_alpha;
+	gl_FragColor = finalColor;
 }
