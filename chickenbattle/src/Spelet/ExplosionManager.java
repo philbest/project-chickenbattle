@@ -32,7 +32,7 @@ public class ExplosionManager {
 		}
 	}
 	public void addExplotion(float x, float y, float z, float cx, float cy, float cz) {
-		float ttl = 2000;
+		float ttl = 5000;
 		explosions.add(new Explosion(x,y,z,cx,cy,cz,ttl));
 //		explosions.add(new Explosion(x+0.5f,y,z,cx,cy,cz,ttl));
 //		explosions.add(new Explosion(x,y,z+0.5f,cx,cy,cz,ttl));

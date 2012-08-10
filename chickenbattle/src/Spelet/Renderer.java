@@ -8,6 +8,8 @@ import java.io.InputStream;
 import network.Player;
 
 import Map.Map;
+import Particles.Particle;
+import Particles.ParticleSystem;
 import Screens.Application;
 import Screens.Lobby;
 
@@ -64,6 +66,7 @@ public class Renderer {
 	ShaderProgram lineShader;
 	ShaderProgram skysphereShader;
 	ShaderProgram explosionShader;
+	ShaderProgram billboardShader;
 	ShaderProgram grassShader;
 	String playerscore;
 	SpriteBatch sb;
@@ -149,6 +152,13 @@ public class Renderer {
 		if (!explosionShader.isCompiled())
 			throw new GdxRuntimeException("Couldn't compile shader: "
 					+ explosionShader.getLog());
+		
+		billboardShader = new ShaderProgram(Gdx.files.internal(
+		"data/shaders/billboardShader.vert").readString(), Gdx.files.internal(
+		"data/shaders/billboardShader.frag").readString());
+		if (!billboardShader.isCompiled())
+			throw new GdxRuntimeException("Couldn't compile shader: "
+					+ billboardShader.getLog());
 		
 		
 		lineShader = new ShaderProgram(Gdx.files.internal(
@@ -274,6 +284,7 @@ public class Renderer {
 		skysphereShader.end();
 	}
 	public void renderExplosions(Application app) {
+		Gdx.gl.glEnable(GL20.GL_BLEND);
 		cubeTexture.bind(0);
 		explosionShader.begin();
 		explosionShader.setUniform4fv("scene_light", app.light.color, 0, 4);
@@ -283,7 +294,7 @@ public class Renderer {
 		explosionShader.setUniformf("material_specular", 0.0f,0.0f,0.0f, 1f);
 		explosionShader.setUniformf("material_shininess", 0.5f);
 		simpleShader.setUniform3fv("u_lightPos",app.light.getViewSpacePositions(app.cam.view), 0,3);
-
+		
 		for (int i = 0; i < app.explosions.explosions.size; i++) {
 			Explosion e = app.explosions.explosions.get(i);
 			modelViewProjectionMatrix.set(app.cam.combined);
@@ -294,10 +305,32 @@ public class Renderer {
 			explosionShader.setUniformMatrix("normalMatrix", normalMatrix);
 			explosionShader.setUniformMatrix("u_modelViewMatrix", modelViewMatrix);
 			explosionShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
+			explosionShader.setUniformf("u_alpha",e.alpha);
 			app.explosions.parts.get(1).render(explosionShader, GL20.GL_TRIANGLES);
 		}
+		
 		explosionShader.end();
-		Gdx.gl.glEnable(GL20.GL_CULL_FACE);
+	
+		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+		Gdx.gl.glDepthMask(false);
+		
+		ParticleSystem.midExplo.bind(0);
+		billboardShader.begin();
+		billboardShader.setUniformi("s_texture", 0);
+		for (int i = 0; i < app.explosionParticles.particles.size; i++) {
+			
+			Particle e = app.explosionParticles.particles.get(i);
+			billboardShader.setUniform4fv("u_colorTint", e.colorTint, 0, 4);
+			billboardShader.setUniformi("u_texVal",e.texVal);
+			modelViewProjectionMatrix.set(app.cam.combined);
+			modelViewProjectionMatrix.mul(e.modelMatrix);
+			billboardShader.setUniformMatrix("u_mvpMatrix", modelViewProjectionMatrix);
+			ParticleSystem.quad.render(billboardShader, GL20.GL_TRIANGLES);
+		}
+		billboardShader.end();
+		Gdx.gl.glDisable(GL20.GL_BLEND);
+		Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+		Gdx.gl.glDepthMask(true);
 	}
 	public void renderMultiplayer(Application app) {
 

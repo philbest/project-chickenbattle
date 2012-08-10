@@ -23,6 +23,7 @@ public class Explosion {
 	float timer;
 	float initialForceUp;
 	float rotation;
+	public float alpha;
 	public Explosion(float x, float y, float z, float cx, float cy, float cz, float ttl) {
 		position = new Vector3(x,y,z);
 		velocity = new Vector3(0,0,0);
@@ -38,6 +39,7 @@ public class Explosion {
 		gravity = -1f;
 		timer = 0;
 		initialForceUp = 7f;
+		alpha = 1;
 	}
 	public void update(Application app) {
 		timeAlive += Gdx.graphics.getDeltaTime()*1000;
@@ -96,6 +98,9 @@ public class Explosion {
 		mat.setToTranslation(position);
 		rotation ++;
 		mat.rotate(rotationVec,rotation);
+		if (timeAlive > ttl*0.8) {
+			alpha = 1-(timeAlive-ttl*0.8f)/(ttl*0.2f);
+		}
 	}
 	public boolean isDead() {
 		return timeAlive > ttl;

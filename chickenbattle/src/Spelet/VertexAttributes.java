@@ -10,7 +10,6 @@ public class VertexAttributes {
 	public static VertexAttribute textureCoords;
 	public static VertexAttribute occlusion;
 	public static VertexAttribute crackCoords;
-	
 	public static VertexAttribute particledirection;
 	public static void initiate() {
 		position = new VertexAttribute(Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE );
