@@ -3,6 +3,7 @@ package Spelet;
 import Map.Chunk;
 import Map.Voxel;
 import Map.Map;
+import Particles.Particle;
 import Screens.Application;
 
 import com.badlogic.gdx.Gdx;
@@ -43,6 +44,7 @@ public class Explosion {
 	}
 	public void update(Application app) {
 		timeAlive += Gdx.graphics.getDeltaTime()*1000;
+		timer += Gdx.graphics.getDeltaTime()*1000;
 		acceleration.set(direction);
 		acceleration.add(0,gravity+initialForceUp,0);
 		acceleration.mul(Gdx.graphics.getDeltaTime());
@@ -100,6 +102,17 @@ public class Explosion {
 		mat.rotate(rotationVec,rotation);
 		if (timeAlive > ttl*0.8) {
 			alpha = 1-(timeAlive-ttl*0.8f)/(ttl*0.2f);
+		}
+		if (timer > 16) {
+			if (timeAlive < ttl*0.8) {
+				Particle p = new Particle(position.x, position.y, position.z, 0, 0.1f, 0, 1, 1, 1, 0, 0, 0, 10, false, false, false, true);
+				p.setColor(0.8f,0.8f,0.8f);
+				app.explosionParticles.addParticle(p);
+				p = new Particle(position.x, position.y, position.z, 0, 0.1f, 0, 1, 1, 1, -0.1f, -0.1f, -0.1f, 5, false, false, false, false);
+				p.setColor(1f,0.75f,0.5f);
+				app.explosionParticles.addParticle(p);
+				timer -= 16;
+			}
 		}
 	}
 	public boolean isDead() {

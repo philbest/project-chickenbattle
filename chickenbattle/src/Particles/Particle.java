@@ -28,10 +28,13 @@ public class Particle {
 	public int texVal;
 	public float[] colorTint;
 	boolean hasPhysics;
-	public Particle(float px, float py, float pz, float vx, float vy, float vz, float w, float h, float d, float dw,float dh, float dd, float steps, boolean hasGravity, boolean emitter, boolean hasPhysics) {
+	public boolean isSmoke;
+	public float distance;
+	public Particle(float px, float py, float pz, float vx, float vy, float vz, float w, float h, float d, float dw,float dh, float dd, float steps, boolean hasGravity, boolean emitter, boolean hasPhysics, boolean isSmoke) {
 		this.hasPhysics = hasPhysics;
 		this.emitter = emitter;
 		this.hasGravity = hasGravity;
+		this.isSmoke = isSmoke;
 		modelMatrix = new Matrix4();
 		position = new Vector3(px,py,pz);
 		velocity = new Vector3(vx,vy,vz);
@@ -40,11 +43,13 @@ public class Particle {
 		sizeChange = new Vector3(dw,dh,dd);
 		stepsAlive = steps;
 		colorTint = new float[4];
-		colorTint[0] = 0.7f;
-		colorTint[1] = 0.3f;
-		colorTint[2] = 0;
-		colorTint[3] = 1f;
+		colorTint[3] = 1;
 		texVal = MathUtils.random(0,15);
+	}
+	public void setColor(float r, float g, float b) {
+		colorTint[0] = r;
+		colorTint[1] = g;
+		colorTint[2] = b;
 	}
 	public void step(Application app, ParticleSystem sys) {
 		dir.set(app.cam.position).sub(position).nor();
@@ -103,9 +108,15 @@ public class Particle {
 		modelMatrix.scale(size.x,size.y,size.z);
 		modelMatrix.rotate(rotation);
 		if (emitter) {
-			sys.addParticle(position.x,position.y,position.z,
-					0,0.05f,0,
-					0.8f, 0.8f, 0.8f, 0, 0, 0, 10, false, false,false);
+			if (isSmoke) {
+		
+			} else {
+				Particle p = new Particle(position.x,position.y,position.z,
+						0,0.05f,0,
+						0.8f, 0.8f, 0.8f, 0, 0, 0, 10, false, false,false,false);
+				p.setColor(1,0.5f,0.2f);
+				sys.addParticle(p);
+			}
 		}
 		colorTint[3] = 1-steps/stepsAlive;
 

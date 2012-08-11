@@ -85,7 +85,7 @@ public class Lobby extends Screen{
 		name = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/name.png")));
 		host = new Sprite(new Texture(Gdx.files.internal("data/mainmenu/host.png")));
 		//MasterServerIP = "129.16.177.67";
-		MasterServerIP = "46.239.100.249";
+		MasterServerIP = "192.168.0.142";
 
 		playerName = "anon";
 		tempName = ""; 
