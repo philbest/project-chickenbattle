@@ -231,7 +231,7 @@ public class Weapon {
 			currentBullets = 5;
 			magBullets = 1;
 			magSize = 1;
-			cooldown = 1500;
+			cooldown = 50;
 			bulletType = Weapon.bullet_rocket;
 			rocketAnim = 2100;
 		}

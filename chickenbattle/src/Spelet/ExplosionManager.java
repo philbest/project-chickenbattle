@@ -16,12 +16,13 @@ public class ExplosionManager {
 		explosions = new Array<Explosion>();
 		parts = new HashMap<Integer,Mesh>();
 		FloatArray fa = new FloatArray();
-		addTopFace(fa,0,0,0,0.5f,0.5f,0.5f);
-		addBotFace(fa,0,0,0,0.5f,0.5f,0.5f);
-		addRightFace(fa,0,0,0,0.5f,0.5f,0.5f);
-		addLeftFace(fa,0,0,0,0.5f,0.5f,0.5f);
-		addFrontFace(fa,0,0,0,0.5f,0.5f,0.5f);
-		addBackFace(fa,0,0,0,0.5f,0.5f,0.5f);
+		float blockSize = 0.5f;
+		addTopFace(fa,0,0,0,blockSize,blockSize,blockSize);
+		addBotFace(fa,0,0,0,blockSize,blockSize,blockSize);
+		addRightFace(fa,0,0,0,blockSize,blockSize,blockSize);
+		addLeftFace(fa,0,0,0,blockSize,blockSize,blockSize);
+		addFrontFace(fa,0,0,0,blockSize,blockSize,blockSize);
+		addBackFace(fa,0,0,0,blockSize,blockSize,blockSize);
 		if (fa.size > 0) {
 			Mesh mesh = new Mesh(true, fa.size, 0,
 					VertexAttributes.position, 

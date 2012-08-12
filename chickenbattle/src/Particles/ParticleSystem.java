@@ -53,35 +53,36 @@ public class ParticleSystem {
 		Vector3 temp = new Vector3();
 		Vector3 temp2 = new Vector3();
 		Matrix4 rot = new Matrix4();
+		// Core fire
 		Particle p = new Particle(cx,cy,cz,
-				0,0,0,
-				5,5,5,
-				-0.01f,-0.01f,-0.01f,
-				100,false,false,false,false);
+				10,10,10,
+				100,false,false,false);
+		p.setSizeChange(-0.01f, -0.01f, -0.01f);
 		p.setColor(1,0.5f,0.2f);
 		addParticle(p);
 		
+		// Main smoke
 		for (int i = 0; i < 20; i++) {
 			temp.set(cx,cy,cz);
 			temp.add(MathUtils.random(-5f,5f),MathUtils.random(-3f,0f),MathUtils.random(-5f,5f));
 			p = new Particle(temp.x,temp.y,temp.z,
-					0,0.05f,0,
-					5,5,5,
-					0f,0f,0f,
-					200,false,false,false,true);
+					10,10,10,
+					200,false,false,true);
+			p.setVelocity(0,0.4f,0);
 			p.setColor(0.6f,0.6f,0.6f);
 			addParticle(p);	
 		}
 		
-		
+		// Blast fire
 		p = new Particle(cx,cy,cz,
-				0,0,0,
-				5,5,5,
-				3,3,3,
-				20,false,false,false,false);
+				10,10,10,
+				20,false,false,false);
 		p.setColor(1,0.5f,0.2f);
+		p.setSizeChange(3,3,3);
 		addParticle(p);
 
+		
+		// Upwards fire
 		for (int i = 0; i < 30; i++) {
 			temp.set(1,0,0);
 			rot.setToRotation(0,0,1,MathUtils.random(50f,90f));
@@ -91,11 +92,13 @@ public class ParticleSystem {
 			temp.nor();
 			temp.mul(MathUtils.random(0.3f,0.4f));
 			p = new Particle(cx,cy,cz,
-					temp.x,temp.y,temp.z,
-					1,1,1,
-					0,0,0,
-					100,true,true,true,false);
+					3,3,3,
+					100,true,true,false);
+			p.setEmitter(true);
+			p.setEmitterProperties(false,0,0.05f,0,2.5f,2.5f,2.5f);
 			p.setColor(1,0.5f,0.2f);
+			temp.mul(2);
+			p.setVelocity(temp.x,temp.y,temp.z);
 			addParticle(p);
 		}
 		for (int i = 0; i < 10; i++) {
@@ -110,10 +113,12 @@ public class ParticleSystem {
 				temp2.set(temp);
 				temp2.add(MathUtils.random(-1f,1f)/16, MathUtils.random(-1f,1f)/16,MathUtils.random(-1f,1f)/16);
 				p = new Particle(cx,cy,cz,
-						temp2.x,temp2.y,temp2.z,
-						1,1,1,
-						0,0,0,
-						20,true,true,true,false);		
+						3,3,3,
+						20,true,true,false);
+				p.setEmitter(true);
+				p.setEmitterProperties(false,0,0.05f,0,2.5f,2.5f,2.5f);
+				temp2.mul(2);
+				p.setVelocity(temp2.x,temp2.y,temp2.z);
 				p.setColor(1,0.5f,0.2f);
 				addParticle(p);
 			}
