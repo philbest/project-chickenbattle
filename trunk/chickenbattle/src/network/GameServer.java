@@ -440,17 +440,21 @@ public class GameServer {
 																	bd.y = pointY;
 																	bd.z = pointZ;
 																	bd.damage = structuralDamage;
+																	if (bd == null)
+																		System.out.println("ADDED NULL");
 																	bdamage.add(bd);
 																	//server.sendToAllTCP(bdamage); // FIX
-																	ExplosionUpd eu = new ExplosionUpd();
-																	eu.x = pointX;
-																	eu.y = pointY;
-																	eu.z = pointZ;
-																	eu.cx = centerX;
-																	eu.cy = centerY;
-																	eu.cz = centerZ;
-																	explo.add(eu);
-																	//server.sendToAllTCP(explo);
+																	if (distance > radius/2) {
+																		ExplosionUpd eu = new ExplosionUpd();
+																		eu.x = pointX;
+																		eu.y = pointY;
+																		eu.z = pointZ;
+																		eu.cx = centerX;
+																		eu.cy = centerY;
+																		eu.cz = centerZ;
+																		explo.add(eu);
+																		//sdderver.sendToAllTCP(explo);
+																	}
 																}
 															} 
 														}
@@ -479,6 +483,8 @@ public class GameServer {
 												bd.y = pointY;
 												bd.z = pointZ;
 												bd.damage = structuralDamage;
+												if (bd == null)
+													System.out.println("ADDED NULL");
 												bdamage.add(bd);
 												//server.sendToAllTCP(bdamage); // FIX
 											}
@@ -530,18 +536,18 @@ public class GameServer {
 		}
 		return false;
 	}
-		public static void main (String[] args) throws IOException {
-			try
-			{
-				new GameServer("Server hosted as standalone", 5);
-				System.out.println("Game server is online!");
-			}
-			catch(Exception e)
-			{
-				System.out.println(e);
-				System.out.println("Server fucked up.");
-			}	
+	public static void main (String[] args) throws IOException {
+		try
+		{
+			new GameServer("Server hosted as standalone", 5);
+			System.out.println("Game server is online!");
 		}
+		catch(Exception e)
+		{
+			System.out.println(e);
+			System.out.println("Server fucked up.");
+		}	
+	}
 	public void kill() {
 		running = false;
 	}
@@ -551,9 +557,13 @@ public class GameServer {
 			while (running) {
 				if (timer >= 16) {
 					int size = bdamage.size;
+					int j = 0;
 					for (int i = size-1; i >= 0; i--) {
+						if (bdamage.get(i) == null)
+							System.out.println(j);
 						server.sendToAllTCP(bdamage.get(i));
 						bdamage.removeIndex(i);
+						j++;
 					}
 					size = toSend.size;
 					for (int i = size-1; i >= 0; i--) {
@@ -565,13 +575,13 @@ public class GameServer {
 						server.sendToAllTCP(btoSend.get(i));
 						btoSend.removeIndex(i);
 					}
-					
+
 					size = updServer.size;
 					for (int i = size-1; i >= 0; i--) {
 						server.sendToAllTCP(updServer.get(i));
 						updServer.removeIndex(i);
 					}
-					
+
 					size = hittoSend.size;
 					for (int i = size-1; i >= 0; i--) {
 						server.sendToAllTCP(hittoSend.get(i));

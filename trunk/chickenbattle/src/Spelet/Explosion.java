@@ -35,11 +35,10 @@ public class Explosion {
 		direction.set(x-cx,y-cy,z-cz);
 		direction.nor();
 		rotationVec = new Vector3(direction);
-		direction.mul(MathUtils.random(1f));
 		this.ttl = ttl;
 		gravity = -1f;
 		timer = 0;
-		initialForceUp = 7f;
+		initialForceUp = 8f;
 		alpha = 1;
 	}
 	public void update(Application app) {
@@ -105,13 +104,16 @@ public class Explosion {
 		}
 		if (timer > 16) {
 			if (timeAlive < ttl*0.8) {
-				Particle p = new Particle(position.x, position.y, position.z, 0, 0.1f, 0, 1, 1, 1, 0, 0, 0, 10, false, false, false, true);
-				p.setColor(0.8f,0.8f,0.8f);
-				app.explosionParticles.addParticle(p);
-				p = new Particle(position.x, position.y, position.z, 0, 0.1f, 0, 1, 1, 1, -0.1f, -0.1f, -0.1f, 5, false, false, false, false);
-				p.setColor(1f,0.75f,0.5f);
-				app.explosionParticles.addParticle(p);
-				timer -= 16;
+//				Particle p = new Particle(position.x, position.y, position.z, 3, 3, 3, 10, false, false, true);
+//				p.setVelocity(0,0.1f,0);
+//				p.setColor(0.8f,0.8f,0.8f);
+//				app.explosionParticles.addParticle(p);
+//				p = new Particle(position.x, position.y, position.z, 3, 3, 3, 5, false, false, false);
+//				p.setVelocity(0,0.1f,0);
+//				p.setSizeChange(-0.1f,-0.1f,-0.1f);
+//				p.setColor(1f,0.75f,0.5f);
+//				app.explosionParticles.addParticle(p);
+//				timer -= 16;
 			}
 		}
 	}
