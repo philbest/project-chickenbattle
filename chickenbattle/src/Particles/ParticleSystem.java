@@ -17,6 +17,9 @@ public class ParticleSystem {
 	public float timer;
 	public static Mesh quad;
 	public static Texture midExplo;
+	Vector3 temp = new Vector3();
+	Vector3 temp2 = new Vector3();
+	Matrix4 rot = new Matrix4();
 	public ParticleSystem() {
 		midExplo = new Texture(Gdx.files.internal("data/Particles/midexplosion.bmp"));
 		particles = new Array<Particle>();
@@ -50,9 +53,7 @@ public class ParticleSystem {
 		particles.sort(ParticleComparator.getInstance());
 	}
 	public void addExplosion(float cx, float cy, float cz) {
-		Vector3 temp = new Vector3();
-		Vector3 temp2 = new Vector3();
-		Matrix4 rot = new Matrix4();
+	
 		// Core fire
 		Particle p = new Particle(cx,cy,cz,
 				10,10,10,
@@ -128,65 +129,65 @@ public class ParticleSystem {
 
 
 	public static void initiateMesh() {
-		FloatArray fa = new FloatArray();
-		fa.add(-0.5f); // x1
-		fa.add(-0.5f); // y1
-		fa.add(0);
-		fa.add(5);
-		fa.add(5);
-		fa.add(5);
-		fa.add(0); // u1
-		fa.add(0.25f); // v1
+		float[] list = new float[48];
+		int i = 0;
+		list[i++] = -0.5f; // x1
+		list[i++] = -0.5f; // y1
+		list[i++] = 0;
+		list[i++] = 5;
+		list[i++] = 5;
+		list[i++] = 5;
+		list[i++] = 0; // u1
+		list[i++] = 0.25f; // v1
 
-		fa.add(0.5f); // x2
-		fa.add(-0.5f); // y2
-		fa.add(0f);
-		fa.add(5);
-		fa.add(5);
-		fa.add(5);
-		fa.add(0.25f); // u2
-		fa.add(0.25f); // v2
+		list[i++] = 0.5f; // x2
+		list[i++] = -0.5f; // y2
+		list[i++] = 0f;
+		list[i++] = 5;
+		list[i++] = 5;
+		list[i++] = 5;
+		list[i++] = 0.25f; // u2
+		list[i++] = 0.25f; // v2
 
-		fa.add(0.5f); // x3
-		fa.add(0.5f); // y2
-		fa.add(0f);
-		fa.add(5);
-		fa.add(5);
-		fa.add(5);
-		fa.add(0.25f); // u3
-		fa.add(0); // v3
+		list[i++] = 0.5f; // x3
+		list[i++] = 0.5f; // y2
+		list[i++] = 0f;
+		list[i++] = 5;
+		list[i++] = 5;
+		list[i++] = 5;
+		list[i++] = 0.25f; // u3
+		list[i++] = 0; // v3
 
-		fa.add(0.5f); // x3
-		fa.add(0.5f); // y2
-		fa.add(0f);
-		fa.add(5);
-		fa.add(5);
-		fa.add(5);
-		fa.add(0.25f); // u3
-		fa.add(0); // v3
+		list[i++] = 0.5f; // x3
+		list[i++] = 0.5f; // y2
+		list[i++] = 0f;
+		list[i++] = 5;
+		list[i++] = 5;
+		list[i++] = 5;
+		list[i++] = 0.25f; // u3
+		list[i++] = 0; // v3
 
-		fa.add(-0.5f); // x4
-		fa.add(0.5f); // y4
-		fa.add(0f);
-		fa.add(5);
-		fa.add(5);
-		fa.add(5);
-		fa.add(0); // u4
-		fa.add(0); // v4
+		list[i++] = -0.5f; // x4
+		list[i++] = 0.5f; // y4
+		list[i++] = 0f;
+		list[i++] = 5;
+		list[i++] = 5;
+		list[i++] = 5;
+		list[i++] = 0; // u4
+		list[i++] = 0; // v4
 
-		fa.add(-0.5f); // x1
-		fa.add(-0.5f); // y1
-		fa.add(0f);
-		fa.add(5);
-		fa.add(5);
-		fa.add(5);
-		fa.add(0); // u1
-		fa.add(0.25f); // v1
-		fa.shrink();
+		list[i++] = -0.5f; // x1
+		list[i++] = -0.5f; // y1
+		list[i++] = 0f;
+		list[i++] = 5;
+		list[i++] = 5;
+		list[i++] = 5;
+		list[i++] = 0; // u1
+		list[i++] = 0.25f; // v1
 		quad = new Mesh(true, 6, 0,
 				VertexAttributes.position,
 				VertexAttributes.normal,
 				VertexAttributes.textureCoords);
-		quad.setVertices(fa.items);
+		quad.setVertices(list);
 	}
 }
