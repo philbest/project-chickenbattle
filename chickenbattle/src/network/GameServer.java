@@ -3,6 +3,7 @@ package network;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.HashMap;
+import java.util.concurrent.Semaphore;
 
 import network.Packet.AddPlayer;
 import network.Packet.AddServer;
@@ -23,6 +24,7 @@ import Map.Voxel;
 import Spelet.StaticVariables;
 import Spelet.Weapon;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
@@ -39,6 +41,13 @@ public class GameServer {
 	Vector3[] bbCorners;
 	HashMap<Connection,Integer> connectionIDs;
 	Connection[] connections;
+	private Semaphore toSendSema;
+	private Semaphore btoSendSema;
+	private Semaphore bdamageSema;
+	private Semaphore updServerSema;
+	private Semaphore hittoSendSema;
+	private Semaphore broadcastSema;
+	private Semaphore exploSema;
 	Array<Update> toSend;
 	Array<BlockUpdate> btoSend;
 	Array<BlockDamage> bdamage;
@@ -82,6 +91,13 @@ public class GameServer {
 			bbCorners[i] = new Vector3(0,0,0);
 		point = new Vector3(0,0,0);
 		direction = new Vector3(0,0,0);
+		toSendSema = new Semaphore(1);
+		btoSendSema = new Semaphore(1);
+		bdamageSema = new Semaphore(1);
+		updServerSema = new Semaphore(1);
+		hittoSendSema = new Semaphore(1);
+		broadcastSema = new Semaphore(1);
+		exploSema = new Semaphore(1);
 		toSend = new Array<Update>();
 		bdamage = new Array<BlockDamage>();
 		btoSend = new Array<BlockUpdate>();
@@ -101,7 +117,7 @@ public class GameServer {
 		Packet.register(lobbyconnection);
 		//lobbyconnection.connect(5000, "192.168.0.101", 50000, 50002);
 		//lobbyconnection.connect(5000, "129.16.21.56", 50000, 50002);
-		lobbyconnection.connect(5000, "192.168.0.142", 50000, 50002);
+		lobbyconnection.connect(5000, "46.239.100.249", 50000, 50002);
 
 		this.motd =m;
 		this.online =0;
@@ -169,7 +185,15 @@ public class GameServer {
 						msg.motd = motd;
 						msg.playercap =playercap;
 						msg.online = numPlayers();
-						updServer.add(msg);
+						try {
+							updServerSema.acquire();
+							updServer.add(msg);
+							updServerSema.release();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
 					}
 					else{
 						connection.sendTCP(new Reject());
@@ -281,10 +305,24 @@ public class GameServer {
 							Message bc = new Message();
 							bc.type = StaticVariables.falldeath;
 							bc.message = player[received.id].name;
-							broadcast.add(bc);
+							try {
+								broadcastSema.acquire();
+								broadcast.add(bc);
+								broadcastSema.release();
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 					}
-					toSend.add(msg);
+					try {
+						toSendSema.acquire();
+						toSend.add(msg);
+						toSendSema.release();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					//server.sendToAllTCP(toSend); // FIX
 				}
 				else if (object instanceof BlockUpdate){
@@ -296,7 +334,14 @@ public class GameServer {
 					msg.z = received.z;
 					msg.size = received.size;
 					msg.modi = received.modi;
-					btoSend.add(msg);
+					try {
+						btoSendSema.acquire();
+						btoSend.add(msg);
+						btoSendSema.release();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					//server.sendToAllTCP(btoSend);//FIX		
 				} else if(object instanceof Bullet){
 					hit = false;
@@ -356,11 +401,25 @@ public class GameServer {
 											bc.type = StaticVariables.frag;
 											bc.created = TimeUtils.millis();
 											bc.message = player[b.id].name + "," + compare.name;
-											broadcast.add(bc);
+											try {
+												broadcastSema.acquire();
+												broadcast.add(bc);
+												broadcastSema.release();
+											} catch (InterruptedException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
 										}
 										player[i] = compare;
 										hit = true;
-										hittoSend.add(msg);
+										try {
+											hittoSendSema.acquire();
+											hittoSend.add(msg);
+											hittoSendSema.release();
+										} catch (InterruptedException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
 										//server.sendToAllTCP(hittoSend); // FIX
 									}
 								}
@@ -399,7 +458,14 @@ public class GameServer {
 											bo.z = pointZ;
 											bo.size = Map.chunkSize;
 											bo.modi = Voxel.grass;
-											btoSend.add(bo);
+											try {
+												btoSendSema.acquire();
+												btoSend.add(bo);
+												btoSendSema.release();
+											} catch (InterruptedException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
 											//server.sendToAllTCP(btoSend); // FIX
 										}
 									}		
@@ -440,11 +506,17 @@ public class GameServer {
 																	bd.y = pointY;
 																	bd.z = pointZ;
 																	bd.damage = structuralDamage;
-																	if (bd == null)
-																		System.out.println("ADDED NULL");
-																	bdamage.add(bd);
+																	try {
+																		bdamageSema.acquire();
+																		bdamage.add(bd);
+																		bdamageSema.release();
+																	} catch (InterruptedException e) {
+																		// TODO Auto-generated catch block
+																		e.printStackTrace();
+																	}
+																	
 																	//server.sendToAllTCP(bdamage); // FIX
-																	if (distance > radius/2) {
+																	if (distance > radius/2 && MathUtils.random(1,10) >= 8) {
 																		ExplosionUpd eu = new ExplosionUpd();
 																		eu.x = pointX;
 																		eu.y = pointY;
@@ -452,7 +524,15 @@ public class GameServer {
 																		eu.cx = centerX;
 																		eu.cy = centerY;
 																		eu.cz = centerZ;
-																		explo.add(eu);
+																		try {
+																			exploSema.acquire();
+																			explo.add(eu);
+																			exploSema.release();
+																		} catch (InterruptedException e) {
+																			// TODO Auto-generated catch block
+																			e.printStackTrace();
+																		}
+																		
 																		//sdderver.sendToAllTCP(explo);
 																	}
 																}
@@ -483,9 +563,15 @@ public class GameServer {
 												bd.y = pointY;
 												bd.z = pointZ;
 												bd.damage = structuralDamage;
-												if (bd == null)
-													System.out.println("ADDED NULL");
-												bdamage.add(bd);
+												try {
+													bdamageSema.acquire();
+													bdamage.add(bd);
+													bdamageSema.release();
+												} catch (InterruptedException e) {
+													// TODO Auto-generated catch block
+													e.printStackTrace();
+												}
+												
 												//server.sendToAllTCP(bdamage); // FIX
 											}
 										}
@@ -509,7 +595,15 @@ public class GameServer {
 					msg.motd = motd;
 					msg.playercap =playercap;
 					msg.online = numPlayers();
-					updServer.add(msg);
+					try {
+						updServerSema.acquire();
+						updServer.add(msg);
+						updServerSema.release();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
 					//lobbyconnection.sendTCP(updServer); // FIX
 				}
 			}
@@ -556,47 +650,98 @@ public class GameServer {
 		public void run() {
 			while (running) {
 				if (timer >= 16) {
-					int size = bdamage.size;
-					int j = 0;
+					int size = 0;
+					try {
+						bdamageSema.acquire();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					size = bdamage.size;
 					for (int i = size-1; i >= 0; i--) {
-						if (bdamage.get(i) == null)
-							System.out.println(j);
 						server.sendToAllTCP(bdamage.get(i));
 						bdamage.removeIndex(i);
-						j++;
+					}
+					bdamageSema.release();
+
+					try {
+						toSendSema.acquire();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					size = toSend.size;
 					for (int i = size-1; i >= 0; i--) {
 						server.sendToAllTCP(toSend.get(i));
 						toSend.removeIndex(i);
 					}
+					toSendSema.release();
+					
+					try {
+						btoSendSema.acquire();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					size = btoSend.size;
 					for (int i = size-1; i >= 0; i--) {
 						server.sendToAllTCP(btoSend.get(i));
 						btoSend.removeIndex(i);
 					}
-
+					btoSendSema.release();
+					
+					try {
+						updServerSema.acquire();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					size = updServer.size;
 					for (int i = size-1; i >= 0; i--) {
 						server.sendToAllTCP(updServer.get(i));
 						updServer.removeIndex(i);
 					}
-
+					updServerSema.release();
+					
+					try {
+						hittoSendSema.acquire();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					size = hittoSend.size;
 					for (int i = size-1; i >= 0; i--) {
 						server.sendToAllTCP(hittoSend.get(i));
 						hittoSend.removeIndex(i);
+					}
+					hittoSendSema.release();
+					
+					try {
+						exploSema.acquire();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					size = explo.size;
 					for (int i = size-1; i >= 0; i--) {
 						server.sendToAllTCP(explo.get(i));
 						explo.removeIndex(i);
 					}
+					exploSema.release();
+					
+					try {
+						broadcastSema.acquire();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					size = broadcast.size;
 					for (int i = size-1; i >= 0; i--) {
 						server.sendToAllTCP(broadcast.get(i));
 						broadcast.removeIndex(i);
 					}
+					broadcastSema.release();
+					
 					lastUpdate = System.currentTimeMillis();
 					timerOffset = timer-16;
 					timer -= 16;

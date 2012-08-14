@@ -104,16 +104,16 @@ public class Explosion {
 		}
 		if (timer > 16) {
 			if (timeAlive < ttl*0.8) {
-				Particle p = new Particle(position.x, position.y, position.z, 3, 3, 3, 10, false, false, true);
-				p.setVelocity(0,0.1f,0);
-				p.setColor(0.8f,0.8f,0.8f);
-				app.explosionParticles.addParticle(p);
-				p = new Particle(position.x, position.y, position.z, 3, 3, 3, 5, false, false, false);
-				p.setVelocity(0,0.1f,0);
-				p.setSizeChange(-0.1f,-0.1f,-0.1f);
-				p.setColor(1f,0.75f,0.5f);
-				app.explosionParticles.addParticle(p);
-				timer -= 16;
+//				Particle p = new Particle(position.x, position.y, position.z, 2, 2, 2, 10, false, false, true);
+//				p.setVelocity(0,0.005f,0);
+//				p.setColor(0.8f,0.8f,0.8f);
+//				app.explosionParticles.addParticle(p);
+//				p = new Particle(position.x, position.y, position.z, 3, 3, 3, 5, false, false, false);
+//				p.setVelocity(0,0.1f,0);
+//				p.setSizeChange(-0.1f,-0.1f,-0.1f);
+//				p.setColor(1f,0.75f,0.5f);
+//				app.explosionParticles.addParticle(p);
+//				timer -= 16;
 			}
 		}
 	}

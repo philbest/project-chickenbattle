@@ -21,17 +21,11 @@ import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
-import com.badlogic.gdx.graphics.g3d.decals.Decal;
-import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
-import com.badlogic.gdx.graphics.g3d.decals.GroupStrategy;
 import com.badlogic.gdx.graphics.g3d.loaders.obj.ObjLoader;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -39,9 +33,7 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.TimeUtils;
 
 
 public class Renderer {
@@ -71,10 +63,6 @@ public class Renderer {
 	String playerscore;
 	SpriteBatch sb;
 	Sprite score, teamscore;
-
-	DecalBatch decalbatch;
-	Decal grassbb;
-	GroupStrategy strategy;
 	BitmapFont font;
 
 	FrameBuffer shadowMap;
@@ -187,13 +175,6 @@ public class Renderer {
 		skysphereTexture = new Texture(Gdx.files.internal("data/skydome.bmp"));
 		// Load a Texture
 		Texture image = new Texture(Gdx.files.internal("data/grassbb.png"));
-		// create a decal sprite
-		grassbb = Decal.newDecal(32, 32, new TextureRegion(image), true);
-
-		// create a DecalBatch to render them with just once at startup
-		//		decalbatch = new DecalBatch();
-		//		decalbatch.
-		//		grassbb.setPosition(500, 250, 5);
 
 	}
 
