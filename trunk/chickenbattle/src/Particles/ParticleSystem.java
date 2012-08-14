@@ -33,6 +33,7 @@ public class ParticleSystem {
 //		particles.add(new Particle(px, py,pz, vx, vy, vz, w, h, d, dw,dh, dd, steps, grav, emitts, phys, isSmoke));
 //	}
 	public void update(Application app) {
+		System.out.println(particles.size);
 		timer += Gdx.graphics.getDeltaTime()*1000;
 		float stepSpeed = 16;
 		if (timer >= stepSpeed) {
@@ -63,13 +64,13 @@ public class ParticleSystem {
 		addParticle(p);
 		
 		// Main smoke
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 10; i++) {
 			temp.set(cx,cy,cz);
 			temp.add(MathUtils.random(-5f,5f),MathUtils.random(-3f,0f),MathUtils.random(-5f,5f));
 			p = new Particle(temp.x,temp.y,temp.z,
 					10,10,10,
 					200,false,false,true);
-			p.setVelocity(0,0.4f,0);
+			p.setVelocity(0,0.3f,0);
 			p.setColor(0.6f,0.6f,0.6f);
 			addParticle(p);	
 		}
@@ -77,53 +78,77 @@ public class ParticleSystem {
 		// Blast fire
 		p = new Particle(cx,cy,cz,
 				10,10,10,
-				20,false,false,false);
+				30,false,false,false);
+		p.setColor(1,0.5f,0.2f);
+		p.setSizeChange(3,3,3);
+		addParticle(p);
+		p = new Particle(cx,cy,cz,
+				10,10,10,
+				30,false,false,false);
 		p.setColor(1,0.5f,0.2f);
 		p.setSizeChange(3,3,3);
 		addParticle(p);
 
-		
-		// Upwards fire
 		for (int i = 0; i < 30; i++) {
 			temp.set(1,0,0);
-			rot.setToRotation(0,0,1,MathUtils.random(50f,90f));
+			rot.setToRotation(0,0,1,MathUtils.random(0f,90f));
 			temp.rot(rot);
 			rot.setToRotation(0,1,0, MathUtils.random(360f));
 			temp.rot(rot);
 			temp.nor();
 			temp.mul(MathUtils.random(0.3f,0.4f));
 			p = new Particle(cx,cy,cz,
-					3,3,3,
-					100,true,true,false);
+					5,5,5,
+					50,true,true,false);
 			p.setEmitter(true);
-			p.setEmitterProperties(false,0,0.05f,0,2.5f,2.5f,2.5f);
+			p.setEmitterProperties(false,0,0.05f,0,2.5f,4f,4f);
 			p.setColor(1,0.5f,0.2f);
 			temp.mul(2);
 			p.setVelocity(temp.x,temp.y,temp.z);
 			addParticle(p);
 		}
-		for (int i = 0; i < 10; i++) {
-			temp.set(1,0,0);
-			rot.setToRotation(0,0,1,MathUtils.random(10f,40f));
-			temp.rot(rot);
-			rot.setToRotation(0,1,0, MathUtils.random(360f));
-			temp.rot(rot);
-			temp.nor();
-			temp.mul(0.4f);
-			for (int j = 0; j < MathUtils.random(5,10); j++) {
-				temp2.set(temp);
-				temp2.add(MathUtils.random(-1f,1f)/16, MathUtils.random(-1f,1f)/16,MathUtils.random(-1f,1f)/16);
-				p = new Particle(cx,cy,cz,
-						3,3,3,
-						20,true,true,false);
-				p.setEmitter(true);
-				p.setEmitterProperties(false,0,0.05f,0,2.5f,2.5f,2.5f);
-				temp2.mul(2);
-				p.setVelocity(temp2.x,temp2.y,temp2.z);
-				p.setColor(1,0.5f,0.2f);
-				addParticle(p);
-			}
-		}
+		
+//		// Upwards fire
+//		for (int i = 0; i < 30; i++) {
+//			temp.set(1,0,0);
+//			rot.setToRotation(0,0,1,MathUtils.random(70f,90f));
+//			temp.rot(rot);
+//			rot.setToRotation(0,1,0, MathUtils.random(360f));
+//			temp.rot(rot);
+//			temp.nor();
+//			temp.mul(MathUtils.random(0.3f,0.4f));
+//			p = new Particle(cx,cy,cz,
+//					5,5,5,
+//					100,true,true,false);
+//			p.setEmitter(true);
+//			p.setEmitterProperties(false,0,0.05f,0,2.5f,4f,4f);
+//			p.setColor(1,0.5f,0.2f);
+//			temp.mul(2);
+//			p.setVelocity(temp.x,temp.y,temp.z);
+//			addParticle(p);
+//		}
+//		for (int i = 0; i < 10; i++) {
+//			temp.set(1,0,0);
+//			rot.setToRotation(0,0,1,MathUtils.random(20f,60f));
+//			temp.rot(rot);
+//			rot.setToRotation(0,1,0, MathUtils.random(360f));
+//			temp.rot(rot);
+//			temp.nor();
+//			temp.mul(0.4f);
+//			for (int j = 0; j < MathUtils.random(3,5); j++) {
+//				temp2.set(temp);
+//				temp2.add(MathUtils.random(-1f,1f)/16, MathUtils.random(-1f,1f)/16,MathUtils.random(-1f,1f)/16);
+//				p = new Particle(cx,cy,cz,
+//						5,5,5,
+//						100,true,true,false);
+//				p.setEmitter(true);
+//				p.setEmitterProperties(false,0,0.05f,0,4f,4f,4f);
+//				temp2.mul(2);
+//				p.setVelocity(temp2.x,temp2.y,temp2.z);
+//				p.setColor(1,0.5f,0.2f);
+//				addParticle(p);
+//			}
+//		}
 	}
 
 

@@ -34,6 +34,7 @@ public class Particle {
 	public boolean isSmoke;
 	public float distance;
 	float gravity;
+	int emitterTimer;
 	public Particle(float px, float py, float pz, float w, float h, float d, float steps, boolean hasGravity, boolean hasPhysics, boolean isSmoke) {
 		this.hasPhysics = hasPhysics;
 		this.emitter = emitter;
@@ -78,6 +79,7 @@ public class Particle {
 	}
 	public void step(Application app, ParticleSystem sys) {
 		dir.set(app.cam.position).sub(position).nor();
+		emitterTimer++;
 		setRotation(dir,app.cam.up);
 		steps++;
 		if (hasGravity)
@@ -132,7 +134,8 @@ public class Particle {
 		modelMatrix.setToTranslation(position);
 		modelMatrix.scale(size.x,size.y,size.z);
 		modelMatrix.rotate(rotation);
-		if (emitter) {
+		if (emitter && emitterTimer > 2) {
+			emitterTimer = 0;
 			Particle p = new Particle(position.x,position.y,position.z,
 					emittSize.x, emittSize.y, emittSize.z,10, false,false,emittsSmoke);
 			p.setVelocity(emittVelocity.x,emittVelocity.y,emittVelocity.z);
