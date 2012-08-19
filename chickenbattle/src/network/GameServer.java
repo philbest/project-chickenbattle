@@ -116,8 +116,8 @@ public class GameServer {
 		lobbyconnection.start();
 		Packet.register(lobbyconnection);
 		//lobbyconnection.connect(5000, "192.168.0.101", 50000, 50002);
-		//lobbyconnection.connect(5000, "129.16.21.56", 50000, 50002);
-		lobbyconnection.connect(5000, "46.239.100.249", 50000, 50002);
+		lobbyconnection.connect(5000, "129.16.21.56", 50000, 50002);
+//		lobbyconnection.connect(5000, "46.239.100.249", 50000, 50002);
 
 		this.motd =m;
 		this.online =0;

@@ -218,7 +218,7 @@ public class Application extends Screen implements InputProcessor{
 			ExplosionUpd e = null;
 			for (int i = 0; i < newExplosions.size; i++) {
 				e=newExplosions.get(i);
-				explosions.addExplotion(e.x, e.y, e.z, e.cx, e.cy,e.cz);
+			explosions.addExplotion(e.x, e.y, e.z, e.cx, e.cy,e.cz);
 			}
 			if (e != null) {
 				explosionParticles.addExplosion(e.cx,e.cy,e.cz);

@@ -24,6 +24,7 @@ public class Explosion {
 	float timer;
 	float initialForceUp;
 	float rotation;
+	boolean rotating;
 	public float alpha;
 	public Explosion(float x, float y, float z, float cx, float cy, float cz, float ttl) {
 		position = new Vector3(x,y,z);
@@ -40,6 +41,7 @@ public class Explosion {
 		timer = 0;
 		initialForceUp = 8f;
 		alpha = 1;
+		rotating = true;
 	}
 	public void update(Application app) {
 		timeAlive += Gdx.graphics.getDeltaTime()*1000;
@@ -63,11 +65,14 @@ public class Explosion {
 				if (c.x == (cx/Map.chunkSize) && c.y == (cy/Map.chunkSize) && c.z == (cz/Map.chunkSize)) {
 					if (c.map[cx-c.x*Map.chunkSize][cy-c.y*Map.chunkSize][cz-c.z*Map.chunkSize].id != Voxel.nothing) {
 						position.y -= velocity.y;
-						velocity.y*=-0.75f;
-						velocity.x*=0.6;
-						velocity.z*=0.6;
-						direction.z *=0.5f;
-						direction.x *=0.5f;
+//						velocity.y*=-0.75f;
+//						velocity.x*=0.6;
+//						velocity.z*=0.6;
+//						direction.z *=0.5f;
+//						direction.x *=0.5f;
+						velocity.set(0,0,0);
+						direction.set(0,0,0);
+						rotating = false;
 					}		
 					break;
 				}
@@ -97,6 +102,7 @@ public class Explosion {
 
 		direction.mul(0.9f);
 		mat.setToTranslation(position);
+		if(rotating)
 		rotation ++;
 		mat.rotate(rotationVec,rotation);
 		if (timeAlive > ttl*0.8) {
